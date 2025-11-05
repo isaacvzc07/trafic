@@ -35,6 +35,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Group data by hour for easier frontend consumption
+    type GroupedItem = {
+      hour: string;
+      data: Array<{
+        camera_id: string;
+        vehicle_type: string;
+        direction: string;
+        count: number;
+        avg_confidence: number;
+      }>;
+    };
+
     const groupedData = (data || []).reduce((acc, record) => {
       const existing = acc.find((item) => item.hour === record.hour);
 
@@ -60,16 +71,7 @@ export async function GET(request: NextRequest) {
       }
 
       return acc;
-    }, [] as Array<{
-      hour: string;
-      data: Array<{
-        camera_id: string;
-        vehicle_type: string;
-        direction: string;
-        count: number;
-        avg_confidence: number;
-      }>;
-    }>);
+    }, [] as GroupedItem[]);
 
     return NextResponse.json({
       period: startDate && endDate
