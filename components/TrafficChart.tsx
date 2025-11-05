@@ -151,8 +151,21 @@ export default function TrafficChart({ data: propData }: TrafficChartProps) {
 
   // Group data by hour and camera, maintaining chronological order
   const chartData = data.reduce((acc, stat) => {
+    // Validate stat.hour exists
+    if (!stat.hour) {
+      console.warn('Skipping record with missing hour:', stat);
+      return acc;
+    }
+
     // Convert UTC to CST (UTC-6) - keeping full timestamp
     const utcDate = new Date(stat.hour + 'Z'); // Force UTC interpretation
+
+    // Validate that the date is valid
+    if (isNaN(utcDate.getTime())) {
+      console.warn('Skipping record with invalid date:', stat.hour, stat);
+      return acc;
+    }
+
     const cstTimestamp = utcDate.getTime() - 6 * 60 * 60 * 1000; // Subtract 6 hours in milliseconds
 
     // Use timestamp as key to preserve chronological order
