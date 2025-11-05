@@ -1,0 +1,31 @@
+name: Traffic Data Collection
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: '*/5 * * * *'
+
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+
+jobs:
+  collect-traffic-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Vercel API endpoint
+        run: |
+          curl -X GET "${{ secrets.VERCEL_APP_URL }}/api/cron/run-all" \
+            -H "Content-Type: application/json" \
+            -f \
+            --max-time 60 \
+            --retry 2 \
+            --retry-delay 10
+
+      - name: Log completion
+        if: success()
+        run: echo "Data collection completed successfully at $(date)"
+
+      - name: Log failure
+        if: failure()
+        run: echo "Data collection failed at $(date)"
