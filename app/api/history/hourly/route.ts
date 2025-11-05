@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       }>;
     };
 
-    const groupedData = (data || []).reduce((acc, record) => {
+    const groupedData = (data || []).reduce((acc: GroupedItem[], record) => {
       const existing = acc.find((item) => item.hour === record.hour);
 
       if (existing) {
