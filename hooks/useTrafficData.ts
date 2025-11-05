@@ -91,10 +91,11 @@ export function useHistoricalData(startDate?: string, endDate?: string, refreshI
   // Flatten the data structure to match HourlyStatistic[]
   const flattenedData: HourlyStatistic[] | undefined = data?.data.flatMap(hourGroup =>
     hourGroup.data.map(stat => ({
+      period: data.period,
       hour: hourGroup.hour,
       camera_id: stat.camera_id,
-      vehicle_type: stat.vehicle_type,
-      direction: stat.direction,
+      vehicle_type: stat.vehicle_type as 'car' | 'bus' | 'truck',
+      direction: stat.direction as 'in' | 'out',
       count: stat.count,
       avg_confidence: stat.avg_confidence,
     }))
