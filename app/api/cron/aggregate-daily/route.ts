@@ -100,12 +100,12 @@ export async function GET(request: NextRequest) {
       }, {} as Record<number, number>);
 
       const peakHourIn = Object.entries(hourlyTotalsIn).reduce(
-        (max, [hour, count]) => (count > max.count ? { hour: +hour, count } : max),
+        (max, [hour, count]) => ((count as number) > max.count ? { hour: +hour, count: count as number } : max),
         { hour: 0, count: 0 }
       );
 
       const peakHourOut = Object.entries(hourlyTotalsOut).reduce(
-        (max, [hour, count]) => (count > max.count ? { hour: +hour, count } : max),
+        (max, [hour, count]) => ((count as number) > max.count ? { hour: +hour, count: count as number } : max),
         { hour: 0, count: 0 }
       );
 
