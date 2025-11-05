@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     const summaries = [];
 
     for (const [cameraId, cameraRecords] of Object.entries(cameraGroups)) {
-      const records = cameraRecords;
+      const records = cameraRecords as typeof hourlyData;
       // Aggregate by vehicle type and direction
       const aggregates = records.reduce(
         (acc, record) => {
