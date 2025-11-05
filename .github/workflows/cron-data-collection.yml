@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Call Vercel API endpoint
         run: |
-          curl -X GET "${{ secrets.VERCEL_APP_URL }}/api/cron/run-all" \
+          curl -L -X GET "${{ secrets.VERCEL_APP_URL }}/api/cron/run-all" \
             -H "Content-Type: application/json" \
             -f \
             --max-time 60 \
