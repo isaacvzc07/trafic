@@ -11,7 +11,7 @@ import TrafficChartVisx from '@/components/TrafficChartVisx';
 import TrafficMap from '@/components/TrafficMap';
 import { Activity, TrendingUp, Camera, AlertCircle, Clock, BarChart3, ArrowLeft } from 'lucide-react';
 import { LiveCount, HourlyStatistic } from '@/types/api';
-import { formatMexicoCityTime } from '@/lib/timezone';
+import { formatMexicoCityTime, MEXICO_CITY_TIMEZONE } from '@/lib/timezone';
 
 export default function Dashboard() {
   const { liveCounts, isLoading: loadingLive, isError: errorLive } = useLiveCounts(5000);
@@ -198,12 +198,17 @@ export default function Dashboard() {
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Traffic Heatmap</h3>
             <TrafficHeatmap 
-              data={Array.isArray(hourlyStats) ? hourlyStats.map((stat: HourlyStatistic) => ({
-                hour: new Date(stat.hour).getHours().toString(),
-                location: stat.camera_id,
-                intensity: stat.count,
-                count: stat.count
-              })) : []}
+              data={Array.isArray(hourlyStats) ? hourlyStats.map((stat: HourlyStatistic) => {
+                // Convert to Mexico City timezone to get correct hour
+                const date = new Date(stat.hour);
+                const mexicoCityHour = new Date(date.toLocaleString('en-US', { timeZone: MEXICO_CITY_TIMEZONE })).getHours();
+                return {
+                  hour: mexicoCityHour.toString().padStart(2, '0'),
+                  location: stat.camera_id,
+                  intensity: stat.count,
+                  count: stat.count
+                };
+              }) : []}
             />
           </motion.div>
         )}
