@@ -93,10 +93,10 @@ export default function TrafficAnalysis() {
         api.getSummary() // Summary statistics
       ]);
       
-      console.log('API hourly data:', apiData.status === 'fulfilled' ? apiData.value.length : 'failed');
-      console.log('Supabase data:', supabaseData.status === 'fulfilled' ? supabaseData.value?.data?.length || 0 : 'failed');
-      console.log('Live data:', liveData.status === 'fulfilled' ? liveData.value.length : 'failed');
-      console.log('Summary data:', summaryData.status === 'fulfilled' ? 'success' : 'failed');
+      console.log('Datos de API por hora:', apiData.status === 'fulfilled' ? apiData.value.length : 'falló');
+      console.log('Datos de Supabase:', supabaseData.status === 'fulfilled' ? supabaseData.value?.data?.length || 0 : 'falló');
+      console.log('Datos en vivo:', liveData.status === 'fulfilled' ? liveData.value.length : 'falló');
+      console.log('Datos de resumen:', summaryData.status === 'fulfilled' ? 'éxito' : 'falló');
       
       // Process API data
       let apiArray: ExtendedHourlyStatistic[] = [];
@@ -144,7 +144,7 @@ export default function TrafficAnalysis() {
       
       // Combine all datasets
       const combinedData = [...apiArray, ...supabaseArray, ...liveArray];
-      console.log('Total combined data length:', combinedData.length);
+      console.log('Longitud total de datos combinados:', combinedData.length);
       
       setHistoryData(combinedData);
       
@@ -153,8 +153,8 @@ export default function TrafficAnalysis() {
         setSummaryStats(summaryData.value);
       }
     } catch (err) {
-      console.error('Error fetching history data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch history data');
+      console.error('Error al obtener datos históricos:', err);
+      setError(err instanceof Error ? err.message : 'Error al obtener datos históricos');
       setHistoryData([]);
     } finally {
       setLoading(false);
@@ -260,20 +260,20 @@ export default function TrafficAnalysis() {
             <Link href="/dashboard">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                Volver al Dashboard
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
-              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
+              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
             </div>
           </div>
           
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Activity className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-              <p className="text-gray-600">No traffic data available</p>
-              <p className="text-sm text-gray-500 mt-2">Please check back later when data is collected</p>
+              <p className="text-gray-600">No hay datos de tráfico disponibles</p>
+              <p className="text-sm text-gray-500 mt-2">Por favor regrese más tarde cuando se hayan recolectado datos</p>
             </div>
           </div>
         </div>
@@ -289,19 +289,19 @@ export default function TrafficAnalysis() {
             <Link href="/dashboard">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                Volver al Dashboard
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
-              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
+              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
             </div>
           </div>
           
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Activity className="w-8 h-8 mx-auto mb-2 text-blue-400 animate-pulse" />
-              <p className="text-gray-600">Loading traffic analysis...</p>
+              <p className="text-gray-600">Cargando datos de análisis...</p>
             </div>
           </div>
         </div>
@@ -317,21 +317,26 @@ export default function TrafficAnalysis() {
             <Link href="/dashboard">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                Volver al Dashboard
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
-              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
+              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
             </div>
           </div>
           
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Activity className="w-8 h-8 mx-auto mb-2 text-red-400" />
-              <p className="text-red-600">Error: {error}</p>
-              <Button onClick={fetchHistoryData} className="mt-2" size="sm">
-                Retry
+              <p className="text-red-600">Error al cargar datos</p>
+              <p className="text-sm text-gray-500 mt-2">{error}</p>
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="mt-4"
+                size="sm"
+              >
+                Reintentar
               </Button>
             </div>
           </div>
@@ -349,12 +354,12 @@ export default function TrafficAnalysis() {
             <Link href="/dashboard">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                Volver al Dashboard
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
-              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
+              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
             </div>
           </div>
           
@@ -376,7 +381,7 @@ export default function TrafficAnalysis() {
             
             <Button variant="ghost" size="sm">
               <Download className="w-4 h-4 mr-2" />
-              Export
+              Exportar
             </Button>
           </div>
         </div>
@@ -386,7 +391,7 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">API Records</p>
+                <p className="text-sm text-gray-600">Registros API</p>
                 <p className="text-2xl font-bold text-blue-600">{dataSourceStats.apiRecords}</p>
               </div>
               <Activity className="w-8 h-8 text-blue-600" />
@@ -396,7 +401,7 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Supabase Records</p>
+                <p className="text-sm text-gray-600">Registros Supabase</p>
                 <p className="text-2xl font-bold text-green-600">{dataSourceStats.supabaseRecords}</p>
               </div>
               <Database className="w-8 h-8 text-green-600" />
@@ -406,7 +411,7 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Live Records</p>
+                <p className="text-sm text-gray-600">Registros en Vivo</p>
                 <p className="text-2xl font-bold text-orange-600">{dataSourceStats.liveRecords}</p>
               </div>
               <Zap className="w-8 h-8 text-orange-600" />
@@ -416,7 +421,7 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active Cameras</p>
+                <p className="text-sm text-gray-600">Cámaras Activas</p>
                 <p className="text-2xl font-bold text-purple-600">{dataSourceStats.uniqueCameras}</p>
               </div>
               <Camera className="w-8 h-8 text-purple-600" />
@@ -429,7 +434,7 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Vehicles</p>
+                <p className="text-sm text-gray-600">Total de Vehículos</p>
                 <p className="text-2xl font-bold text-gray-900">{totalVehicles.toLocaleString()}</p>
               </div>
               <Car className="w-8 h-8 text-blue-600" />
@@ -439,7 +444,7 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Avg Hourly</p>
+                <p className="text-sm text-gray-600">Promedio por Hora</p>
                 <p className="text-2xl font-bold text-gray-900">{avgHourly.toLocaleString()}</p>
               </div>
               <Clock className="w-8 h-8 text-green-600" />
@@ -449,9 +454,8 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Peak Hour</p>
-                <p className="text-lg font-bold text-gray-900">{peakHour.time}</p>
-                <p className="text-sm text-gray-600">{peakHour.total} vehicles</p>
+                <p className="text-sm text-gray-600">Hora Pico</p>
+                <p className="text-2xl font-bold text-gray-900">{peakHour.time}</p>
               </div>
               <TrendingUp className="w-8 h-8 text-orange-600" />
             </div>
@@ -460,7 +464,7 @@ export default function TrafficAnalysis() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Data Points</p>
+                <p className="text-sm text-gray-600">Puntos de Datos</p>
                 <p className="text-2xl font-bold text-gray-900">{processedData.length}</p>
               </div>
               <BarChart3 className="w-8 h-8 text-purple-600" />
@@ -471,8 +475,8 @@ export default function TrafficAnalysis() {
         {/* Traffic by Hour Chart - Full Width */}
         <Card className="p-6 mb-8">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Traffic by Hour</h3>
-            <p className="text-gray-600">Detailed hourly traffic patterns for all vehicle types</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Tráfico por Hora</h3>
+            <p className="text-gray-600">Patrones de tráfico horario detallados para todos los tipos de vehículos</p>
           </div>
           
           <div className="h-[600px] w-full">
@@ -494,7 +498,7 @@ export default function TrafficAnalysis() {
                   domain={[0, 'dataMax + 500']}
                   allowDataOverflow={false}
                   label={{
-                    value: 'Vehicles',
+                    value: 'Vehículos',
                     angle: -90,
                     position: 'insideLeft',
                     offset: 40,
@@ -538,7 +542,7 @@ export default function TrafficAnalysis() {
                     stroke="#3b82f6" 
                     strokeWidth={3}
                     dot={false}
-                    name="Cars"
+                    name="Autos"
                   />
                 )}
                 
@@ -549,7 +553,7 @@ export default function TrafficAnalysis() {
                     stroke="#10b981" 
                     strokeWidth={2.5}
                     dot={false}
-                    name="Buses"
+                    name="Autobuses"
                   />
                 )}
                 
@@ -560,7 +564,7 @@ export default function TrafficAnalysis() {
                     stroke="#f59e0b" 
                     strokeWidth={2.5}
                     dot={false}
-                    name="Trucks"
+                    name="Camiones"
                   />
                 )}
               </LineChart>

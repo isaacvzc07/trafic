@@ -10,6 +10,7 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { GridRows, GridColumns } from '@visx/grid';
 import { LinePath } from '@visx/shape';
 import { Tooltip, useTooltip } from '@visx/tooltip';
+import { getMexicoCityTime } from '@/lib/timezone';
 
 type TimeRange = '24h' | 'today' | 'yesterday' | '7d';
 
@@ -31,7 +32,7 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
 
   // Calculate date range based on selected filter
   const getDateRange = (range: TimeRange) => {
-    const now = new Date();
+    const now = getMexicoCityTime();
 
     switch (range) {
       case '24h':
@@ -101,11 +102,12 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
   const yMax = height - margin.top - margin.bottom;
 
   // Scales
+  const mexicoCityNow = getMexicoCityTime();
   const dateScale = scaleTime<number>({
     range: [0, xMax],
     domain: chartData.length > 0 
       ? [Math.min(...chartData.map(d => d.date.getTime())), Math.max(...chartData.map(d => d.date.getTime()))]
-      : [new Date().getTime() - 24 * 60 * 60 * 1000, new Date().getTime()],
+      : [mexicoCityNow.getTime() - 24 * 60 * 60 * 1000, mexicoCityNow.getTime()],
   });
 
   const totalScale = scaleLinear<number>({
@@ -129,12 +131,12 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
   const getTooltipContent = () => {
     if (!tooltipData) return null;
     return (
-      <div className="bg-white border border-gray-100 rounded-lg p-3 shadow-lg">
-        <p className="font-semibold text-gray-900 mb-2">{format(tooltipData.date, 'MMM dd, yyyy HH:mm')}</p>
+      <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
+        <p className="font-semibold text-gray-900 mb-2">{format(tooltipData.date, 'dd MMM yyyy HH:mm', { timeZone: 'America/Mexico_City' })}</p>
         <p className="text-blue-600 text-sm">Total: {tooltipData.total}</p>
-        <p className="text-green-600 text-sm">Cars: {tooltipData.cars}</p>
-        <p className="text-purple-600 text-sm">Buses: {tooltipData.buses}</p>
-        <p className="text-orange-600 text-sm">Trucks: {tooltipData.trucks}</p>
+        <p className="text-green-600 text-sm">Autos: {tooltipData.cars}</p>
+        <p className="text-purple-600 text-sm">Autobuses: {tooltipData.buses}</p>
+        <p className="text-orange-600 text-sm">Camiones: {tooltipData.trucks}</p>
       </div>
     );
   };
@@ -155,9 +157,9 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
   if (isError || chartData.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Traffic by Hour (Last 24h)</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Tráfico por Hora (Últimas 24h)</h3>
         <div className="flex items-center justify-center h-64 text-gray-500">
-          No data available
+          No hay datos disponibles
         </div>
       </div>
     );
@@ -167,25 +169,25 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-semibold text-gray-900">
-            {timeRange === '24h' && 'Traffic by Hour (Last 24h)'}
-            {timeRange === 'today' && 'Traffic by Hour (Today)'}
-            {timeRange === 'yesterday' && 'Traffic by Hour (Yesterday)'}
-            {timeRange === '7d' && 'Traffic by Hour (Last 7 days)'}
+            {timeRange === '24h' && 'Tráfico por Hora (Últimas 24h)'}
+            {timeRange === 'today' && 'Tráfico por Hora (Hoy)'}
+            {timeRange === 'yesterday' && 'Tráfico por Hora (Ayer)'}
+            {timeRange === '7d' && 'Tráfico por Hora (Últimos 7 días)'}
           </h3>
           <div className="flex gap-2">
             {(['24h', 'today', 'yesterday', '7d'] as TimeRange[]).map((range) => (
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
-                className={`px-3 py-1 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-3 py-1 text-sm font-medium rounded-lg Transition-colors ${
                   timeRange === range
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 {range === '24h' && '24h'}
-                {range === 'today' && 'Today'}
-                {range === 'yesterday' && 'Yesterday'}
+                {range === 'today' && 'Hoy'}
+                {range === 'yesterday' && 'Ayer'}
                 {range === '7d' && '7d'}
               </button>
             ))}
@@ -230,7 +232,7 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
                 fontSize: 12,
                 textAnchor: 'middle',
               })}
-              tickFormat={(date) => format(new Date(date as number), 'HH:mm')}
+              tickFormat={(date) => format(new Date(date as number), 'HH:mm', { timeZone: 'America/Mexico_City' })}
             />
 
             {/* Total line */}
