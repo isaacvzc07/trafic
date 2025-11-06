@@ -26,7 +26,13 @@ export const LiveCountSchema = z.object({
 // Hourly statistic schema
 export const HourlyStatisticSchema = z.object({
   period: z.string().optional(),
-  hour: z.string().optional(),
+  hour: z.string().refine((val) => {
+    // Try to parse as date - this handles both ISO format and other common datetime formats
+    const date = new Date(val);
+    return !isNaN(date.getTime());
+  }, {
+    message: 'Invalid datetime format'
+  }).optional(),
   camera_id: z.string().min(1, 'Camera ID is required'),
   vehicle_type: VehicleTypeSchema,
   direction: DirectionSchema,
@@ -60,7 +66,13 @@ export const HistoricalDataResponseSchema = z.object({
   period: z.string(),
   count: z.number().int().min(0),
   data: z.array(z.object({
-    hour: z.string().datetime(),
+    hour: z.string().refine((val) => {
+      // Try to parse as date - this handles both ISO format and other common datetime formats
+      const date = new Date(val);
+      return !isNaN(date.getTime());
+    }, {
+      message: 'Invalid datetime format'
+    }),
     data: z.array(z.object({
       camera_id: z.string(),
       vehicle_type: z.string(),

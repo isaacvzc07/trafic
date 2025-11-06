@@ -47,7 +47,9 @@ export async function GET(request: NextRequest) {
     };
 
     const groupedData = (data || []).reduce((acc: GroupedItem[], record) => {
-      const existing = acc.find((item) => item.hour === record.hour);
+      // Ensure hour is properly formatted as ISO datetime
+      const formattedHour = new Date(record.hour).toISOString();
+      const existing = acc.find((item) => item.hour === formattedHour);
 
       if (existing) {
         existing.data.push({
@@ -59,7 +61,7 @@ export async function GET(request: NextRequest) {
         });
       } else {
         acc.push({
-          hour: record.hour,
+          hour: formattedHour,
           data: [{
             camera_id: record.camera_id,
             vehicle_type: record.vehicle_type,

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useLiveCounts, useHourlyStatistics, useSummaryStatistics } from '@/hooks/useTrafficDataQuery';
 import { Card } from '@/components/ui/Card';
@@ -8,8 +9,9 @@ import { DataTable } from '@/components/DataTable';
 import { TrafficHeatmap } from '@/components/TrafficHeatmap';
 import TrafficChartVisx from '@/components/TrafficChartVisx';
 import TrafficMap from '@/components/TrafficMap';
-import { Activity, TrendingUp, Camera, Car, AlertCircle, Clock } from 'lucide-react';
+import { Activity, TrendingUp, Camera, AlertCircle, Clock, BarChart3, ArrowLeft } from 'lucide-react';
 import { LiveCount, HourlyStatistic } from '@/types/api';
+import { formatMexicoCityTime } from '@/lib/timezone';
 
 export default function Dashboard() {
   const { liveCounts, isLoading: loadingLive, isError: errorLive } = useLiveCounts(5000);
@@ -18,16 +20,16 @@ export default function Dashboard() {
 
   if (errorLive || errorHourly || errorSummary) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-        <Card className="max-w-md border-red-600">
+      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
+        <div className="max-w-md w-full p-6 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/20">
           <div className="flex items-center space-x-3 mb-4">
-            <AlertCircle className="w-6 h-6 text-red-400" />
-            <h2 className="text-red-400 font-bold text-lg">Error al cargar datos</h2>
+            <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+            <h2 className="text-red-600 dark:text-red-400 font-bold text-lg">Error loading data</h2>
           </div>
-          <p className="text-slate-300">
-            No se pudo conectar con la API. Por favor verifica tu conexión e intenta de nuevo.
+          <p className="text-red-600 dark:text-red-300 text-sm">
+            Unable to connect to the API. Please check your connection and try again.
           </p>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -36,14 +38,14 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
+            className="w-12 h-12 border-3 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full mx-auto mb-4"
           />
-          <p className="text-slate-300 font-medium">Cargando datos de tráfico...</p>
+          <p className="text-gray-600 dark:text-gray-400 font-medium">Loading traffic data...</p>
         </div>
       </div>
     );
@@ -56,77 +58,68 @@ export default function Dashboard() {
   const totalOut = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_out, 0) || 0;
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-slate-900 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <motion.h1 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-3xl font-bold text-white mb-2"
-              >
-                Dashboard de Tráfico
-              </motion.h1>
-              <p className="text-slate-400">Monitoreo en tiempo real - api.trafic.mx</p>
+            <div className="flex items-center space-x-4">
+              <Link href="/" className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Traffic Dashboard</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Real-time monitoring</p>
+              </div>
             </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center"
-              >
-                <div className="text-3xl font-bold text-blue-400">{totalTraffic}</div>
-                <div className="text-sm text-slate-400">Vehículos (5 min)</div>
-              </motion.div>
-              <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-center"
-              >
-                <div className="text-3xl font-bold text-green-400">{liveCountsData?.length || 0}</div>
-                <div className="text-sm text-slate-400">Cámaras Activas</div>
-              </motion.div>
+            <div className="hidden md:flex items-center space-x-6">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{totalTraffic}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Vehicles (5 min)</div>
+              </div>
+              <div className="w-px h-8 bg-gray-200 dark:bg-slate-800"></div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{liveCountsData?.length || 0}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Active Cameras</div>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
         {/* Key Metrics */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
         >
           <MetricCard
-            title="Tráfico Total"
+            title="Total Traffic"
             value={totalTraffic}
             change={12.5}
             trend="up"
-            changeLabel="vs. hora anterior"
-            icon={<Activity className="w-6 h-6" />}
+            changeLabel="vs. last hour"
+            icon={<Activity className="w-5 h-5" />}
             format="number"
           />
           
           <MetricCard
-            title="Entrada / Salida"
+            title="In / Out"
             value={`${totalIn} / ${totalOut}`}
             change={totalIn - totalOut > 0 ? (totalIn - totalOut) : -(totalIn - totalOut)}
             trend={totalIn - totalOut > 0 ? 'up' : 'down'}
             changeLabel={`Balance: ${totalIn - totalOut > 0 ? '+' : ''}${totalIn - totalOut}`}
-            icon={<TrendingUp className="w-6 h-6" />}
+            icon={<TrendingUp className="w-5 h-5" />}
           />
           
           <MetricCard
-            title="Cámaras Activas"
+            title="Active Cameras"
             value={liveCountsData?.length || 0}
             change={0}
             trend="neutral"
-            changeLabel="Monitoreando 2 avenidas"
-            icon={<Camera className="w-6 h-6" />}
+            changeLabel="Monitoring 2 avenues"
+            icon={<Camera className="w-5 h-5" />}
           />
         </motion.div>
 
@@ -137,32 +130,36 @@ export default function Dashboard() {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <h2 className="text-2xl font-bold text-white mb-6">Datos en Tiempo Real</h2>
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Live Data</h2>
+          </div>
           {liveCountsData && liveCountsData.length > 0 && (
-            <DataTable
-              data={liveCountsData.map((count: LiveCount) => ({
-                ...count,
-                efficiency: count.total_in > 0 ? Math.round((count.total_out / count.total_in) * 100) : 0,
-                timestamp: new Date(count.timestamp).toLocaleTimeString('es-MX')
-              }))}
-              columns={[
-                { key: 'camera_id', label: 'Cámara', sortable: true },
-                { key: 'direction', label: 'Dirección', sortable: true },
-                { key: 'total_in', label: 'Entrada', sortable: true },
-                { key: 'total_out', label: 'Salida', sortable: true },
-                { 
-                  key: 'efficiency', 
-                  label: 'Eficiencia', 
-                  sortable: true,
-                  render: (value) => (
-                    <span className={`font-medium ${value > 80 ? 'text-green-400' : value > 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                      {value}%
-                    </span>
-                  )
-                },
-                { key: 'timestamp', label: 'Última Actualización', sortable: true },
-              ]}
-            />
+            <div className="rounded-xl border border-gray-200 dark:border-slate-800 overflow-hidden">
+              <DataTable
+                data={liveCountsData.map((count: LiveCount) => ({
+                  ...count,
+                  efficiency: count.total_in > 0 ? Math.round((count.total_out / count.total_in) * 100) : 0,
+                  timestamp: formatMexicoCityTime(count.timestamp)
+                }))}
+                columns={[
+                  { key: 'camera_id', label: 'Camera', sortable: true },
+                  { key: 'direction', label: 'Direction', sortable: true },
+                  { key: 'total_in', label: 'In', sortable: true },
+                  { key: 'total_out', label: 'Out', sortable: true },
+                  { 
+                    key: 'efficiency', 
+                    label: 'Efficiency', 
+                    sortable: true,
+                    render: (value) => (
+                      <span className={`font-medium text-sm ${value > 80 ? 'text-green-600 dark:text-green-400' : value > 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {value}%
+                      </span>
+                    )
+                  },
+                  { key: 'timestamp', label: 'Last Updated', sortable: true },
+                ]}
+              />
+            </div>
           )}
         </motion.div>
 
@@ -172,22 +169,22 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
+            className="rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6"
           >
-            <Card>
-              <h3 className="text-xl font-semibold text-white mb-4">Tráfico por Hora</h3>
-              {hourlyStats && <TrafficChartVisx data={hourlyStats} />}
-            </Card>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Traffic by Hour</h3>
+            {hourlyStats && <TrafficChartVisx data={hourlyStats} />}
           </motion.div>
 
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
+            className="rounded-xl border border-gray-200 dark:border-slate-800 overflow-hidden"
           >
-            <Card>
-              <h3 className="text-xl font-semibold text-white mb-4">Mapa de Tráfico</h3>
-              {liveCountsData && liveCountsData.length > 0 && <TrafficMap cameras={liveCountsData} />}
-            </Card>
+            <TrafficMap 
+              cameras={liveCountsData || []} 
+              showHistory={true}
+            />
           </motion.div>
         </div>
 
@@ -197,8 +194,9 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mb-8"
+            className="mb-8 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6"
           >
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Traffic Heatmap</h3>
             <TrafficHeatmap 
               data={Array.isArray(hourlyStats) ? hourlyStats.map((stat: HourlyStatistic) => ({
                 hour: new Date(stat.hour).getHours().toString(),
@@ -215,20 +213,22 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
+          className="rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/50 p-6"
         >
-          <Card>
-            <div className="text-center text-sm text-slate-400">
-              <div className="flex items-center justify-center space-x-2 mb-2">
-                <Clock className="w-4 h-4 text-blue-400" />
-                <p>
-                  Los datos se actualizan automáticamente cada 5 segundos.
-                </p>
-              </div>
+          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center justify-center space-x-2 mb-3">
+              <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <p>
-                <span className="font-semibold text-slate-300">Ubicaciones:</span> Av. Homero (Oeste-Este, Este-Oeste) • Av. Industrias (Norte-Sur, Sur-Norte)
+                Data updates automatically every 5 seconds.
               </p>
             </div>
-          </Card>
+            <p className="text-xs">
+              <span className="font-semibold text-gray-900 dark:text-white">Location:</span> 28.712335611426948, -106.10549703573227
+            </p>
+            <p className="text-xs mt-2">
+              <span className="font-semibold text-gray-900 dark:text-white">Cameras:</span> cam_01 (Main) • cam_02 (North) • cam_03 (South) • cam_04 (East)
+            </p>
+          </div>
         </motion.div>
       </main>
     </div>

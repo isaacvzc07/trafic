@@ -4,6 +4,7 @@ import { LiveCount } from '@/types/api';
 import { ArrowDown, ArrowUp, Camera as CameraIcon } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { formatRelativeMexicoCityTime } from '@/lib/timezone';
 
 interface LiveCounterProps {
   data: LiveCount;
@@ -13,7 +14,8 @@ export default function LiveCounter({ data }: LiveCounterProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
   const totalVehicles = data.total_in + data.total_out;
   const netFlow = data.total_in - data.total_out;
@@ -144,7 +146,7 @@ export default function LiveCounter({ data }: LiveCounterProps) {
       {/* Timestamp */}
       <div className="text-xs text-gray-400 text-center mt-2">
         {mounted ? (
-          <>Actualizado {formatDistanceToNow(new Date(data.timestamp), { addSuffix: true })}</>
+          <>Actualizado {formatRelativeMexicoCityTime(data.timestamp)}</>
         ) : (
           <>Actualizado recientemente</>
         )}

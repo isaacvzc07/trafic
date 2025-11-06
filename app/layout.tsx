@@ -4,6 +4,7 @@ import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { WebSocketProvider } from "@/providers/WebSocketProvider";
 import { PostHogProvider } from "@/providers/PostHogProvider";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,13 +31,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <WebSocketProvider>
-            <PostHogProvider>
-              {children}
-            </PostHogProvider>
-          </WebSocketProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <WebSocketProvider>
+              <PostHogProvider>
+                {children}
+              </PostHogProvider>
+            </WebSocketProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

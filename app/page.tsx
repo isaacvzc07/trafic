@@ -1,379 +1,281 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { 
-  TrendingUp, 
+  BarChart3, 
   MapPin, 
   Clock, 
-  DollarSign, 
-  BarChart3, 
+  TrendingUp, 
   Shield, 
-  Zap, 
   Users, 
   ChevronRight,
-  Mail,
-  Phone,
-  Building,
-  Car,
-  AlertCircle
+  ArrowRight,
+  Sun,
+  Moon,
+  Zap,
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-react';
-import Link from 'next/link';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function HomePage() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-2"
-            >
-              <BarChart3 className="w-8 h-8 text-blue-400" />
-              <span className="text-xl font-bold text-blue-400">
+            <Link href="/" className="flex items-center space-x-2 group">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 TraficMX
               </span>
-            </motion.div>
+            </Link>
             
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-6"
-            >
-              <Link href="/dashboard" className="text-gray-300 hover:text-white transition-colors font-medium">
+            <div className="flex items-center space-x-4">
+              <Link href="/dashboard" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors text-sm font-medium">
                 Dashboard
               </Link>
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors border border-blue-600 hover:border-blue-500">
-                Solicitar Demo
+              
+              <button 
+                onClick={toggleTheme}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                ) : (
+                  <Moon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                )}
               </button>
-            </motion.div>
+              
+              <Link href="#pricing" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                Get Started
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-600/20 border border-blue-600/30 text-blue-400 text-sm font-medium mb-6">
-                <Zap className="w-4 h-4 mr-2" />
-                Revolucionando el Tráfico en México
-              </div>
-              
-              <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-white">
-                  Control de Tráfico
-                </span>
-                <br />
-                <span className="text-blue-400">
-                  en Tiempo Real
-                </span>
-              </h1>
-              
-              <p className="text-xl text-slate-300 mb-8 leading-relaxed">
-                Transforma la gestión del tráfico urbano con nuestra solución económica y 
-                avanzada. Monitorea, analiza y optimiza el flujo vehicular en tiempo real 
-                para reducir congestión y mejorar la movilidad en las ciudades mexicanas.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl border border-blue-600 hover:border-blue-500"
-                  onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  Solicitar Cotización
-                  <ChevronRight className="w-5 h-5 ml-2 inline" />
-                </motion.button>
-                
-                <Link href="/dashboard">
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold text-lg transition-all border border-slate-600 hover:border-slate-500"
-                  >
-                    Ver Demo
-                  </motion.button>
-                </Link>
-              </div>
-              
-              <div className="flex items-center space-x-8 text-sm text-slate-400">
-                <div className="flex items-center">
-                  <Users className="w-5 h-5 mr-2 text-blue-400" />
-                  <span>50+ Ciudades Activas</span>
-                </div>
-                <div className="flex items-center">
-                  <TrendingUp className="w-5 h-5 mr-2 text-green-400" />
-                  <span>40% Reducción en Congestión</span>
-                </div>
-                <div className="flex items-center">
-                  <Shield className="w-5 h-5 mr-2 text-blue-400" />
-                  <span>99.9% Uptime</span>
-                </div>
-              </div>
-            </motion.div>
+      <section className="py-24 px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 mb-6">
+            <Zap className="w-3 h-3 text-blue-600 dark:text-blue-400 mr-2" />
+            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+              Real-time traffic intelligence
+            </span>
+          </div>
+          
+          <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+            Monitor traffic
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-700">
+              in real-time
+            </span>
+          </h1>
+          
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+            Advanced traffic management system designed for Mexican cities. Reduce congestion, optimize flow, and make data-driven decisions.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <Link href="#pricing" className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors group">
+              Get Started
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
             
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="relative bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-2xl">
-                <div className="absolute inset-0 bg-slate-800 rounded-2xl" />
-                
-                {/* Mock Dashboard */}
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold text-white">Dashboard en Vivo</h3>
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <motion.div 
-                      whileHover={{ scale: 1.02 }}
-                      className="bg-slate-800 rounded-lg p-4 border border-slate-600"
-                    >
-                      <Car className="w-8 h-8 text-blue-400 mb-2" />
-                      <div className="text-2xl font-bold text-white">1,247</div>
-                      <div className="text-sm text-slate-400">Vehículos/Hora</div>
-                    </motion.div>
-                    
-                    <motion.div 
-                      whileHover={{ scale: 1.02 }}
-                      className="bg-slate-800 rounded-lg p-4 border border-slate-600"
-                    >
-                      <TrendingUp className="w-8 h-8 text-green-400 mb-2" />
-                      <div className="text-2xl font-bold text-white">89%</div>
-                      <div className="text-sm text-slate-400">Fluidez</div>
-                    </motion.div>
-                  </div>
-                  
-                  <div className="h-32 bg-slate-800 rounded-lg flex items-center justify-center border border-slate-600">
-                    <BarChart3 className="w-12 h-12 text-slate-500" />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            <Link href="/dashboard" className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors">
+              View Demo
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">50+</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Cities Active</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">40%</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Less Congestion</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">99.9%</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Uptime</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-900">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-4 text-white">
-              Características que
-              <span className="text-blue-400">
-                {" "}Transforman Ciudades
-              </span>
+      {/* Features Grid */}
+      <section className="py-24 px-6 lg:px-8 bg-gray-50 dark:bg-slate-900/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Powerful features
             </h2>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              Tecnología de vanguardia diseñada específicamente para los desafíos del tráfico urbano en México
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Everything you need to manage urban traffic effectively
             </p>
-          </motion.div>
+          </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
                 icon: Clock,
-                title: "Monitoreo 24/7",
-                description: "Acceso a datos en tiempo real de cámaras y sensores en toda la ciudad"
+                title: "24/7 Monitoring",
+                description: "Real-time data from cameras and sensors across the city"
               },
               {
                 icon: MapPin,
-                title: "Geolocalización Precisa",
-                description: "Mapas interactivos con ubicación exacta de incidentes y congestión"
+                title: "Live Location Tracking",
+                description: "Interactive maps with exact incident and congestion locations"
               },
               {
-                icon: DollarSign,
-                title: "Solución Económica",
-                description: "Costos accesibles con ROI comprobado en menos de 6 meses"
+                icon: TrendingUp,
+                title: "Predictive Analytics",
+                description: "AI-powered traffic prediction and optimal route recommendations"
               },
               {
                 icon: AlertCircle,
-                title: "Alertas Inteligentes",
-                description: "Notificaciones automáticas de incidentes y patrones anómalos"
-              },
-              {
-                icon: BarChart3,
-                title: "Análisis Predictivo",
-                description: "IA que predice patrones de tráfico y recomienda rutas óptimas"
+                title: "Smart Alerts",
+                description: "Automatic notifications for incidents and unusual patterns"
               },
               {
                 icon: Shield,
-                title: "Seguridad Garantizada",
-                description: "Encriptación de nivel empresarial y cumplimiento de normativas"
+                title: "Enterprise Security",
+                description: "Bank-level encryption and data protection"
+              },
+              {
+                icon: Users,
+                title: "Expert Support",
+                description: "Dedicated technical team available 24/7"
               }
             ].map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-slate-800 rounded-xl p-6 border border-slate-600 hover:border-blue-500 transition-all"
+                className="group p-6 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-lg dark:hover:shadow-blue-900/20 transition-all duration-300"
               >
-                <feature.icon className="w-12 h-12 text-blue-400 mb-4" />
-                <h3 className="text-xl font-semibold mb-3 text-white">{feature.title}</h3>
-                <p className="text-slate-300 leading-relaxed">{feature.description}</p>
-              </motion.div>
+                <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors">
+                  <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Inquiry */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-slate-800 rounded-2xl p-8 lg:p-12 border border-blue-600/30"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold mb-4 text-white">
-                Comienza la Revolución del Tráfico en tu Ciudad
-              </h2>
-              <p className="text-xl text-slate-300">
-                Obtén una cotización personalizada adaptada a las necesidades de tu municipio
-              </p>
-            </div>
+      {/* CTA Section */}
+      <section id="pricing" className="py-24 px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-12 text-center text-white">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Ready to transform your city?
+            </h2>
+            <p className="text-lg text-blue-100 mb-8">
+              Get a personalized demo tailored to your municipality&apos;s needs
+            </p>
             
-            <form onSubmit={(e) => { e.preventDefault(); alert('Gracias por tu interés. Te contactaremos pronto.'); }} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-slate-300">Nombre Completo</label>
-                  <input 
-                    type="text" 
-                    required
-                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Juan Pérez"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-slate-300">Email</label>
-                  <input 
-                    type="email" 
-                    required
-                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="juan@ejemplo.com"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-slate-300">Teléfono</label>
-                  <input 
-                    type="tel" 
-                    required
-                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="+52 55 123 o"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-slate-300">Municipio</label>
-                  <input 
-                    type="text" 
-                    required
-                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Ci"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">Mensaje (Opcional)</label>
-                <textarea 
-                  rows={4}
-                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Cuéntanos sobre las necesidades de tráfico en tu ciudad..."
+            <form 
+              onSubmit={(e) => { e.preventDefault(); alert('Thank you! We will contact you soon.'); }} 
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input 
+                  type="text" 
+                  required
+                  placeholder="Full Name"
+                  className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur"
+                />
+                <input 
+                  type="email" 
+                  required
+                  placeholder="Email"
+                  className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur"
                 />
               </div>
               
-              <motion.button
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input 
+                  type="tel" 
+                  required
+                  placeholder="Phone"
+                  className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur"
+                />
+                <input 
+                  type="text" 
+                  required
+                  placeholder="Municipality"
+                  className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur"
+                />
+              </div>
+              
+              <button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl mx-auto border border-blue-600 hover:border-blue-500"
+                className="w-full px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
               >
-                Solicitar Cotización Personalizada
-              </motion.button>
+                Request Demo
+              </button>
             </form>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-slate-700/50 bg-slate-900/50">
-        <div className="max-w-7xl mx-auto">
+      <footer className="py-12 px-6 lg:px-8 border-t border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/50">
+        <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <BarChart3 className="w-8 h-8 text-blue-400" />
-                <span className="text-xl font-bold">TraficMX</span>
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-white" />
+                </div>
+                <span className="font-semibold text-gray-900 dark:text-white">TraficMX</span>
               </div>
-              <p className="text-gray-400 text-sm">
-                Revolucionando el tráfico urbano en México con tecnología de vanguardia.
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Advanced traffic management for Mexican cities.
               </p>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Producto</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Características</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Precios</a></li>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-4 text-sm">Product</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/dashboard" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Dashboard</Link></li>
+                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Features</a></li>
+                <li><a href="#pricing" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Pricing</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Empresa</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Sobre Nosotros</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Casos de Éxito</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-4 text-sm">Company</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</a></li>
+                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Blog</a></li>
+                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Contacto</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li className="flex items-center">
-                  <Mail className="w-4 h-4 mr-2" />
-                  info@trafic.mx
-                </li>
-                <li className="flex items-center">
-                  <Phone className="w-4 h-4 mr-2" />
-                  +52 55 123 o
-                </li>
-                <li className="flex items-center">
-                  <Building className="w-4 h-4 mr-2" />
-                  Ciudad de México
-                </li>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-4 text-sm">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy</a></li>
+                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Terms</a></li>
               </ul>
             </div>
           </div>
           
-          <div className="pt-8 border-t border-slate-700/50 text-center text-gray-400 text-sm">
-            <p>&copy; 2024 TraficMX. Todos los derechos reservados.</p>
+          <div className="border-t border-gray-200 dark:border-slate-800 pt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>&copy; 2025 TraficMX. All rights reserved.</p>
           </div>
         </div>
       </footer>

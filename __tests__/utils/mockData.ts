@@ -3,52 +3,52 @@ import { LiveCount, HourlyStatistic, SummaryStatistics, Camera } from '@/types/a
 // Mock camera data
 export const mockCameras: Camera[] = [
   {
-    id: 'homero_oe',
-    name: 'Av. Homero Oeste-Este',
+    id: 'cam_01',
+    name: 'Camera 01 - Main Intersection',
     active: true,
     line_x1: 100,
     line_y1: 200,
     line_x2: 300,
     line_y2: 200,
-    address: 'Av. Homero y Av. Industrias',
+    address: 'Location: 28.712335611426948, -106.10549703573227',
   },
   {
-    id: 'homero_eo',
-    name: 'Av. Homero Este-Oeste',
+    id: 'cam_02',
+    name: 'Camera 02 - North',
     active: true,
     line_x1: 300,
     line_y1: 300,
     line_x2: 100,
     line_y2: 300,
-    address: 'Av. Homero y Av. Industrias',
+    address: 'Location: 28.712335611426948, -106.10549703573227',
   },
   {
-    id: 'industrias_ns',
-    name: 'Av. Industrias Norte-Sur',
+    id: 'cam_03',
+    name: 'Camera 03 - South',
     active: true,
     line_x1: 200,
     line_y1: 100,
     line_x2: 200,
     line_y2: 300,
-    address: 'Av. Industrias y Av. Homero',
+    address: 'Location: 28.712335611426948, -106.10549703573227',
   },
   {
-    id: 'industrias_sn',
-    name: 'Av. Industrias Sur-Norte',
+    id: 'cam_04',
+    name: 'Camera 04 - East',
     active: true,
     line_x1: 200,
     line_y1: 300,
     line_x2: 200,
     line_y2: 100,
-    address: 'Av. Industrias y Av. Homero',
+    address: 'Location: 28.712335611426948, -106.10549703573227',
   },
 ]
 
 // Mock live count data
 export const mockLiveCounts: LiveCount[] = [
   {
-    camera_id: 'homero_oe',
-    camera_name: 'Av. Homero Oeste-Este',
+    camera_id: 'cam_01',
+    camera_name: 'Camera 01 - Main Intersection',
     counts: {
       car_in: 15,
       car_out: 12,
@@ -62,8 +62,8 @@ export const mockLiveCounts: LiveCount[] = [
     timestamp: '2025-01-06T12:00:00Z',
   },
   {
-    camera_id: 'homero_eo',
-    camera_name: 'Av. Homero Este-Oeste',
+    camera_id: 'cam_02',
+    camera_name: 'Camera 02 - North',
     counts: {
       car_in: 8,
       car_out: 10,
@@ -77,8 +77,8 @@ export const mockLiveCounts: LiveCount[] = [
     timestamp: '2025-01-06T12:00:00Z',
   },
   {
-    camera_id: 'industrias_ns',
-    camera_name: 'Av. Industrias Norte-Sur',
+    camera_id: 'cam_03',
+    camera_name: 'Camera 03 - South',
     counts: {
       car_in: 25,
       car_out: 20,
@@ -92,18 +92,18 @@ export const mockLiveCounts: LiveCount[] = [
     timestamp: '2025-01-06T12:00:00Z',
   },
   {
-    camera_id: 'industrias_sn',
-    camera_name: 'Av. Industrias Sur-Norte',
+    camera_id: 'cam_04',
+    camera_name: 'Camera 04 - East',
     counts: {
-      car_in: 0,
-      car_out: 0,
-      bus_in: 0,
-      bus_out: 0,
-      truck_in: 0,
-      truck_out: 0,
+      car_in: 12,
+      car_out: 15,
+      bus_in: 2,
+      bus_out: 3,
+      truck_in: 1,
+      truck_out: 2,
     },
-    total_in: 0,
-    total_out: 0,
+    total_in: 15,
+    total_out: 20,
     timestamp: '2025-01-06T12:00:00Z',
   },
 ]
@@ -113,7 +113,7 @@ export const mockHourlyStats: HourlyStatistic[] = [
   {
     period: '2025-01-06',
     hour: '2025-01-06T00:00:00Z',
-    camera_id: 'homero_oe',
+    camera_id: 'cam_01',
     vehicle_type: 'car',
     direction: 'in',
     count: 45,
@@ -122,7 +122,7 @@ export const mockHourlyStats: HourlyStatistic[] = [
   {
     period: '2025-01-06',
     hour: '2025-01-06T00:00:00Z',
-    camera_id: 'homero_oe',
+    camera_id: 'cam_01',
     vehicle_type: 'car',
     direction: 'out',
     count: 42,
@@ -131,7 +131,7 @@ export const mockHourlyStats: HourlyStatistic[] = [
   {
     period: '2025-01-06',
     hour: '2025-01-06T01:00:00Z',
-    camera_id: 'homero_eo',
+    camera_id: 'cam_02',
     vehicle_type: 'bus',
     direction: 'in',
     count: 8,
@@ -144,7 +144,7 @@ export const mockSummaryStats: SummaryStatistics = {
   start_date: '2025-01-06T00:00:00Z',
   end_date: '2025-01-06T23:59:59Z',
   summary: {
-    homero_oe: {
+    cam_01: {
       car_in: 450,
       car_out: 420,
       bus_in: 80,
@@ -152,7 +152,7 @@ export const mockSummaryStats: SummaryStatistics = {
       truck_in: 20,
       truck_out: 18,
     },
-    homero_eo: {
+    cam_02: {
       car_in: 380,
       car_out: 400,
       bus_in: 65,
@@ -160,7 +160,7 @@ export const mockSummaryStats: SummaryStatistics = {
       truck_in: 15,
       truck_out: 12,
     },
-    industrias_ns: {
+    cam_03: {
       car_in: 520,
       car_out: 480,
       bus_in: 95,
@@ -168,13 +168,13 @@ export const mockSummaryStats: SummaryStatistics = {
       truck_in: 35,
       truck_out: 28,
     },
-    industrias_sn: {
-      car_in: 0,
-      car_out: 0,
-      bus_in: 0,
-      bus_out: 0,
-      truck_in: 0,
-      truck_out: 0,
+    cam_04: {
+      car_in: 290,
+      car_out: 310,
+      bus_in: 45,
+      bus_out: 50,
+      truck_in: 18,
+      truck_out: 22,
     },
   },
 }
