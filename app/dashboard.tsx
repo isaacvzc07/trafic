@@ -1,8 +1,9 @@
 'use client';
 
-import { useLiveCounts, useHourlyStatistics, useSummaryStatistics } from '@/hooks/useTrafficData';
+import { useLiveCounts, useHourlyStatistics, useSummaryStatistics } from '@/hooks/useTrafficDataQuery';
 import LiveCounter from '@/components/LiveCounter';
-import TrafficChart from '@/components/TrafficChart';
+import TrafficChartVisx from '@/components/TrafficChartVisx';
+import TrafficMap from '@/components/TrafficMap';
 import CameraComparison from '@/components/CameraComparison';
 import AlertsBanner from '@/components/AlertsBanner';
 import { Activity, TrendingUp, Camera } from 'lucide-react';
@@ -127,10 +128,17 @@ export default function Dashboard() {
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+          {/* Traffic Map */}
+          {liveCounts && (
+            <div className="xl:col-span-2">
+              <TrafficMap cameras={liveCounts} />
+            </div>
+          )}
+
           {/* Hourly Traffic Chart */}
           {hourlyStats && (
             <div className="xl:col-span-2">
-              <TrafficChart data={hourlyStats} />
+              <TrafficChartVisx data={hourlyStats} />
             </div>
           )}
 

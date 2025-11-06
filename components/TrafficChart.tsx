@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { HourlyStatistic } from '@/types/api';
-import { useHistoricalData } from '@/hooks/useTrafficData';
+import { useHistoricalData } from '@/hooks/useTrafficDataQuery';
 import {
   LineChart,
   Line,
