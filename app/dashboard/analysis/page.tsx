@@ -22,17 +22,19 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import {
-  Calendar,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  Car,
-  Bus,
+import { 
+  ArrowLeft, 
+  Download, 
+  Calendar, 
+  TrendingUp, 
+  TrendingDown, 
+  Car, 
+  Bus, 
   Truck,
   Activity,
-  Download,
-  ArrowLeft,
+  Database,
+  Zap,
+  Camera,
   BarChart3,
   PieChart as PieChartIcon,
   MapPin
@@ -63,6 +65,7 @@ interface VehicleDistribution {
 
 export default function TrafficAnalysis() {
   const [historyData, setHistoryData] = useState<HourlyStatistic[]>([]);
+  const [summaryStats, setSummaryStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('24h');
@@ -76,11 +79,75 @@ export default function TrafficAnalysis() {
     try {
       setLoading(true);
       setError(null);
-      const data = await api.getHourlyStatistics();
       
-      const dataArray = Array.isArray(data) ? data : [];
-      setHistoryData(dataArray);
+      // Fetch data from multiple sources
+      const [apiData, supabaseData, liveData, summaryData] = await Promise.allSettled([
+        api.getHourlyStatistics(),
+        fetch('/api/history/hourly').then(res => res.json()).catch(() => ({ data: [] })),
+        api.getLiveCounts(60), // Last hour of live data
+        api.getSummary() // Summary statistics
+      ]);
+      
+      console.log('API hourly data:', apiData.status === 'fulfilled' ? apiData.value.length : 'failed');
+      console.log('Supabase data:', supabaseData.status === 'fulfilled' ? supabaseData.value?.data?.length || 0 : 'failed');
+      console.log('Live data:', liveData.status === 'fulfilled' ? liveData.value.length : 'failed');
+      console.log('Summary data:', summaryData.status === 'fulfilled' ? 'success' : 'failed');
+      
+      // Process API data
+      let apiArray: any[] = [];
+      if (apiData.status === 'fulfilled') {
+        apiArray = Array.isArray(apiData.value) ? apiData.value.map(item => ({...item, source: 'api'})) : [];
+      }
+      
+      // Process Supabase data
+      let supabaseArray: any[] = [];
+      if (supabaseData.status === 'fulfilled' && supabaseData.value?.data) {
+        // Flatten Supabase grouped data
+        supabaseArray = supabaseData.value.data.flatMap((hourGroup: any) => 
+          hourGroup.data.map((record: any) => ({
+            ...record,
+            hour: hourGroup.hour,
+            source: 'supabase'
+          }))
+        );
+      }
+      
+      // Process live data into hourly format
+      let liveArray: any[] = [];
+      if (liveData.status === 'fulfilled' && Array.isArray(liveData.value)) {
+        // Convert live counts to hourly format
+        const currentHour = new Date().toISOString().slice(0, 13) + ':00:00Z';
+        liveArray = liveData.value.map((camera: any) => ({
+          hour: currentHour,
+          camera_id: camera.camera_id,
+          vehicle_type: 'car', // Live data doesn't specify vehicle type, assume car
+          direction: 'in',
+          count: camera.total_in || 0,
+          avg_confidence: 0.8, // Default confidence
+          source: 'live'
+        })).concat(liveData.value.map((camera: any) => ({
+          hour: currentHour,
+          camera_id: camera.camera_id,
+          vehicle_type: 'car',
+          direction: 'out',
+          count: camera.total_out || 0,
+          avg_confidence: 0.8,
+          source: 'live'
+        })));
+      }
+      
+      // Combine all datasets
+      const combinedData = [...apiArray, ...supabaseArray, ...liveArray];
+      console.log('Total combined data length:', combinedData.length);
+      
+      setHistoryData(combinedData);
+      
+      // Store summary data if available
+      if (summaryData.status === 'fulfilled') {
+        setSummaryStats(summaryData.value);
+      }
     } catch (err) {
+      console.error('Error fetching history data:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch history data');
       setHistoryData([]);
     } finally {
@@ -88,44 +155,51 @@ export default function TrafficAnalysis() {
     }
   };
 
-  // Process data for charts
+  // Process data for charts - improved to handle real API data
   const processedData: AnalysisData[] = historyData.reduce((acc: AnalysisData[], stat) => {
-    const hour = new Date(stat.hour);
-    const timeKey = formatMexicoCityTime(hour, { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-    
-    const existingEntry = acc.find(entry => entry.time === timeKey);
-    
-    if (existingEntry) {
-      if (stat.vehicle_type === 'car') {
-        existingEntry.cars += stat.direction === 'in' ? stat.count : -stat.count;
-      } else if (stat.vehicle_type === 'bus') {
-        existingEntry.buses += stat.direction === 'in' ? stat.count : -stat.count;
-      } else if (stat.vehicle_type === 'truck') {
-        existingEntry.trucks += stat.direction === 'in' ? stat.count : -stat.count;
-      }
-      existingEntry.total = Math.abs(existingEntry.cars) + Math.abs(existingEntry.buses) + Math.abs(existingEntry.trucks);
-    } else {
-      const cars = stat.vehicle_type === 'car' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-      const buses = stat.vehicle_type === 'bus' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-      const trucks = stat.vehicle_type === 'truck' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-      
-      acc.push({
-        hour: stat.hour,
-        time: timeKey,
-        cars,
-        buses,
-        trucks,
-        total: Math.abs(cars) + Math.abs(buses) + Math.abs(trucks)
+    try {
+      const hour = new Date(stat.hour);
+      const timeKey = formatMexicoCityTime(hour, { 
+        hour: '2-digit', 
+        minute: '2-digit' 
       });
+      
+      const existingEntry = acc.find(entry => entry.time === timeKey);
+      
+      if (existingEntry) {
+        if (stat.vehicle_type === 'car') {
+          existingEntry.cars += stat.direction === 'in' ? stat.count : -stat.count;
+        } else if (stat.vehicle_type === 'bus') {
+          existingEntry.buses += stat.direction === 'in' ? stat.count : -stat.count;
+        } else if (stat.vehicle_type === 'truck') {
+          existingEntry.trucks += stat.direction === 'in' ? stat.count : -stat.count;
+        }
+        existingEntry.total = Math.abs(existingEntry.cars) + Math.abs(existingEntry.buses) + Math.abs(existingEntry.trucks);
+      } else {
+        const cars = stat.vehicle_type === 'car' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
+        const buses = stat.vehicle_type === 'bus' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
+        const trucks = stat.vehicle_type === 'truck' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
+        
+        acc.push({
+          hour: stat.hour,
+          time: timeKey,
+          cars,
+          buses,
+          trucks,
+          total: Math.abs(cars) + Math.abs(buses) + Math.abs(trucks)
+        });
+      }
+    } catch (err) {
+      console.warn('Error processing stat:', stat, err);
     }
     
     return acc;
   }, []);
 
-  // Calculate statistics
+  console.log('Processed data:', processedData);
+  console.log('Processed data length:', processedData.length);
+
+  // Calculate comprehensive statistics
   const totalVehicles = processedData.reduce((sum, entry) => sum + entry.total, 0);
   const avgHourly = processedData.length > 0 ? Math.round(totalVehicles / processedData.length) : 0;
   const peakHour = processedData.reduce((max, entry) => 
@@ -157,6 +231,19 @@ export default function TrafficAnalysis() {
     }
     return acc;
   }, []);
+
+  // Data source statistics
+  const dataSourceStats = {
+    apiRecords: historyData.filter(d => d.source === 'api').length,
+    supabaseRecords: historyData.filter(d => d.source === 'supabase').length,
+    liveRecords: historyData.filter(d => d.source === 'live').length,
+    totalRecords: historyData.length,
+    uniqueCameras: [...new Set(historyData.map(d => d.camera_id))].length,
+    timeRange: {
+      start: processedData.length > 0 ? processedData[0].hour : 'N/A',
+      end: processedData.length > 0 ? processedData[processedData.length - 1].hour : 'N/A'
+    }
+  };
 
   // If no real data, show empty state
   if (processedData.length === 0) {
@@ -288,6 +375,49 @@ export default function TrafficAnalysis() {
           </div>
         </div>
 
+        {/* Data Sources Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">API Records</p>
+                <p className="text-2xl font-bold text-blue-600">{dataSourceStats.apiRecords}</p>
+              </div>
+              <Activity className="w-8 h-8 text-blue-600" />
+            </div>
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Supabase Records</p>
+                <p className="text-2xl font-bold text-green-600">{dataSourceStats.supabaseRecords}</p>
+              </div>
+              <Database className="w-8 h-8 text-green-600" />
+            </div>
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Live Records</p>
+                <p className="text-2xl font-bold text-orange-600">{dataSourceStats.liveRecords}</p>
+              </div>
+              <Zap className="w-8 h-8 text-orange-600" />
+            </div>
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Active Cameras</p>
+                <p className="text-2xl font-bold text-purple-600">{dataSourceStats.uniqueCameras}</p>
+              </div>
+              <Camera className="w-8 h-8 text-purple-600" />
+            </div>
+          </Card>
+        </div>
+
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="p-6">
@@ -332,37 +462,38 @@ export default function TrafficAnalysis() {
           </Card>
         </div>
 
-        {/* Traffic by Hour Chart */}
+        {/* Traffic by Hour Chart - Full Width */}
         <Card className="p-6 mb-8">
           <div className="mb-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Traffic by Hour</h3>
             <p className="text-gray-600">Detailed hourly traffic patterns for all vehicle types</p>
           </div>
           
-          <div className="h-96">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={processedData} margin={{ top: 20, right: 30, left: 80, bottom: 80 }}>
+          <div className="h-[600px] w-full">
+            <ResponsiveContainer width="100%" height="100%" minWidth={800}>
+              <LineChart data={processedData} margin={{ top: 40, right: 60, left: 120, bottom: 120 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis 
                   dataKey="time" 
                   stroke="#6b7280"
-                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  tick={{ fill: '#6b7280', fontSize: 14 }}
                   angle={-45}
                   textAnchor="end"
-                  height={80}
+                  height={120}
+                  interval="preserveStartEnd"
                 />
                 <YAxis 
                   stroke="#6b7280"
-                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  tick={{ fill: '#6b7280', fontSize: 14 }}
                   domain={[0, 'dataMax + 500']}
                   allowDataOverflow={false}
                   label={{
                     value: 'Vehicles',
                     angle: -90,
                     position: 'insideLeft',
-                    offset: 10,
+                    offset: 40,
                     fill: '#6b7280',
-                    style: { fontSize: 14 }
+                    style: { fontSize: 16, fontWeight: 'bold' }
                   }}
                 />
                 <Tooltip 
@@ -370,49 +501,62 @@ export default function TrafficAnalysis() {
                     backgroundColor: '#ffffff', 
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px',
-                    color: '#1f2937'
+                    color: '#1f2937',
+                    fontSize: '14px'
                   }}
-                  labelStyle={{ color: '#1f2937' }}
+                  labelStyle={{ color: '#1f2937', fontWeight: 'bold' }}
                 />
                 <Legend 
                   verticalAlign="top"
-                  height={36}
-                  wrapperStyle={{ paddingBottom: '20px' }}
+                  height={50}
+                  wrapperStyle={{ paddingBottom: '30px', fontSize: '14px' }}
+                  iconSize={20}
                 />
                 
-                <Line 
-                  type="monotone" 
-                  dataKey="total" 
-                  stroke="#ef4444" 
-                  strokeWidth={3}
-                  dot={false}
-                  name="Total"
-                  strokeDasharray="5 5"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="cars" 
-                  stroke="#3b82f6" 
-                  strokeWidth={2.5}
-                  dot={false}
-                  name="Cars"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="buses" 
-                  stroke="#10b981" 
-                  strokeWidth={2}
-                  dot={false}
-                  name="Buses"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="trucks" 
-                  stroke="#f59e0b" 
-                  strokeWidth={2}
-                  dot={false}
-                  name="Trucks"
-                />
+                {(vehicleType === 'all' || vehicleType === 'car') && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="total" 
+                    stroke="#ef4444" 
+                    strokeWidth={4}
+                    dot={false}
+                    name="Total"
+                    strokeDasharray="8 4"
+                  />
+                )}
+                
+                {(vehicleType === 'all' || vehicleType === 'car') && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="cars" 
+                    stroke="#3b82f6" 
+                    strokeWidth={3}
+                    dot={false}
+                    name="Cars"
+                  />
+                )}
+                
+                {(vehicleType === 'all' || vehicleType === 'bus') && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="buses" 
+                    stroke="#10b981" 
+                    strokeWidth={2.5}
+                    dot={false}
+                    name="Buses"
+                  />
+                )}
+                
+                {(vehicleType === 'all' || vehicleType === 'truck') && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="trucks" 
+                    stroke="#f59e0b" 
+                    strokeWidth={2.5}
+                    dot={false}
+                    name="Trucks"
+                  />
+                )}
               </LineChart>
             </ResponsiveContainer>
           </div>
