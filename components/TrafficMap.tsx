@@ -189,7 +189,7 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       <PanelGroup direction="horizontal" className="h-full min-h-[500px]">
         {/* Map Panel */}
-        <Panel defaultSize={showHistory ? 60 : 100} minSize={30}>
+        <Panel defaultSize={100} minSize={50}>
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">Traffic Map</h3>

@@ -176,30 +176,37 @@ export default function Dashboard() {
           )}
         </motion.div>
 
-        {/* Gráficos y Visualizaciones */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="card p-6"
-          >
-            <h3 className="text-lg font-semibold text-neutral-900 mb-6">Tráfico por Hora</h3>
-            {hourlyStats && <TrafficChartVisx data={hourlyStats} />}
-          </motion.div>
+        {/* Mapa de Tráfico - Full Width */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="card overflow-hidden mb-8"
+        >
+          <TrafficMap 
+            cameras={liveCountsData || []} 
+            showHistory={false}
+          />
+        </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="card overflow-hidden"
-          >
-            <TrafficMap 
-              cameras={liveCountsData || []} 
-              showHistory={true}
-            />
-          </motion.div>
-        </div>
+        {/* Tráfico por Hora - Full Width with Analysis Link */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card p-6 mb-8"
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold text-neutral-900">Tráfico por Hora</h3>
+            <Link href="/dashboard/analysis">
+              <Button variant="primary" size="sm">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Ver Análisis Completo
+              </Button>
+            </Link>
+          </div>
+          {hourlyStats && <TrafficChartVisx data={hourlyStats} />}
+        </motion.div>
 
         {/* Snapshots de Cámaras */}
         <motion.div 

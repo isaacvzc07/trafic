@@ -146,12 +146,47 @@ export default function TrafficAnalysis() {
 
   const COLORS = ['#10b981', '#f59e0b', '#ef4444'];
 
-  // Generate trend data (mock for now)
-  const trendData: TrendData[] = Array.from({ length: 7 }, (_, i) => ({
-    date: `Day ${i + 1}`,
-    total: Math.floor(Math.random() * 1000) + 500,
-    trend: Math.random() > 0.5 ? 1 : -1
-  }));
+  // Generate trend data from real data
+  const trendData: TrendData[] = processedData.reduce((acc: TrendData[], entry, index) => {
+    if (index % Math.ceil(processedData.length / 7) === 0) { // Sample 7 data points
+      acc.push({
+        date: entry.time,
+        total: entry.total,
+        trend: acc.length > 0 ? (entry.total > acc[acc.length - 1].total ? 1 : -1) : 1
+      });
+    }
+    return acc;
+  }, []);
+
+  // If no real data, show empty state
+  if (processedData.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
+              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Activity className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-gray-600">No traffic data available</p>
+              <p className="text-sm text-gray-500 mt-2">Please check back later when data is collected</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
