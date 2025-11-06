@@ -67,7 +67,7 @@ export default function HomePage() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1488747807830-63789f68bb65?w=1200&h=600&fit=crop"
+            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=600&fit=crop"
             alt="City traffic"
             fill
             className="object-cover"
@@ -154,13 +154,13 @@ export default function HomePage() {
                 icon: TrendingUp,
                 title: "Predictive Analytics",
                 description: "AI-powered traffic prediction and optimal route recommendations",
-                image: "https://images.unsplash.com/photo-1460925895917-adf4e565db18?w=400&h=300&fit=crop"
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop"
               },
               {
                 icon: AlertCircle,
                 title: "Smart Alerts",
                 description: "Automatic notifications for incidents and unusual patterns",
-                image: "https://images.unsplash.com/photo-1516321318423-f06f70504c8a?w=400&h=300&fit=crop"
+                image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop"
               },
               {
                 icon: Shield,
