@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { api } from '@/lib/api';
 import { HourlyStatistic } from '@/types/api';
-import { formatMexicoCityTime } from '@/lib/timezone';
+import { formatMexicoCityTime, getMexicoCityTime, getMexicoCityHourTimestamp } from '@/lib/timezone';
 import {
   LineChart,
   Line,
@@ -120,8 +120,9 @@ export default function TrafficAnalysis() {
       // Process live data into hourly format
       let liveArray: ExtendedHourlyStatistic[] = [];
       if (liveData.status === 'fulfilled' && Array.isArray(liveData.value)) {
-        // Convert live counts to hourly format
-        const currentHour = new Date().toISOString().slice(0, 13) + ':00:00Z';
+        // Convert live counts to hourly format using Mexico City time
+        const currentHour = getMexicoCityHourTimestamp();
+        
         liveArray = liveData.value.map((camera: any) => ({
           hour: currentHour,
           camera_id: camera.camera_id,

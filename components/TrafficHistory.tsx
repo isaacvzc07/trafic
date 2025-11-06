@@ -72,18 +72,18 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
         : dataArray;
 
       // Filter by time range (simplified - in real app would use proper date filtering)
-      const now = new Date();
-      const cutoffDate = new Date();
+      const now = getMexicoCityTime();
+      const cutoffDate = new Date(now);
       
       switch (timeRange) {
         case '24h':
-          cutoffDate.setHours(now.getHours() - 24);
+          cutoffDate.setHours(cutoffDate.getHours() - 24);
           break;
         case '7d':
-          cutoffDate.setDate(now.getDate() - 7);
+          cutoffDate.setDate(cutoffDate.getDate() - 7);
           break;
         case '30d':
-          cutoffDate.setDate(now.getDate() - 30);
+          cutoffDate.setDate(cutoffDate.getDate() - 30);
           break;
       }
 

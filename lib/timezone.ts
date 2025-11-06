@@ -84,6 +84,21 @@ export function getMexicoCityTime(): Date {
 }
 
 /**
+ * Get current hour timestamp in Mexico City timezone (ISO format)
+ */
+export function getMexicoCityHourTimestamp(): string {
+  const mexicoCityNow = getMexicoCityTime();
+  return new Date(
+    mexicoCityNow.getFullYear(), 
+    mexicoCityNow.getMonth(), 
+    mexicoCityNow.getDate(), 
+    mexicoCityNow.getHours(), 
+    0, 
+    0
+  ).toISOString();
+}
+
+/**
  * Format relative time in Mexico City timezone
  */
 export function formatRelativeMexicoCityTime(date: Date | string): string {
