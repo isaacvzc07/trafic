@@ -9,22 +9,7 @@ import { TrafficHeatmap } from '@/components/TrafficHeatmap';
 import TrafficChartVisx from '@/components/TrafficChartVisx';
 import TrafficMap from '@/components/TrafficMap';
 import { Activity, TrendingUp, Camera, Car, AlertCircle, Clock } from 'lucide-react';
-
-// Type definitions for dashboard data
-interface LiveCount {
-  camera_id: string;
-  direction: string;
-  total_in: number;
-  total_out: number;
-  timestamp: string;
-}
-
-interface HourlyStat {
-  hour: string;
-  camera_id: string;
-  total_in: number;
-  total_out: number;
-}
+import { LiveCount, HourlyStatistic } from '@/types/api';
 
 export default function Dashboard() {
   const { liveCounts, isLoading: loadingLive, isError: errorLive } = useLiveCounts(5000);
@@ -215,12 +200,12 @@ export default function Dashboard() {
             className="mb-8"
           >
             <TrafficHeatmap 
-              data={(hourlyStats as HourlyStat[]).map((stat: HourlyStat) => ({
+              data={Array.isArray(hourlyStats) ? hourlyStats.map((stat: HourlyStatistic) => ({
                 hour: new Date(stat.hour).getHours().toString(),
                 location: stat.camera_id,
-                intensity: stat.total_in + stat.total_out,
-                count: stat.total_in + stat.total_out
-              }))}
+                intensity: stat.count,
+                count: stat.count
+              })) : []}
             />
           </motion.div>
         )}
