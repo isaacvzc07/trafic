@@ -1,0 +1,535 @@
+{
+  "brand": {
+    "name": "TraficMX",
+    "tagline": "Critical Infrastructure Intelligence",
+    "positioning": "Enterprise-Grade Traffic Management & Urban Security Platform"
+  },
+  "colorPalette": {
+    "primary": {
+      "950": "#0a0e1b",
+      "900": "#0f1729",
+      "850": "#141f38",
+      "800": "#1a2847",
+      "700": "#253765",
+      "600": "#304583",
+      "500": "#3b54a1",
+      "400": "#4d6bc4",
+      "300": "#6b87db",
+      "200": "#94aae7",
+      "100": "#c2d0f0",
+      "50": "#e8edf8"
+    },
+    "accent": {
+      "cyan": "#00d4ff",
+      "emerald": "#10b981",
+      "amber": "#f59e0b",
+      "red": "#ef4444",
+      "purple": "#8b5cf6"
+    },
+    "neutral": {
+      "950": "#030712",
+      "900": "#0a0f1e",
+      "850": "#111827",
+      "800": "#1a202e",
+      "750": "#232937",
+      "700": "#2d3748",
+      "600": "#374151",
+      "500": "#4a5568",
+      "400": "#6b7280",
+      "300": "#9ca3af",
+      "200": "#d1d5db",
+      "100": "#e5e7eb",
+      "50": "#f3f4f6",
+      "25": "#f9fafb"
+    },
+    "semantic": {
+      "success": "#059669",
+      "warning": "#d97706",
+      "error": "#dc2626",
+      "info": "#0891b2",
+      "critical": "#ff0844"
+    },
+    "gradients": {
+      "hero": "linear-gradient(135deg, #0a0e1b 0%, #1a2847 50%, #0a0e1b 100%)",
+      "card": "linear-gradient(145deg, #141f38 0%, #0f1729 100%)",
+      "accent": "linear-gradient(90deg, #3b54a1 0%, #00d4ff 100%)",
+      "mesh": "radial-gradient(at 40% 20%, hsla(210, 100%, 16%, 1) 0px, transparent 50%), radial-gradient(at 80% 0%, hsla(189, 100%, 15%, 1) 0px, transparent 50%)",
+      "glow": "radial-gradient(600px circle at var(--x) var(--y), rgba(0, 212, 255, 0.15), transparent 40%)"
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "display": "'Inter Tight', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+      "heading": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "body": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "mono": "'JetBrains Mono', 'SF Mono', Consolas, monospace",
+      "data": "'Roboto Mono', 'IBM Plex Mono', monospace"
+    },
+    "sizes": {
+      "hero": {
+        "size": "clamp(2.5rem, 5vw, 4.5rem)",
+        "lineHeight": "1.1",
+        "letterSpacing": "-0.03em",
+        "weight": "800"
+      },
+      "h1": {
+        "size": "clamp(2rem, 4vw, 3rem)",
+        "lineHeight": "1.2",
+        "letterSpacing": "-0.02em",
+        "weight": "700"
+      },
+      "h2": {
+        "size": "clamp(1.5rem, 3vw, 2rem)",
+        "lineHeight": "1.3",
+        "letterSpacing": "-0.01em",
+        "weight": "600"
+      },
+      "h3": {
+        "size": "1.25rem",
+        "lineHeight": "1.4",
+        "letterSpacing": "-0.005em",
+        "weight": "600"
+      },
+      "body": {
+        "size": "1rem",
+        "lineHeight": "1.6",
+        "letterSpacing": "0",
+        "weight": "400"
+      },
+      "small": {
+        "size": "0.875rem",
+        "lineHeight": "1.5",
+        "letterSpacing": "0.01em",
+        "weight": "400"
+      },
+      "micro": {
+        "size": "0.75rem",
+        "lineHeight": "1.4",
+        "letterSpacing": "0.02em",
+        "weight": "500"
+      }
+    }
+  },
+  "spacing": {
+    "unit": "0.25rem",
+    "scale": {
+      "xs": "0.25rem",
+      "sm": "0.5rem",
+      "md": "1rem",
+      "lg": "1.5rem",
+      "xl": "2rem",
+      "2xl": "3rem",
+      "3xl": "4rem",
+      "4xl": "6rem",
+      "5xl": "8rem"
+    },
+    "container": {
+      "padding": "1.25rem",
+      "maxWidth": "1440px"
+    }
+  },
+  "components": {
+    "navigation": {
+      "height": "72px",
+      "background": "rgba(10, 14, 27, 0.8)",
+      "backdropFilter": "blur(20px) saturate(180%)",
+      "borderBottom": "1px solid rgba(255, 255, 255, 0.05)",
+      "logo": {
+        "style": "geometric",
+        "includeIcon": true,
+        "iconStyle": "shield-network"
+      },
+      "menu": {
+        "items": ["Platform", "Solutions", "Resources", "Company", "Contact"],
+        "style": "minimal",
+        "hoverEffect": "underline-reveal"
+      },
+      "cta": {
+        "primary": "Request Access",
+        "secondary": "Sign In",
+        "style": "contained-glow"
+      }
+    },
+    "hero": {
+      "layout": "centered-split",
+      "background": {
+        "type": "animated-mesh",
+        "overlay": "rgba(10, 14, 27, 0.6)"
+      },
+      "heading": {
+        "main": "Enterprise Traffic Intelligence Platform",
+        "accent": "Real-Time",
+        "accentColor": "#00d4ff",
+        "subtitle": "Military-grade infrastructure monitoring. Predictive analytics. Zero downtime."
+      },
+      "stats": {
+        "display": "inline-cards",
+        "animation": "counter",
+        "items": [
+          {
+            "value": "50+",
+            "label": "Protected Cities",
+            "icon": "shield-check"
+          },
+          {
+            "value": "40%",
+            "label": "Incident Reduction",
+            "icon": "trending-down"
+          },
+          {
+            "value": "99.99%",
+            "label": "System Uptime",
+            "icon": "server"
+          },
+          {
+            "value": "24/7",
+            "label": "SOC Operations",
+            "icon": "radar"
+          }
+        ]
+      },
+      "cta": {
+        "primary": {
+          "text": "Deploy Solution",
+          "style": "gradient-border",
+          "icon": "arrow-right"
+        },
+        "secondary": {
+          "text": "View Demo",
+          "style": "ghost-glow",
+          "icon": "play-circle"
+        }
+      },
+      "visualization": {
+        "type": "holographic-grid",
+        "animation": "pulse-scan"
+      }
+    },
+    "features": {
+      "layout": "bento-grid",
+      "sectionTitle": "Mission-Critical Capabilities",
+      "subtitle": "Built for governments. Trusted by cities.",
+      "cards": [
+        {
+          "title": "Real-Time Surveillance",
+          "description": "AI-powered video analytics processing 10,000+ feeds simultaneously",
+          "icon": "camera-security",
+          "size": "large",
+          "visual": "live-feed-grid",
+          "metrics": ["< 50ms latency", "4K resolution", "Edge processing"],
+          "gradient": "blue-cyan"
+        },
+        {
+          "title": "Predictive Intelligence",
+          "description": "Machine learning models predicting traffic patterns 72 hours ahead",
+          "icon": "brain-circuit",
+          "size": "medium",
+          "visual": "prediction-graph",
+          "metrics": ["95% accuracy", "ML-powered"],
+          "gradient": "purple-pink"
+        },
+        {
+          "title": "Incident Response",
+          "description": "Automated alert system with multi-agency coordination",
+          "icon": "alert-octagon",
+          "size": "medium",
+          "visual": "alert-timeline",
+          "metrics": ["< 3 sec detection", "Auto-dispatch"],
+          "gradient": "red-orange"
+        },
+        {
+          "title": "Command Center",
+          "description": "Unified operations dashboard for city-wide monitoring",
+          "icon": "command",
+          "size": "large",
+          "visual": "dashboard-preview",
+          "metrics": ["Single pane of glass", "Role-based access"],
+          "gradient": "emerald-teal"
+        },
+        {
+          "title": "Data Fortress",
+          "description": "Military-grade encryption and compliance",
+          "icon": "lock-shield",
+          "size": "small",
+          "metrics": ["AES-256", "SOC 2", "ISO 27001"],
+          "gradient": "gray-blue"
+        },
+        {
+          "title": "API Platform",
+          "description": "RESTful APIs for seamless integration",
+          "icon": "code-branch",
+          "size": "small",
+          "metrics": ["< 10ms response", "99.99% uptime"],
+          "gradient": "indigo-purple"
+        }
+      ]
+    },
+    "trustIndicators": {
+      "layout": "logo-cloud",
+      "title": "Trusted by Leading Municipalities",
+      "logos": {
+        "style": "monochrome",
+        "hover": "colorize",
+        "items": [
+          "Government Certified",
+          "NATO Standards",
+          "ISO 27001",
+          "SOC 2 Type II",
+          "GDPR Compliant",
+          "FedRAMP Authorized"
+        ]
+      },
+      "certificationBadges": {
+        "display": true,
+        "position": "footer"
+      }
+    },
+    "cta": {
+      "style": "security-terminal",
+      "background": "dark-gradient",
+      "heading": "Secure Your Infrastructure",
+      "subheading": "Get a personalized security assessment for your municipality",
+      "form": {
+        "style": "inline-modern",
+        "fields": [
+          {
+            "type": "text",
+            "placeholder": "Full Name",
+            "icon": "user-shield",
+            "validation": "required"
+          },
+          {
+            "type": "email",
+            "placeholder": "Government Email",
+            "icon": "mail-secure",
+            "validation": "gov-domain"
+          },
+          {
+            "type": "text",
+            "placeholder": "Organization",
+            "icon": "building-shield",
+            "validation": "required"
+          },
+          {
+            "type": "select",
+            "placeholder": "City Population",
+            "icon": "users",
+            "options": ["< 100k", "100k-500k", "500k-1M", "> 1M"]
+          }
+        ],
+        "button": {
+          "text": "Request Security Briefing",
+          "style": "gradient-pulse",
+          "icon": "shield-check"
+        }
+      },
+      "security": {
+        "badge": "🔒 256-bit SSL Encrypted",
+        "compliance": "Your data is handled according to government security standards"
+      }
+    },
+    "buttons": {
+      "variants": {
+        "primary": {
+          "background": "linear-gradient(135deg, #3b54a1 0%, #4d6bc4 100%)",
+          "border": "1px solid rgba(0, 212, 255, 0.2)",
+          "borderRadius": "4px",
+          "padding": "12px 24px",
+          "fontSize": "0.875rem",
+          "fontWeight": "600",
+          "letterSpacing": "0.02em",
+          "textTransform": "uppercase",
+          "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          "hover": {
+            "background": "linear-gradient(135deg, #4d6bc4 0%, #3b54a1 100%)",
+            "boxShadow": "0 0 20px rgba(0, 212, 255, 0.3)",
+            "transform": "translateY(-1px)"
+          }
+        },
+        "secondary": {
+          "background": "transparent",
+          "border": "1px solid rgba(255, 255, 255, 0.1)",
+          "borderRadius": "4px",
+          "padding": "12px 24px",
+          "fontSize": "0.875rem",
+          "fontWeight": "500",
+          "letterSpacing": "0.01em",
+          "hover": {
+            "background": "rgba(255, 255, 255, 0.05)",
+            "borderColor": "rgba(255, 255, 255, 0.2)"
+          }
+        },
+        "ghost": {
+          "background": "transparent",
+          "border": "none",
+          "padding": "8px 16px",
+          "fontSize": "0.875rem",
+          "fontWeight": "500",
+          "hover": {
+            "background": "rgba(255, 255, 255, 0.05)"
+          }
+        }
+      }
+    },
+    "cards": {
+      "background": "linear-gradient(145deg, rgba(20, 31, 56, 0.5) 0%, rgba(15, 23, 41, 0.5) 100%)",
+      "border": "1px solid rgba(255, 255, 255, 0.05)",
+      "borderRadius": "8px",
+      "backdropFilter": "blur(10px)",
+      "padding": "1.5rem",
+      "hover": {
+        "borderColor": "rgba(0, 212, 255, 0.3)",
+        "boxShadow": "0 0 30px rgba(0, 212, 255, 0.1)",
+        "transform": "translateY(-2px)"
+      },
+      "glassmorphism": {
+        "enabled": true,
+        "blur": "20px",
+        "opacity": "0.1"
+      }
+    },
+    "animations": {
+      "scanline": {
+        "enabled": true,
+        "speed": "3s",
+        "color": "rgba(0, 212, 255, 0.1)"
+      },
+      "glitch": {
+        "enabled": false,
+        "intensity": "subtle"
+      },
+      "dataStream": {
+        "enabled": true,
+        "elements": "metrics",
+        "speed": "slow"
+      },
+      "gridPulse": {
+        "enabled": true,
+        "color": "rgba(59, 84, 161, 0.3)",
+        "interval": "4s"
+      }
+    },
+    "effects": {
+      "noise": {
+        "enabled": true,
+        "opacity": "0.02",
+        "blend": "overlay"
+      },
+      "gradientMesh": {
+        "enabled": true,
+        "animated": true,
+        "colors": ["#0a0e1b", "#1a2847", "#3b54a1"]
+      },
+      "glowEffects": {
+        "enabled": true,
+        "intensity": "medium",
+        "color": "rgba(0, 212, 255, 0.5)"
+      }
+    },
+    "dataVisualization": {
+      "style": "holographic",
+      "colors": {
+        "primary": "#00d4ff",
+        "secondary": "#3b54a1",
+        "tertiary": "#10b981",
+        "quaternary": "#f59e0b",
+        "danger": "#ef4444"
+      },
+      "charts": {
+        "style": "glassmorphic",
+        "gridLines": "subtle",
+        "animations": "smooth"
+      }
+    },
+    "footer": {
+      "style": "minimal-security",
+      "background": "rgba(10, 14, 27, 0.95)",
+      "content": {
+        "company": {
+          "logo": true,
+          "tagline": "Securing Tomorrow's Cities Today",
+          "certifications": ["ISO 27001", "SOC 2", "GDPR"]
+        },
+        "sections": [
+          {
+            "title": "Platform",
+            "links": ["Overview", "Features", "Security", "Integrations", "API Docs"]
+          },
+          {
+            "title": "Solutions",
+            "links": ["Smart Cities", "Traffic Management", "Public Safety", "Emergency Response"]
+          },
+          {
+            "title": "Resources",
+            "links": ["Documentation", "Case Studies", "White Papers", "Status Page"]
+          },
+          {
+            "title": "Company",
+            "links": ["About", "Careers", "Partners", "Contact", "Legal"]
+          }
+        ],
+        "legal": {
+          "text": "© 2025 TraficMX. All rights reserved. | Military-grade encryption | Government certified",
+          "links": ["Privacy Policy", "Terms of Service", "Security", "Compliance"]
+        }
+      }
+    }
+  },
+  "patterns": {
+    "backgrounds": {
+      "dotGrid": {
+        "size": "20px",
+        "color": "rgba(255, 255, 255, 0.02)",
+        "spacing": "40px"
+      },
+      "hexGrid": {
+        "enabled": true,
+        "color": "rgba(0, 212, 255, 0.03)",
+        "size": "30px"
+      },
+      "circuitBoard": {
+        "enabled": false,
+        "opacity": "0.02"
+      }
+    }
+  },
+  "icons": {
+    "style": "phosphor-thin",
+    "primaryColor": "#00d4ff",
+    "size": "20px",
+    "strokeWidth": "1.5"
+  },
+  "copywriting": {
+    "tone": "authoritative-professional",
+    "terminology": {
+      "users": "operators",
+      "dashboard": "command center",
+      "alerts": "threat detection",
+      "monitoring": "surveillance",
+      "analytics": "intelligence",
+      "reports": "briefings",
+      "settings": "configurations",
+      "support": "tactical support"
+    }
+  },
+  "responsive": {
+    "breakpoints": {
+      "mobile": "640px",
+      "tablet": "768px",
+      "laptop": "1024px",
+      "desktop": "1280px",
+      "wide": "1536px"
+    },
+    "containerWidth": {
+      "default": "1440px",
+      "narrow": "1280px",
+      "wide": "1920px"
+    }
+  },
+  "seo": {
+    "title": "TraficMX - Enterprise Traffic Intelligence Platform",
+    "description": "Military-grade traffic management system for smart cities. Real-time monitoring, predictive analytics, and incident response.",
+    "keywords": ["traffic management", "smart city", "urban security", "infrastructure monitoring", "predictive analytics"],
+    "ogImage": "/assets/og-security.jpg"
+  }
+}

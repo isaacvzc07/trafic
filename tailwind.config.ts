@@ -9,56 +9,57 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // TradingView-inspired color palette
-        slate: {
-          950: '#0e1627', // Deep charcoal background
-          900: '#161b22', // Primary background
-          800: '#21262d', // Secondary background
-          700: '#30363d', // Borders and dividers
-          600: '#484f58', // Hover states
-          500: '#6e7681', // Secondary text
-          400: '#8b949e', // Muted text
-          300: '#c9d1d9', // Primary text
-          200: '#e6edf3', // Bright text
-          100: '#f0f6fc', // Accent backgrounds
+        // Security Design System - Primary Palette
+        primary: {
+          950: '#0a0e1b',
+          900: '#0f1729',
+          850: '#141f38',
+          800: '#1a2847',
+          700: '#253765',
+          600: '#304583',
+          500: '#3b54a1',
+          400: '#4d6bc4',
+          300: '#6b87db',
+          200: '#94aae7',
+          100: '#c2d0f0',
+          50: '#e8edf8',
         },
-        // Professional accent colors
-        blue: {
-          600: '#1f6feb', // Primary blue (TradingView style)
-          500: '#2b7eea',
-          400: '#58a6ff',
-          300: '#79c0ff',
-        },
-        green: {
-          600: '#238636', // Success green (TradingView style)
-          500: '#2ea043',
-          400: '#3fb950',
-        },
-        red: {
-          600: '#da3633', // Danger red (TradingView style)
-          500: '#f85149',
-          400: '#ff7b72',
-        },
-        yellow: {
-          600: '#d29922', // Warning yellow
-          500: '#e3b341',
-          400: '#f2cc60',
-        },
-        orange: {
-          600: '#fb8500', // Accent orange
-          500: '#ff9500',
-          400: '#ffa657',
+        // Security Design System - Accent Colors
+        cyan: '#00d4ff',
+        emerald: '#10b981',
+        amber: '#f59e0b',
+        red: '#ef4444',
+        purple: '#8b5cf6',
+        // Semantic Colors
+        success: '#059669',
+        warning: '#d97706',
+        error: '#dc2626',
+        info: '#0891b2',
+        critical: '#ff0844',
+        // Neutral Colors (for fallback)
+        neutral: {
+          950: '#030712',
+          900: '#0a0f1e',
+          850: '#111827',
+          800: '#1a202e',
+          750: '#232937',
+          700: '#2d3748',
+          600: '#374151',
+          500: '#4a5568',
+          400: '#6b7280',
+          300: '#9ca3af',
+          200: '#d1d5db',
+          100: '#e5e7eb',
+          50: '#f3f4f6',
+          25: '#f9fafb',
         },
       },
       fontFamily: {
-        sans: [
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'sans-serif',
-        ],
+        display: ['var(--font-inter-tight)', 'SF Pro Display', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-jetbrains-mono)', 'SF Mono', 'Consolas', 'monospace'],
+        data: ['var(--font-roboto-mono)', 'IBM Plex Mono', 'monospace'],
       },
       spacing: {
         '18': '4.5rem',
@@ -70,6 +71,10 @@ const config: Config = {
         'slide-up': 'slideUp 0.6s ease-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'shimmer': 'shimmer 2s linear infinite',
+        'mesh': 'meshAnimation 20s ease infinite',
+        'scan-line': 'scanLine 3s linear infinite',
+        'grid-move': 'gridMove 10s linear infinite',
+        'holographic': 'holographicShift 4s ease infinite',
       },
       keyframes: {
         fadeIn: {
@@ -83,6 +88,23 @@ const config: Config = {
         shimmer: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' },
+        },
+        meshAnimation: {
+          '0%, 100%': { transform: 'scale(1) rotate(0deg)' },
+          '50%': { transform: 'scale(1.1) rotate(5deg)' },
+        },
+        scanLine: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        gridMove: {
+          '0%': { transform: 'translate(0, 0)' },
+          '100%': { transform: 'translate(50px, 50px)' },
+        },
+        holographicShift: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
         },
       },
       boxShadow: {
