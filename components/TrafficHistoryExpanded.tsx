@@ -27,8 +27,8 @@ import {
   Car, 
   Bus, 
   Truck,
-  ArrowDown,
-  ArrowUp,
+  ChevronDown,
+  ChevronUp,
   Activity
 } from 'lucide-react';
 
@@ -46,16 +46,18 @@ interface HistoryData {
   total: number;
 }
 
-export default function TrafficHistory({ cameraId, className }: TrafficHistoryProps) {
+export default function TrafficHistoryExpanded({ cameraId, className }: TrafficHistoryProps) {
   const [historyData, setHistoryData] = useState<HourlyStatistic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('24h');
   const [vehicleType, setVehicleType] = useState<'all' | 'car' | 'bus' | 'truck'>('all');
+  const [isChartExpanded, setIsChartExpanded] = useState(false);
+  const [isStatsExpanded, setIsStatsExpanded] = useState(true);
 
   useEffect(() => {
     fetchHistoryData();
-  }, [cameraId, timeRange]);
+  }, [timeRange]);
 
   const fetchHistoryData = async () => {
     try {
@@ -63,38 +65,14 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
       setError(null);
       const data = await api.getHourlyStatistics();
       
-      // Ensure data is an array
-      const dataArray = Array.isArray(data) ? data : [];
-      
-      // Filter by camera if specified
-      const filteredData = cameraId 
-        ? dataArray.filter(stat => stat.camera_id === cameraId)
-        : dataArray;
-
-      // Filter by time range (simplified - in real app would use proper date filtering)
-      const now = new Date();
-      const cutoffDate = new Date();
-      
-      switch (timeRange) {
-        case '24h':
-          cutoffDate.setHours(now.getHours() - 24);
-          break;
-        case '7d':
-          cutoffDate.setDate(now.getDate() - 7);
-          break;
-        case '30d':
-          cutoffDate.setDate(now.getDate() - 30);
-          break;
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid data format received');
       }
-
-      const timeFilteredData = filteredData.filter(stat => 
-        new Date(stat.hour) >= cutoffDate
-      );
-
-      setHistoryData(timeFilteredData);
+      
+      setHistoryData(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch history data');
-      setHistoryData([]); // Set empty array on error
+      setHistoryData([]);
     } finally {
       setLoading(false);
     }
@@ -164,7 +142,7 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Activity className="w-8 h-8 mx-auto mb-2 text-red-400" />
-            <p className="text-red-400">Error: {error}</p>
+            <p className="text-red-600">Error: {error}</p>
             <Button onClick={fetchHistoryData} className="mt-2" size="sm">
               Retry
             </Button>
@@ -221,135 +199,167 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
         </div>
       </div>
 
-      {/* Statistics cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Vehicles</p>
-              <p className="text-2xl font-bold text-gray-900">{totalVehicles.toLocaleString()}</p>
-            </div>
-            <Car className="w-8 h-8 text-blue-600" />
-          </div>
+      {/* Statistics Cards - Collapsible */}
+      <div className="mb-6">
+        <div 
+          className="flex items-center justify-between cursor-pointer p-3 bg-gray-50 rounded-lg border border-gray-200"
+          onClick={() => setIsStatsExpanded(!isStatsExpanded)}
+        >
+          <h4 className="font-medium text-gray-900 flex items-center gap-2">
+            <Activity className="w-4 h-4 text-blue-600" />
+            Statistics Overview
+          </h4>
+          <Button variant="ghost" size="sm">
+            {isStatsExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </Button>
         </div>
         
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Avg Hourly</p>
-              <p className="text-2xl font-bold text-gray-900">{avgHourly.toLocaleString()}</p>
+        {isStatsExpanded && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Vehicles</p>
+                  <p className="text-2xl font-bold text-gray-900">{totalVehicles.toLocaleString()}</p>
+                </div>
+                <Car className="w-8 h-8 text-blue-600" />
+              </div>
             </div>
-            <Clock className="w-8 h-8 text-green-600" />
-          </div>
-        </div>
-        
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Peak Hour</p>
-              <p className="text-lg font-bold text-gray-900">{peakHour.time}</p>
-              <p className="text-sm text-gray-600">{peakHour.total} vehicles</p>
+            
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Avg Hourly</p>
+                  <p className="text-2xl font-bold text-gray-900">{avgHourly.toLocaleString()}</p>
+                </div>
+                <Clock className="w-8 h-8 text-green-600" />
+              </div>
             </div>
-            <TrendingUp className="w-8 h-8 text-orange-600" />
+            
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Peak Hour</p>
+                  <p className="text-lg font-bold text-gray-900">{peakHour.time}</p>
+                  <p className="text-sm text-gray-600">{peakHour.total} vehicles</p>
+                </div>
+                <TrendingUp className="w-8 h-8 text-orange-600" />
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Traffic chart */}
-      <div className="h-96 min-h-[300px] mb-6 resizable-chart bg-white border border-gray-200 rounded-lg p-4 w-full">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
-          <LineChart data={processedData} margin={{ top: 20, right: 30, left: 80, bottom: 80 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey="time" 
-              stroke="#6b7280"
-              tick={{ fill: '#6b7280', fontSize: 12 }}
-              angle={-45}
-              textAnchor="end"
-              height={80}
-            />
-            <YAxis 
-              stroke="#6b7280"
-              tick={{ fill: '#6b7280', fontSize: 12 }}
-              domain={[0, 'dataMax + 500']}
-              allowDataOverflow={false}
-              label={{
-                value: 'Vehicles',
-                angle: -90,
-                position: 'insideLeft',
-                offset: 10,
-                fill: '#6b7280',
-                style: { fontSize: 14 }
-              }}
-            />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: '#ffffff', 
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px',
-                color: '#1f2937'
-              }}
-              labelStyle={{ color: '#1f2937' }}
-              cursor={{ crosshair: true }}
-            />
-            <Legend 
-              verticalAlign="top"
-              height={36}
-              wrapperStyle={{ paddingBottom: '20px' }}
-            />
-            
-            {(vehicleType === 'all' || vehicleType === 'car') && (
-              <Line 
-                type="monotone" 
-                dataKey="cars" 
-                stroke="#3b82f6" 
-                strokeWidth={2.5}
-                dot={false}
-                name="Cars"
+      {/* Traffic Chart - Expandable */}
+      <div className="mb-6">
+        <div 
+          className="flex items-center justify-between cursor-pointer p-3 bg-gray-50 rounded-lg border border-gray-200 mb-4"
+          onClick={() => setIsChartExpanded(!isChartExpanded)}
+        >
+          <h4 className="font-medium text-gray-900 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-blue-600" />
+            Traffic by Hour - {isChartExpanded ? 'Expanded View' : 'Compact View'}
+          </h4>
+          <Button variant="ghost" size="sm">
+            {isChartExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </Button>
+        </div>
+        
+        <div className={`${isChartExpanded ? 'h-[600px] min-h-[400px]' : 'h-96 min-h-[300px]'} transition-all duration-300 bg-white border border-gray-200 rounded-lg p-4 w-full`}>
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
+            <LineChart data={processedData} margin={{ top: 20, right: 30, left: 100, bottom: 100 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis 
+                dataKey="time" 
+                stroke="#6b7280"
+                tick={{ fill: '#6b7280', fontSize: 12 }}
+                angle={-45}
+                textAnchor="end"
+                height={100}
               />
-            )}
-            
-            {(vehicleType === 'all' || vehicleType === 'bus') && (
-              <Line 
-                type="monotone" 
-                dataKey="buses" 
-                stroke="#10b981" 
-                strokeWidth={2}
-                dot={false}
-                name="Buses"
+              <YAxis 
+                stroke="#6b7280"
+                tick={{ fill: '#6b7280', fontSize: 12 }}
+                domain={[0, 'dataMax + 500']}
+                allowDataOverflow={false}
+                label={{
+                  value: 'Vehicles',
+                  angle: -90,
+                  position: 'insideLeft',
+                  offset: 20,
+                  fill: '#6b7280',
+                  style: { fontSize: 14 }
+                }}
               />
-            )}
-            
-            {(vehicleType === 'all' || vehicleType === 'truck') && (
-              <Line 
-                type="monotone" 
-                dataKey="trucks" 
-                stroke="#f59e0b" 
-                strokeWidth={2}
-                dot={false}
-                name="Trucks"
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#ffffff', 
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  color: '#1f2937'
+                }}
+                labelStyle={{ color: '#1f2937' }}
+                cursor={{ crosshair: true }}
               />
-            )}
-            
-            {(vehicleType === 'all') && (
-              <Line 
-                type="monotone" 
-                dataKey="total" 
-                stroke="#ef4444" 
-                strokeWidth={3}
-                dot={false}
-                name="Total"
-                strokeDasharray="5 5"
+              <Legend 
+                verticalAlign="top"
+                height={36}
+                wrapperStyle={{ paddingBottom: '20px' }}
               />
-            )}
-          </LineChart>
-        </ResponsiveContainer>
+              
+              {(vehicleType === 'all' || vehicleType === 'car') && (
+                <Line 
+                  type="monotone" 
+                  dataKey="cars" 
+                  stroke="#3b82f6" 
+                  strokeWidth={2.5}
+                  dot={false}
+                  name="Cars"
+                />
+              )}
+              
+              {(vehicleType === 'all' || vehicleType === 'bus') && (
+                <Line 
+                  type="monotone" 
+                  dataKey="buses" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  dot={false}
+                  name="Buses"
+                />
+              )}
+              
+              {(vehicleType === 'all' || vehicleType === 'truck') && (
+                <Line 
+                  type="monotone" 
+                  dataKey="trucks" 
+                  stroke="#f59e0b" 
+                  strokeWidth={2}
+                  dot={false}
+                  name="Trucks"
+                />
+              )}
+              
+              {(vehicleType === 'all') && (
+                <Line 
+                  type="monotone" 
+                  dataKey="total" 
+                  stroke="#ef4444" 
+                  strokeWidth={3}
+                  dot={false}
+                  name="Total"
+                  strokeDasharray="5 5"
+                />
+              )}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Vehicle type distribution */}
-      <div className="h-48 min-h-[192px] resizable-chart bg-white border border-gray-200 rounded-lg p-4 w-full">
+      <div className="h-48 min-h-[192px] bg-white border border-gray-200 rounded-lg p-4 w-full">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
-          <BarChart data={processedData.slice(-12)} margin={{ top: 20, right: 30, left: 60, bottom: 60 }}>
+          <BarChart data={processedData.slice(-12)} margin={{ top: 20, right: 30, left: 80, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="time" 

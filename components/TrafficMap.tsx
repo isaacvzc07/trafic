@@ -6,7 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { LiveCount } from '@/types/api';
 import { Camera, Activity, TrendingUp, TrendingDown, History, Maximize2, Minimize2 } from 'lucide-react';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
-import TrafficHistory from './TrafficHistory';
+import TrafficHistoryExpanded from './TrafficHistoryExpanded';
 import { Button } from './ui/Button';
 import { formatMexicoCityTime } from '@/lib/timezone';
 
@@ -43,7 +43,7 @@ function TrafficHistoryPanel({ cameraId }: { cameraId?: string }) {
       
       <div className="flex-1 overflow-hidden">
         {isExpanded ? (
-          <TrafficHistory cameraId={cameraId} className="h-full border-0 rounded-none" />
+          <TrafficHistoryExpanded cameraId={cameraId} className="h-full border-0 rounded-none" />
         ) : (
           <div className="p-4 text-center text-gray-500">
             <History className="w-8 h-8 mx-auto mb-2 text-gray-400" />

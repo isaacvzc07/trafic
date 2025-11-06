@@ -15,12 +15,12 @@ export function Badge({
   className = '',
 }: BadgeProps) {
   const variants = {
-    green: 'bg-green-600/20 text-green-400 border border-green-600/30',
-    red: 'bg-red-600/20 text-red-400 border border-red-600/30',
-    blue: 'bg-blue-600/20 text-blue-400 border border-blue-600/30',
-    yellow: 'bg-yellow-600/20 text-yellow-400 border border-yellow-600/30',
-    orange: 'bg-orange-600/20 text-orange-400 border border-orange-600/30',
-    gray: 'bg-slate-700/50 text-slate-300 border border-slate-600/50',
+    green: 'bg-green-100 text-green-700 border border-green-200',
+    red: 'bg-red-100 text-red-700 border border-red-200',
+    blue: 'bg-blue-100 text-blue-700 border border-blue-200',
+    yellow: 'bg-yellow-100 text-yellow-700 border border-yellow-200',
+    orange: 'bg-orange-100 text-orange-700 border border-orange-200',
+    gray: 'bg-gray-100 text-gray-700 border border-gray-200',
   };
   
   const sizes = {

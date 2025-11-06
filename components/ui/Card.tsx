@@ -10,14 +10,14 @@ interface CardProps {
 
 export function Card({ children, className = '', hover = false, glow }: CardProps) {
   const glowClass = glow ? `shadow-glow-${glow}` : '';
-  const hoverClass = hover ? 'hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-900/50' : '';
+  const hoverClass = hover ? 'hover:bg-gray-50 hover:shadow-lg hover:shadow-gray-200/50' : '';
   
   return (
     <motion.div
       whileHover={hover ? { y: -2, scale: 1.01 } : {}}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className={`
-        bg-slate-900 border border-slate-700 rounded-lg p-6
+        bg-white border border-gray-200 rounded-lg p-6
         ${glowClass} ${hoverClass} ${className}
       `}
     >

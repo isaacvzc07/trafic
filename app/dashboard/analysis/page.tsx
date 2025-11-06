@@ -58,6 +58,7 @@ interface VehicleDistribution {
   name: string;
   value: number;
   percentage: number;
+  [key: string]: any; // Add index signature for ChartDataInput compatibility
 }
 
 export default function TrafficAnalysis() {
@@ -245,7 +246,7 @@ export default function TrafficAnalysis() {
               ))}
             </div>
             
-            <Button variant="outline" size="sm">
+            <Button variant="ghost" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
@@ -337,7 +338,7 @@ export default function TrafficAnalysis() {
                     color: '#1f2937'
                   }}
                   labelStyle={{ color: '#1f2937' }}
-                  cursor="crosshair"
+                  cursor={{ crosshair: true }}
                 />
                 <Legend 
                   verticalAlign="top"
@@ -444,7 +445,7 @@ export default function TrafficAnalysis() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+                    label={({ name, percentage }: VehicleDistribution) => `${name}: ${typeof percentage === 'number' ? percentage.toFixed(1) : '0'}%`}
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"

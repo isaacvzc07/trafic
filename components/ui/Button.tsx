@@ -24,9 +24,9 @@ export function Button({
   
   const variants = {
     primary: 'bg-blue-600 hover:bg-blue-500 text-white border border-blue-600 hover:border-blue-500',
-    secondary: 'bg-slate-700 hover:bg-slate-600 text-slate-300 border border-slate-600 hover:border-slate-500',
+    secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-700 border border-gray-300 hover:border-gray-300',
     danger: 'bg-red-600 hover:bg-red-500 text-white border border-red-600 hover:border-red-500',
-    ghost: 'bg-transparent hover:bg-slate-800 text-slate-300 hover:text-white border border-transparent',
+    ghost: 'bg-transparent hover:bg-gray-100 text-gray-600 hover:text-gray-900 border border-transparent',
   };
   
   const sizes = {
