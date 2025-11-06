@@ -37,7 +37,8 @@ import {
   Camera,
   BarChart3,
   PieChart as PieChartIcon,
-  MapPin
+  MapPin,
+  Clock
 } from 'lucide-react';
 import Link from 'next/link';
 
