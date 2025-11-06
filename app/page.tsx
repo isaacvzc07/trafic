@@ -12,7 +12,11 @@ import {
   Users,
   ChevronRight,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  AlertCircle,
+  Zap,
+  Eye,
+  MapPin
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -26,229 +30,229 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className={`sticky top-0 z-50 bg-white border-b border-gray-200 transition-all duration-200 ${
-        isScrolled ? 'shadow-md' : 'shadow-sm'
+      {/* Navegación */}
+      <nav className={`sticky top-0 z-50 bg-white border border-neutral-200 transition-all duration-200 ${
+        isScrolled ? 'shadow-medium' : 'shadow-soft'
       }`}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2 font-semibold text-gray-900">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-2 font-semibold text-neutral-900">
+              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
                 <Shield className="w-4 h-4 text-white" />
               </div>
               TrafficMX
             </Link>
             
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                Features
+              <a href="#caracteristicas" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">
+                Características
               </a>
-              <a href="#solutions" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                Solutions
+              <a href="#soluciones" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">
+                Soluciones
               </a>
-              <a href="#about" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                About
+              <a href="#acerca" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">
+                Acerca de
               </a>
-              <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                Dashboard
+              <Link href="/dashboard" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">
+                Panel de Control
               </Link>
             </div>
             
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
-                Sign In
+              <button className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900">
+                Iniciar Sesión
               </button>
               <Link 
                 href="/dashboard"
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
               >
-                View Dashboard
+                Ver Panel
               </Link>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Sección Hero */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium mb-6">
             <Activity className="w-4 h-4" />
-            Live Traffic Intelligence
+            Inteligencia de Tráfico en Tiempo Real
           </div>
           
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Traffic Intelligence<br />
-            <span className="text-blue-600">for Modern Cities</span>
+          <h1 className="text-5xl font-bold text-neutral-900 mb-6">
+            Inteligencia de Tráfico<br />
+            <span className="text-primary-600">para Ciudades Modernas</span>
           </h1>
           
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Real-time traffic monitoring and analytics for municipal governments. 
-            Make data-driven decisions with AI-powered insights.
+          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
+            Monitoreo y analítica de tráfico en tiempo real para gobiernos municipales. 
+            Toma decisiones basadas en datos con insights potenciados por IA.
           </p>
 
-          {/* Stats */}
+          {/* Estadísticas */}
           <div className="grid grid-cols-3 gap-6 mb-10">
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 mb-1">99.9%</div>
-              <div className="text-sm text-gray-600">System Uptime</div>
+              <div className="text-3xl font-bold text-neutral-900 mb-1">99.9%</div>
+              <div className="text-sm text-neutral-600">Disponibilidad del Sistema</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 mb-1">&lt;5s</div>
-              <div className="text-sm text-gray-600">Update Frequency</div>
+              <div className="text-3xl font-bold text-neutral-900 mb-1">&lt;5s</div>
+              <div className="text-sm text-neutral-600">Frecuencia de Actualización</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 mb-1">24/7</div>
-              <div className="text-sm text-gray-600">Monitoring</div>
+              <div className="text-3xl font-bold text-neutral-900 mb-1">24/7</div>
+              <div className="text-sm text-neutral-600">Monitoreo Continuo</div>
             </div>
           </div>
 
-          {/* CTA Buttons */}
+          {/* Botones CTA */}
           <div className="flex items-center justify-center gap-4">
-            <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 flex items-center gap-2">
-              Request Access
+            <button className="btn-primary flex items-center gap-2">
+              Solicitar Acceso
               <ArrowRight className="w-4 h-4" />
             </button>
             <Link 
               href="/dashboard" 
-              className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 flex items-center gap-2"
+              className="btn-secondary flex items-center gap-2"
             >
-              View Dashboard
+              Ver Panel de Control
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6 bg-gray-50">
+      {/* Sección de Características */}
+      <section id="caracteristicas" className="py-20 px-6 bg-neutral-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Professional Traffic Management
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
+              Gestión de Tráfico Profesional
             </h2>
-            <p className="text-lg text-gray-600">
-              Enterprise-grade features designed for municipal operations
+            <p className="text-lg text-neutral-600">
+              Características de nivel empresarial diseñadas para operaciones municipales
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
-                <Camera className="w-6 h-6 text-blue-600" />
+            <div className="card p-6">
+              <div className="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-4">
+                <Camera className="w-6 h-6 text-primary-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Real-Time Monitoring
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Monitoreo en Tiempo Real
               </h3>
-              <p className="text-gray-600 mb-4">
-                Professional camera network with AI-powered vehicle counting and flow analysis updated every 5 seconds.
+              <p className="text-neutral-600 mb-4">
+                Red de cámaras profesionales con conteo de vehículos por IA y análisis de flujo actualizado cada 5 segundos.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
-                  24/7 Operation
+                <span className="badge-success px-2 py-1 rounded-md text-xs font-medium">
+                  Operación 24/7
                 </span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
-                  AI-Powered
+                <span className="badge-info px-2 py-1 rounded-md text-xs font-medium">
+                  Alta Resolución
                 </span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
-              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+            <div className="card p-6">
+              <div className="w-12 h-12 bg-info-light rounded-lg flex items-center justify-center mb-4">
+                <AlertCircle className="w-6 h-6 text-info" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Analytics Dashboard
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Detección de Incidentes con IA
               </h3>
-              <p className="text-gray-600 mb-4">
-                Comprehensive analytics with historical data, trend analysis, and predictive insights for traffic planning.
+              <p className="text-neutral-600 mb-4">
+                Identificación automática de colisiones con captura instantánea de evidencia para respuesta de emergencia.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
-                  Historical Data
+                <span className="badge-error px-2 py-1 rounded-md text-xs font-medium">
+                  Respuesta Rápida
                 </span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
-                  Export Reports
+                <span className="badge-warning px-2 py-1 rounded-md text-xs font-medium">
+                  Evidencia Automática
                 </span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
-              <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-amber-600" />
+            <div className="card p-6">
+              <div className="w-12 h-12 bg-success-light rounded-lg flex items-center justify-center mb-4">
+                <TrendingUp className="w-6 h-6 text-success" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Secure & Reliable
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Analítica Predictiva
               </h3>
-              <p className="text-gray-600 mb-4">
-                Edge computing with local data storage ensures privacy and reliability. No cloud dependency for critical operations.
+              <p className="text-neutral-600 mb-4">
+                Modelado de patrones de tráfico predictivo para optimización de semáforos y planificación urbana.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
-                  Local Processing
+                <span className="badge-success px-2 py-1 rounded-md text-xs font-medium">
+                  Reducción 40% Congestión
                 </span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
-                  Enterprise Security
+                <span className="badge-info px-2 py-1 rounded-md text-xs font-medium">
+                  IA Avanzada
                 </span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
-              <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center mb-4">
-                <BarChart3 className="w-6 h-6 text-purple-600" />
+            <div className="card p-6">
+              <div className="w-12 h-12 bg-warning-light rounded-lg flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-warning" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Pattern Recognition
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Ahorro de Costos Municipal
               </h3>
-              <p className="text-gray-600 mb-4">
-                Advanced algorithms identify traffic patterns, peak hours, and congestion points for optimized signal timing.
+              <p className="text-neutral-600 mb-4">
+                Reduce costos de congestión en $2.3M anuales con optimización automatizada de flujo vehicular.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
-                  AI Analysis
+                <span className="badge-success px-2 py-1 rounded-md text-xs font-medium">
+                  ROI 12 Meses
                 </span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
-                  Predictive Insights
+                <span className="badge-warning px-2 py-1 rounded-md text-xs font-medium">
+                  Eficiencia Operativa
                 </span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
-              <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center mb-4">
-                <Clock className="w-6 h-6 text-red-600" />
+            <div className="card p-6">
+              <div className="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-4">
+                <Eye className="w-6 h-6 text-primary-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Incident Detection
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Captura de Evidencia 4K
               </h3>
-              <p className="text-gray-600 mb-4">
-                Automated incident detection with instant alerts and snapshot capture for faster emergency response.
+              <p className="text-neutral-600 mb-4">
+                Imágenes cristalinas para documentación de incidentes y propósitos legales/aseguradores.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
-                  Real-Time Alerts
+                <span className="badge-info px-2 py-1 rounded-md text-xs font-medium">
+                  4K Ultra HD
                 </span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
-                  Evidence Collection
+                <span className="badge-success px-2 py-1 rounded-md text-xs font-medium">
+                  Almacenamiento Seguro
                 </span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
-              <div className="w-12 h-12 bg-cyan-50 rounded-lg flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-cyan-600" />
+            <div className="card p-6">
+              <div className="w-12 h-12 bg-neutral-100 rounded-lg flex items-center justify-center mb-4">
+                <MapPin className="w-6 h-6 text-neutral-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Multi-Agency Access
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Cobertura Urbana Completa
               </h3>
-              <p className="text-gray-600 mb-4">
-                Role-based access for traffic departments, emergency services, and municipal planning teams.
+              <p className="text-neutral-600 mb-4">
+                Sistema escalable para monitorear intersecciones críticas y arterias principales de la ciudad.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
-                  Role-Based
+                <span className="badge-info px-2 py-1 rounded-md text-xs font-medium">
+                  Escalable
                 </span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
-                  Audit Trail
+                <span className="badge-success px-2 py-1 rounded-md text-xs font-medium">
+                  Cobertura Total
                 </span>
               </div>
             </div>
@@ -256,82 +260,209 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-blue-600 border border-blue-700 rounded-2xl p-12 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Ready to Transform Your Traffic Management?
+      {/* Sección de Imágenes Demostrativas */}
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
+              Tecnología de Vanguardia en Acción
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
-              Join municipalities using TrafficMX for smarter, data-driven traffic decisions.
+            <p className="text-lg text-neutral-600">
+              Vea cómo nuestras cámaras Hig-Vision transforman la gestión del tráfico urbano
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-50">
-                Request Demo
-              </button>
-              <Link 
-                href="/dashboard"
-                className="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800"
-              >
-                View Live Dashboard
-              </Link>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
+              <img 
+                src="/images/hero-traffic-dashboard.jpg" 
+                alt="Panel de Control de Tráfico"
+                className="w-full h-64 object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <h3 className="text-white font-semibold">Panel de Analítica Avanzada</h3>
+                <p className="text-white/80 text-sm">Datos en tiempo real para decisiones municipales</p>
+              </div>
             </div>
+
+            <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
+              <img 
+                src="/images/smart-camera-installation.jpg" 
+                alt="Instalación de Cámara Inteligente"
+                className="w-full h-64 object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <h3 className="text-white font-semibold">Cámaras de Alta Resolución</h3>
+                <p className="text-white/80 text-sm">Instalación profesional en intersecciones críticas</p>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
+              <img 
+                src="/images/incident-detection-visualization.jpg" 
+                alt="Detección de Incidentes"
+                className="w-full h-64 object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <h3 className="text-white font-semibold">Detección Automática de Incidentes</h3>
+                <p className="text-white/80 text-sm">Respuesta inmediata con evidencia fotográfica</p>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
+              <img 
+                src="/images/data-analytics-center.jpg" 
+                alt="Centro de Analítica de Datos"
+                className="w-full h-64 object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <h3 className="text-white font-semibold">Centro de Operaciones Municipal</h3>
+                <p className="text-white/80 text-sm">Monitoreo centralizado para toda la ciudad</p>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
+              <img 
+                src="/images/mobile-command-interface.jpg" 
+                alt="Interfaz de Comando Móvil"
+                className="w-full h-64 object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <h3 className="text-white font-semibold">Comando Móvil para Emergencias</h3>
+                <p className="text-white/80 text-sm">Acceso instantáneo desde unidades de respuesta</p>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow bg-neutral-100 flex items-center justify-center">
+              <div className="text-center p-8">
+                <Camera className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+                <h3 className="text-neutral-600 font-semibold mb-2">Próximamente</h3>
+                <p className="text-neutral-500 text-sm">Más visualizaciones de nuestra tecnología</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección de Métricas Gubernamentales */}
+      <section className="py-20 px-6 bg-neutral-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-neutral-900 mb-12">
+            Resultados Comprobados para Gobiernos Municipales
+          </h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-primary-600 mb-2">40%</div>
+              <div className="text-neutral-600 font-medium">Reducción en Tiempo de Respuesta</div>
+              <div className="text-neutral-500 text-sm mt-1">Emergencias atendidas más rápido</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="text-4xl font-bold text-success mb-2">$2.3M</div>
+              <div className="text-neutral-600 font-medium">Ahorro Anual en Congestión</div>
+              <div className="text-neutral-500 text-sm mt-1">Costos operativos reducidos</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="text-4xl font-bold text-primary-600 mb-2">95%</div>
+              <div className="text-neutral-600 font-medium">Precisión en Datos</div>
+              <div className="text-neutral-500 text-sm mt-1">Planificación urbana mejorada</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="text-4xl font-bold text-warning mb-2">12</div>
+              <div className="text-neutral-600 font-medium">Meses de ROI</div>
+              <div className="text-neutral-500 text-sm mt-1">Inversión recuperada rápidamente</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección CTA Final */}
+      <section className="py-20 px-6 bg-primary-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Transforme la Gestión del Tráfico de Su Ciudad
+          </h2>
+          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+            Únase a municipios líderes que ya están utilizando nuestra tecnología 
+            para crear ciudades más seguras y eficientes.
+          </p>
+          
+          <div className="flex items-center justify-center gap-4">
+            <button className="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-neutral-50 transition-colors flex items-center gap-2">
+              Solicitar Demostración
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <Link 
+              href="/dashboard" 
+              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-600 transition-colors flex items-center gap-2"
+            >
+              Ver Panel en Vivo
+              <Eye className="w-4 h-4" />
+            </Link>
+          </div>
+          
+          <div className="mt-8 text-primary-200 text-sm">
+            <p>✓ Instalación profesional incluida</p>
+            <p>✓ Capacitación para personal municipal</p>
+            <p>✓ Soporte técnico 24/7</p>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 border-t border-gray-800 py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-lg font-semibold text-white">TrafficMX</span>
+      <footer className="bg-neutral-900 text-neutral-300 py-12 px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                <Shield className="w-4 h-4 text-white" />
               </div>
-              <p className="text-sm text-gray-400">
-                Professional traffic intelligence platform for modern municipal management.
-              </p>
+              <span className="font-bold text-white">TrafficMX</span>
             </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/dashboard" className="hover:text-blue-400">Dashboard</Link></li>
-                <li><a href="#features" className="hover:text-blue-400">Features</a></li>
-                <li><a href="#solutions" className="hover:text-blue-400">Solutions</a></li>
-                <li><a href="#" className="hover:text-blue-400">API</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#about" className="hover:text-blue-400">About</a></li>
-                <li><a href="#" className="hover:text-blue-400">Contact</a></li>
-                <li><a href="#" className="hover:text-blue-400">Partners</a></li>
-                <li><a href="#" className="hover:text-blue-400">Support</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-blue-400">Documentation</a></li>
-                <li><a href="#" className="hover:text-blue-400">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-blue-400">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-blue-400">Security</a></li>
-              </ul>
-            </div>
+            <p className="text-sm text-neutral-400">
+              Tecnología de inteligencia de tráfico de nivel gubernamental 
+              para ciudades más seguras y eficientes.
+            </p>
           </div>
           
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2024 TrafficMX. Professional Traffic Intelligence Platform.</p>
+          <div>
+            <h4 className="font-semibold text-white mb-4">Soluciones</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">Monitoreo en Tiempo Real</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Detección de Incidentes</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Analítica Predictiva</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Gestión Municipal</a></li>
+            </ul>
           </div>
+          
+          <div>
+            <h4 className="font-semibold text-white mb-4">Empresa</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">Acerca de Nosotros</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Casos de Éxito</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Partners</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold text-white mb-4">Soporte</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">Documentación Técnica</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Portal de Ayuda</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Estado del Sistema</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Emergencias: 55-1234-5678</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="max-w-6xl mx-auto mt-8 pt-8 border-t border-neutral-800 text-center text-sm text-neutral-400">
+          <p>&copy; 2025 TrafficMX. Todos los derechos reservados. | 
+          <a href="#" className="hover:text-white transition-colors"> Política de Privacidad</a> | 
+          <a href="#" className="hover:text-white transition-colors"> Términos de Servicio</a></p>
         </div>
       </footer>
     </div>

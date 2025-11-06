@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styling Test</title>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .test-card {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: box-shadow 0.2s;
+        }
+        
+        .test-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .text-gray-900 { color: #111827; }
+        .text-gray-600 { color: #4b5563; }
+        .text-blue-600 { color: #2563eb; }
+        .text-xl { font-size: 1.25rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .font-bold { font-weight: 700; }
+        .mb-4 { margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">TrafficMX Styling Test</h1>
+    <p class="text-xl text-gray-600 mb-4">Testing if professional styles are working correctly</p>
+    
+    <div class="test-card">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Professional Card Test</h2>
+        <p class="text-gray-600 mb-4">This should have clean white background, subtle border, and professional shadow.</p>
+        <button class="btn-primary">Test Button</button>
+    </div>
+    
+    <div class="test-card">
+        <h2 class="text-xl font-bold text-blue-600 mb-4">Another Test Card</h2>
+        <p class="text-gray-600">If you see this with proper styling, the CSS is working.</p>
+    </div>
+    
+    <script>
+        console.log('Styling test loaded successfully');
+        document.body.style.backgroundColor = '#ffffff';
+    </script>
+</body>
+</html>
