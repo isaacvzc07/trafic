@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, Inter_Tight, JetBrains_Mono, Roboto_Mono, Orbitron } from "next/font/google";
+import { Inter, Inter_Tight, JetBrains_Mono, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import "./traficmx-security.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { WebSocketProvider } from "@/providers/WebSocketProvider";
 import { PostHogProvider } from "@/providers/PostHogProvider";
@@ -31,12 +30,6 @@ const robotoMono = Roboto_Mono({
   display: "swap",
 });
 
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "700", "900"],
-});
 
 export const metadata: Metadata = {
   title: "Traffic Dashboard",
@@ -51,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${interTight.variable} ${jetbrainsMono.variable} ${robotoMono.variable} ${orbitron.variable} antialiased`}
+        className={`${inter.variable} ${interTight.variable} ${jetbrainsMono.variable} ${robotoMono.variable} antialiased light`}
       >
         <ThemeProvider>
           <QueryProvider>

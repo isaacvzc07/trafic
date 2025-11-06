@@ -1,428 +1,339 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { 
-  Shield, 
+  Activity, 
   Camera, 
-  Brain, 
-  AlertTriangle, 
-  Command, 
-  Lock, 
-  Code, 
-  ChevronRight,
-  Play,
-  TrendingDown,
-  Server,
-  Radar,
+  TrendingUp, 
+  Shield,
   BarChart3,
-  MapPin,
-  Users,
-  Building,
-  Activity,
   Clock,
-  TrendingUp,
-  Sun,
-  Moon,
-  Zap,
-  CheckCircle2
+  Users,
+  ChevronRight,
+  ArrowRight,
+  CheckCircle
 } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
 
 export default function HomePage() {
-  const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [statsAnimated, setStatsAnimated] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', () => {
       setIsScrolled(window.scrollY > 20);
-      if (window.scrollY > 300 && !statsAnimated) {
-        setStatsAnimated(true);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [statsAnimated]);
+    });
+  }
 
   return (
-    <div className="security-theme min-h-screen relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="background-mesh" />
-      <div className="noise-overlay" />
-      <div className="grid-pattern" />
-
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
-        <div className="navbar-container">
-          <Link href="/" className="logo">
-            <div className="logo-icon">
-              <Shield className="w-5 h-5" />
+      <nav className={`sticky top-0 z-50 bg-white border-b border-gray-200 transition-all duration-200 ${
+        isScrolled ? 'shadow-md' : 'shadow-sm'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center gap-2 font-semibold text-gray-900">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Shield className="w-4 h-4 text-white" />
+              </div>
+              TrafficMX
+            </Link>
+            
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                Features
+              </a>
+              <a href="#solutions" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                Solutions
+              </a>
+              <a href="#about" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                About
+              </a>
+              <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                Dashboard
+              </Link>
             </div>
-            <span>TraficMX</span>
-          </Link>
-          
-          <ul className="nav-menu">
-            <li><a href="#platform" className="nav-link">Platform</a></li>
-            <li><a href="#solutions" className="nav-link">Solutions</a></li>
-            <li><a href="#resources" className="nav-link">Resources</a></li>
-            <li><a href="#company" className="nav-link">Company</a></li>
-            <li><Link href="/dashboard" className="nav-link">Dashboard</Link></li>
-          </ul>
-          
-          <div className="nav-actions">
-            <button className="btn-secondary">Operator Login</button>
-            <button className="btn-primary">Access Control</button>
+            
+            <div className="flex items-center gap-3">
+              <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+                Sign In
+              </button>
+              <Link 
+                href="/dashboard"
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+              >
+                View Dashboard
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-content">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="hero-badge">
-              <Radar className="w-4 h-4" />
-              AUTHORIZED MUNICIPAL PLATFORM
-            </div>
-            
-            <h1 className="hero-title">
-              TRAFFIC<br />
-              <span className="accent">INTELLIGENCE</span><br />
-              COMMAND
-            </h1>
-            
-            <p className="hero-subtitle">
-              Military-Grade Urban Surveillance • Predictive AI • Zero-Day Response
-            </p>
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium mb-6">
+            <Activity className="w-4 h-4" />
+            Live Traffic Intelligence
+          </div>
+          
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            Traffic Intelligence<br />
+            <span className="text-blue-600">for Modern Cities</span>
+          </h1>
+          
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            Real-time traffic monitoring and analytics for municipal governments. 
+            Make data-driven decisions with AI-powered insights.
+          </p>
 
-            {/* Stats Grid */}
-            <div className="stats-grid">
-              <StatCard 
-                value="0"
-                label="Protected Cities"
-                icon={<Shield className="w-5 h-5" />}
-                animated={statsAnimated}
-              />
-              <StatCard 
-                value="99.9%"
-                label="System Uptime"
-                icon={<Server className="w-5 h-5" />}
-                animated={statsAnimated}
-              />
-              <StatCard 
-                value="0%"
-                label="Congestion Reduced"
-                icon={<TrendingDown className="w-5 h-5" />}
-                animated={statsAnimated}
-              />
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-6 mb-10">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gray-900 mb-1">99.9%</div>
+              <div className="text-sm text-gray-600">System Uptime</div>
             </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gray-900 mb-1">&lt;5s</div>
+              <div className="text-sm text-gray-600">Update Frequency</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gray-900 mb-1">24/7</div>
+              <div className="text-sm text-gray-600">Monitoring</div>
+            </div>
+          </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-              <button className="btn-primary">
-                <Shield className="w-4 h-4" />
-                Access Control
-                <ChevronRight className="w-4 h-4" />
-              </button>
-              <Link href="/dashboard" className="btn-secondary">
-                View Command Center
-              </Link>
-            </div>
-          </motion.div>
+          {/* CTA Buttons */}
+          <div className="flex items-center justify-center gap-4">
+            <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 flex items-center gap-2">
+              Request Access
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <Link 
+              href="/dashboard" 
+              className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 flex items-center gap-2"
+            >
+              View Dashboard
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Bento Grid Features */}
-      <section className="bento-grid">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bento-card bento-card-xlarge"
-        >
-          <div className="bento-card-icon">
-            <Brain className="w-6 h-6" />
+      {/* Features Section */}
+      <section id="features" className="py-20 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Professional Traffic Management
+            </h2>
+            <p className="text-lg text-gray-600">
+              Enterprise-grade features designed for municipal operations
+            </p>
           </div>
-          <h3 className="bento-card-title">Predictive Analytics Engine</h3>
-          <p className="bento-card-description">
-            Advanced machine learning algorithms analyze traffic patterns to predict congestion before it happens. Our system processes millions of data points in real-time to provide actionable insights.
-          </p>
-          <div className="bento-card-metrics">
-            <span className="metric-badge">99.8% Accuracy</span>
-            <span className="metric-badge">Real-time</span>
-            <span className="metric-badge">ML-Powered</span>
-          </div>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="bento-card bento-card-large"
-        >
-          <div className="bento-card-icon">
-            <Camera className="w-6 h-6" />
-          </div>
-          <h3 className="bento-card-title">Smart Surveillance</h3>
-          <p className="bento-card-description">
-            AI-powered camera network with automated incident detection and real-time alerting.
-          </p>
-          <div className="bento-card-metrics">
-            <span className="metric-badge">24/7 Monitoring</span>
-            <span className="metric-badge">AI Detection</span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="bento-card bento-card-medium"
-        >
-          <div className="bento-card-icon">
-            <Lock className="w-6 h-6" />
-          </div>
-          <h3 className="bento-card-title">Military-Grade Security</h3>
-          <p className="bento-card-description">
-            End-to-end encryption with zero-knowledge architecture protecting sensitive traffic data.
-          </p>
-          <div className="bento-card-metrics">
-            <span className="metric-badge">AES-256</span>
-            <span className="metric-badge">Zero-Knowledge</span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="bento-card bento-card-medium"
-        >
-          <div className="bento-card-icon">
-            <Command className="w-6 h-6" />
-          </div>
-          <h3 className="bento-card-title">Command Center</h3>
-          <p className="bento-card-description">
-            Centralized dashboard for complete traffic management and emergency response coordination.
-          </p>
-          <div className="bento-card-metrics">
-            <span className="metric-badge">Real-time Control</span>
-            <span className="metric-badge">Emergency Response</span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="bento-card bento-card-small"
-        >
-          <div className="bento-card-icon">
-            <Code className="w-6 h-6" />
-          </div>
-          <h3 className="bento-card-title">Open API</h3>
-          <p className="bento-card-description">
-            Comprehensive API suite for seamless integration with existing municipal systems.
-          </p>
-          <div className="bento-card-metrics">
-            <span className="metric-badge">RESTful</span>
-            <span className="metric-badge">WebSocket</span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="bento-card bento-card-small"
-        >
-          <div className="bento-card-icon">
-            <Building className="w-6 h-6" />
-          </div>
-          <h3 className="bento-card-title">Government Certified</h3>
-          <p className="bento-card-description">
-            Fully compliant with national security standards and municipal regulations.
-          </p>
-          <div className="bento-card-metrics">
-            <span className="metric-badge">ISO 27000</span>
-            <span className="metric-badge">SOC 2 Type II</span>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Security Form Section */}
-      <section className="py-24 px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="security-form"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold mb-4">
-                Request <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">Government Access</span>
-              </h2>
-              <p className="text-lg text-gray-600">
-                Secure platform access for municipal authorities and government agencies.
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                <Camera className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Real-Time Monitoring
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Professional camera network with AI-powered vehicle counting and flow analysis updated every 5 seconds.
               </p>
-            </div>
-            
-            <form 
-              onSubmit={(e) => { e.preventDefault(); alert('Access request submitted. Our team will contact you within 24 hours.'); }} 
-              className="space-y-6"
-            >
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="form-group">
-                  <label className="form-label">Full Name</label>
-                  <div className="relative">
-                    <Shield className="form-input-icon" />
-                    <input
-                      type="text"
-                      placeholder="John Smith"
-                      className="form-input"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Official Email</label>
-                  <div className="relative">
-                    <Lock className="form-input-icon" />
-                    <input
-                      type="email"
-                      placeholder="john@government.gov"
-                      className="form-input"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Government Agency</label>
-                <div className="relative">
-                  <Building className="form-input-icon" />
-                  <input
-                    type="text"
-                    placeholder="Department of Transportation"
-                    className="form-input"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">City/Municipality</label>
-                <div className="relative">
-                  <MapPin className="form-input-icon" />
-                  <input
-                    type="text"
-                    placeholder="Mexico City"
-                    className="form-input"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900 mb-6">
-                <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  This platform is exclusively available to government entities and authorized agencies.
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
+                  24/7 Operation
+                </span>
+                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                  AI-Powered
                 </span>
               </div>
-              
-              <button type="submit" className="btn-primary w-full">
-                <Lock className="w-4 h-4" />
-                Submit Secure Request
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
+              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4">
+                <TrendingUp className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Analytics Dashboard
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Comprehensive analytics with historical data, trend analysis, and predictive insights for traffic planning.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
+                  Historical Data
+                </span>
+                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                  Export Reports
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
+              <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-amber-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Secure & Reliable
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Edge computing with local data storage ensures privacy and reliability. No cloud dependency for critical operations.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
+                  Local Processing
+                </span>
+                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                  Enterprise Security
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
+              <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center mb-4">
+                <BarChart3 className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Pattern Recognition
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Advanced algorithms identify traffic patterns, peak hours, and congestion points for optimized signal timing.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
+                  AI Analysis
+                </span>
+                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                  Predictive Insights
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
+              <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center mb-4">
+                <Clock className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Incident Detection
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Automated incident detection with instant alerts and snapshot capture for faster emergency response.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
+                  Real-Time Alerts
+                </span>
+                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                  Evidence Collection
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md Transition-shadow">
+              <div className="w-12 h-12 bg-cyan-50 rounded-lg flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-cyan-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Multi-Agency Access
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Role-based access for traffic departments, emergency services, and municipal planning teams.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium">
+                  Role-Based
+                </span>
+                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                  Audit Trail
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-blue-600 border border-blue-700 rounded-2xl p-12 text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Ready to Transform Your Traffic Management?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8">
+              Join municipalities using TrafficMX for smarter, data-driven traffic decisions.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-50">
+                Request Demo
               </button>
-            </form>
-          </motion.div>
+              <Link 
+                href="/dashboard"
+                className="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800"
+              >
+                View Live Dashboard
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-primary-950 border-t border-primary-800 py-12 px-6 lg:px-8">
+      <footer className="bg-gray-900 border-t border-gray-800 py-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="logo-icon">
-                  <Shield className="w-5 h-5" />
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-lg font-semibold text-white">TraficMX</span>
+                <span className="text-lg font-semibold text-white">TrafficMX</span>
               </div>
               <p className="text-sm text-gray-400">
-                Critical Infrastructure Intelligence Platform for modern urban security.
+                Professional traffic intelligence platform for modern municipal management.
               </p>
             </div>
             
             <div>
-              <h3 className="text-white font-semibold mb-4">Platform</h3>
+              <h3 className="text-white font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">API</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Documentation</a></li>
+                <li><Link href="/dashboard" className="hover:text-blue-400">Dashboard</Link></li>
+                <li><a href="#features" className="hover:text-blue-400">Features</a></li>
+                <li><a href="#solutions" className="hover:text-blue-400">Solutions</a></li>
+                <li><a href="#" className="hover:text-blue-400">API</a></li>
               </ul>
             </div>
             
             <div>
               <h3 className="text-white font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Certifications</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Partners</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Contact</a></li>
+                <li><a href="#about" className="hover:text-blue-400">About</a></li>
+                <li><a href="#" className="hover:text-blue-400">Contact</a></li>
+                <li><a href="#" className="hover:text-blue-400">Partners</a></li>
+                <li><a href="#" className="hover:text-blue-400">Support</a></li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-white font-semibold mb-4">Compliance</h3>
+              <h3 className="text-white font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">GDPR</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-blue-400">Documentation</a></li>
+                <li><a href="#" className="hover:text-blue-400">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-blue-400">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-blue-400">Security</a></li>
               </ul>
             </div>
           </div>
           
-          <div className="border-t border-primary-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2024 TraficMX. All rights reserved. | Government Authorized Platform</p>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+            <p>&copy; 2024 TrafficMX. Professional Traffic Intelligence Platform.</p>
           </div>
         </div>
       </footer>
     </div>
-  );
-}
-
-// Stat Card Component
-function StatCard({ value, label, icon, animated }: { 
-  value: string; 
-  label: string; 
-  icon: React.ReactNode; 
-  animated: boolean; 
-}) {
-  return (
-    <motion.div 
-      className="stat-card"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      <div className="stat-value">
-        {animated ? value : "0"}
-        {icon}
-      </div>
-      <div className="stat-label">{label}</div>
-    </motion.div>
   );
 }

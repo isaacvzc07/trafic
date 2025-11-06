@@ -130,22 +130,24 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
   const getTooltipContent = () => {
     if (!tooltipData) return null;
     return (
-      <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
-        <p className="font-semibold">{format(tooltipData.date, 'MMM dd, yyyy HH:mm')}</p>
-        <p className="text-blue-600">Total: {tooltipData.total}</p>
-        <p className="text-green-600">Cars: {tooltipData.cars}</p>
-        <p className="text-purple-600">Buses: {tooltipData.buses}</p>
-        <p className="text-orange-600">Trucks: {tooltipData.trucks}</p>
+      <div className="bg-white border border-gray-100 rounded-lg p-3 shadow-lg">
+        <p className="font-semibold text-gray-900 mb-2">{format(tooltipData.date, 'MMM dd, yyyy HH:mm')}</p>
+        <p className="text-blue-600 text-sm">Total: {tooltipData.total}</p>
+        <p className="text-green-600 text-sm">Cars: {tooltipData.cars}</p>
+        <p className="text-purple-600 text-sm">Buses: {tooltipData.buses}</p>
+        <p className="text-orange-600 text-sm">Trucks: {tooltipData.trucks}</p>
       </div>
     );
   };
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="mb-6">
+          <div className="animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="h-64 bg-gray-200 rounded"></div>
+          </div>
         </div>
       </div>
     );
@@ -153,43 +155,43 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
 
   if (isError || chartData.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4">Tráfico por Hora (Últimas 24h)</h3>
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Traffic by Hour (Last 24h)</h3>
         <div className="flex items-center justify-center h-64 text-gray-500">
-          No hay datos disponibles
+          No data available
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">
-          {timeRange === '24h' && 'Tráfico por Hora (Últimas 24h)'}
-          {timeRange === 'today' && 'Tráfico por Hora (Hoy)'}
-          {timeRange === 'yesterday' && 'Tráfico por Hora (Ayer)'}
-          {timeRange === '7d' && 'Tráfico por Hora (Últimos 7 días)'}
-        </h3>
-        <div className="flex gap-2">
-          {(['24h', 'today', 'yesterday', '7d'] as TimeRange[]).map((range) => (
-            <button
-              key={range}
-              onClick={() => setTimeRange(range)}
-              className={`px-3 py-1 text-sm rounded ${
-                timeRange === range
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {range === '24h' && '24h'}
-              {range === 'today' && 'Hoy'}
-              {range === 'yesterday' && 'Ayer'}
-              {range === '7d' && '7d'}
-            </button>
-          ))}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold text-gray-900">
+            {timeRange === '24h' && 'Traffic by Hour (Last 24h)'}
+            {timeRange === 'today' && 'Traffic by Hour (Today)'}
+            {timeRange === 'yesterday' && 'Traffic by Hour (Yesterday)'}
+            {timeRange === '7d' && 'Traffic by Hour (Last 7 days)'}
+          </h3>
+          <div className="flex gap-2">
+            {(['24h', 'today', 'yesterday', '7d'] as TimeRange[]).map((range) => (
+              <button
+                key={range}
+                onClick={() => setTimeRange(range)}
+                className={`px-3 py-1 text-sm font-medium rounded-lg transition-colors ${
+                  timeRange === range
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {range === '24h' && '24h'}
+                {range === 'today' && 'Today'}
+                {range === 'yesterday' && 'Yesterday'}
+                {range === '7d' && '7d'}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
       <div className="relative">
         <svg width={width} height={height} className="w-full h-auto">
@@ -199,22 +201,22 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
               scale={totalScale}
               width={xMax}
               strokeDasharray="2,2"
-              stroke="#e0e0e0"
+              stroke="#f1f3f5"
             />
             <GridColumns
               scale={dateScale}
               height={yMax}
               strokeDasharray="2,2"
-              stroke="#e0e0e0"
+              stroke="#f1f3f5"
             />
 
             {/* Axes */}
             <AxisLeft
               scale={totalScale}
-              stroke="#666"
-              tickStroke="#666"
+              stroke="#9ca3af"
+              tickStroke="#9ca3af"
               tickLabelProps={() => ({
-                fill: '#666',
+                fill: '#6b7280',
                 fontSize: 12,
                 textAnchor: 'end',
                 dy: '0.33em',
@@ -222,10 +224,10 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
             />
             <AxisBottom
               scale={dateScale}
-              stroke="#666"
-              tickStroke="#666"
+              stroke="#9ca3af"
+              tickStroke="#9ca3af"
               tickLabelProps={() => ({
-                fill: '#666',
+                fill: '#6b7280',
                 fontSize: 12,
                 textAnchor: 'middle',
               })}
@@ -307,22 +309,22 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
       </div>
 
       {/* Legend */}
-      <div className="flex justify-center gap-6 mt-4">
+      <div className="flex justify-center gap-6 mt-6">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-1 bg-blue-600"></div>
-          <span className="text-sm text-gray-700">Total</span>
+          <div className="w-4 h-1 bg-blue-600 rounded"></div>
+          <span className="text-sm text-gray-700 font-medium">Total</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-1 bg-green-600"></div>
-          <span className="text-sm text-gray-700">Cars</span>
+          <div className="w-4 h-1 bg-green-600 rounded"></div>
+          <span className="text-sm text-gray-700 font-medium">Cars</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-1 bg-purple-600"></div>
-          <span className="text-sm text-gray-700">Buses</span>
+          <div className="w-4 h-1 bg-purple-600 rounded"></div>
+          <span className="text-sm text-gray-700 font-medium">Buses</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-1 bg-orange-600"></div>
-          <span className="text-sm text-gray-700">Trucks</span>
+          <div className="w-4 h-1 bg-orange-600 rounded"></div>
+          <span className="text-sm text-gray-700 font-medium">Trucks</span>
         </div>
       </div>
     </div>

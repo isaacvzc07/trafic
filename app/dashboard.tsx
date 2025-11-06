@@ -20,13 +20,13 @@ export default function Dashboard() {
 
   if (errorLive || errorHourly || errorSummary) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
-        <div className="max-w-md w-full p-6 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/20">
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="max-w-md w-full p-6 rounded-xl border border-red-200 bg-red-50">
           <div className="flex items-center space-x-3 mb-4">
-            <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
-            <h2 className="text-red-600 dark:text-red-400 font-bold text-lg">Error loading data</h2>
+            <AlertCircle className="w-6 h-6 text-red-600" />
+            <h2 className="text-red-600 font-bold text-lg">Error loading data</h2>
           </div>
-          <p className="text-red-600 dark:text-red-300 text-sm">
+          <p className="text-red-600 text-sm">
             Unable to connect to the API. Please check your connection and try again.
           </p>
         </div>
@@ -38,14 +38,14 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 border-3 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full mx-auto mb-4"
+            className="w-12 h-12 border-3 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-4"
           />
-          <p className="text-gray-600 dark:text-gray-400 font-medium">Loading traffic data...</p>
+          <p className="text-gray-600 font-medium">Loading traffic data...</p>
         </div>
       </div>
     );
@@ -58,36 +58,36 @@ export default function Dashboard() {
   const totalOut = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_out, 0) || 0;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Link href="/" className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-                <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <Link href="/" className="p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Traffic Dashboard</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Real-time monitoring</p>
+                <h1 className="text-2xl font-bold text-gray-900">Traffic Dashboard</h1>
+                <p className="text-sm text-gray-600">Real-time monitoring</p>
               </div>
             </div>
             <div className="hidden md:flex items-center space-x-6">
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{totalTraffic}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Vehicles (5 min)</div>
+                <div className="text-2xl font-bold text-gray-900">{totalTraffic}</div>
+                <div className="text-xs text-gray-600">Vehicles (5 min)</div>
               </div>
-              <div className="w-px h-8 bg-gray-200 dark:bg-slate-800"></div>
+              <div className="w-px h-8 bg-gray-200"></div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{liveCountsData?.length || 0}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Active Cameras</div>
+                <div className="text-2xl font-bold text-gray-900">{liveCountsData?.length || 0}</div>
+                <div className="text-xs text-gray-600">Active Cameras</div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Key Metrics */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -131,10 +131,11 @@ export default function Dashboard() {
           className="mb-8"
         >
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Live Data</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Live Data</h2>
+            <p className="text-sm text-gray-600">Real-time traffic counts from all cameras</p>
           </div>
           {liveCountsData && liveCountsData.length > 0 && (
-            <div className="rounded-xl border border-gray-200 dark:border-slate-800 overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
               <DataTable
                 data={liveCountsData.map((count: LiveCount) => ({
                   ...count,
@@ -151,7 +152,7 @@ export default function Dashboard() {
                     label: 'Efficiency', 
                     sortable: true,
                     render: (value) => (
-                      <span className={`font-medium text-sm ${value > 80 ? 'text-green-600 dark:text-green-400' : value > 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <span className={`font-medium text-sm ${value > 80 ? 'text-green-600' : value > 50 ? 'text-yellow-600' : 'text-red-600'}`}>
                         {value}%
                       </span>
                     )
@@ -169,9 +170,9 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6"
+            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
           >
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Traffic by Hour</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Traffic by Hour</h3>
             {hourlyStats && <TrafficChartVisx data={hourlyStats} />}
           </motion.div>
 
@@ -179,7 +180,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="rounded-xl border border-gray-200 dark:border-slate-800 overflow-hidden"
+            className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
           >
             <TrafficMap 
               cameras={liveCountsData || []} 
@@ -194,9 +195,9 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mb-8 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6"
+            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
           >
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Traffic Heatmap</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Traffic Heatmap</h3>
             <TrafficHeatmap 
               data={Array.isArray(hourlyStats) ? hourlyStats.map((stat: HourlyStatistic) => {
                 // Convert to Mexico City timezone to get correct hour
@@ -218,20 +219,20 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/50 p-6"
+          className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
         >
-          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-center text-sm text-gray-600">
             <div className="flex items-center justify-center space-x-2 mb-3">
-              <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <Clock className="w-4 h-4 text-blue-600" />
               <p>
                 Data updates automatically every 5 seconds.
               </p>
             </div>
             <p className="text-xs">
-              <span className="font-semibold text-gray-900 dark:text-white">Location:</span> 28.712335611426948, -106.10549703573227
+              <span className="font-semibold text-gray-900">Location:</span> 28.712335611426948, -106.10549703573227
             </p>
             <p className="text-xs mt-2">
-              <span className="font-semibold text-gray-900 dark:text-white">Cameras:</span> cam_01 (Main) • cam_02 (North) • cam_03 (South) • cam_04 (East)
+              <span className="font-semibold text-gray-900">Cameras:</span> cam_01 (Main) • cam_02 (North) • cam_03 (South) • cam_04 (East)
             </p>
           </div>
         </motion.div>
