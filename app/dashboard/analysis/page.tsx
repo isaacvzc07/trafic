@@ -51,6 +51,10 @@ interface AnalysisData {
   total: number;
 }
 
+interface ExtendedHourlyStatistic extends HourlyStatistic {
+  source: 'api' | 'supabase' | 'live';
+}
+
 interface TrendData {
   date: string;
   total: number;
@@ -65,7 +69,7 @@ interface VehicleDistribution {
 }
 
 export default function TrafficAnalysis() {
-  const [historyData, setHistoryData] = useState<HourlyStatistic[]>([]);
+  const [historyData, setHistoryData] = useState<ExtendedHourlyStatistic[]>([]);
   const [summaryStats, setSummaryStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -95,17 +99,17 @@ export default function TrafficAnalysis() {
       console.log('Summary data:', summaryData.status === 'fulfilled' ? 'success' : 'failed');
       
       // Process API data
-      let apiArray: any[] = [];
+      let apiArray: ExtendedHourlyStatistic[] = [];
       if (apiData.status === 'fulfilled') {
-        apiArray = Array.isArray(apiData.value) ? apiData.value.map(item => ({...item, source: 'api'})) : [];
+        apiArray = Array.isArray(apiData.value) ? apiData.value.map((item: HourlyStatistic) => ({...item, source: 'api'})) : [];
       }
       
       // Process Supabase data
-      let supabaseArray: any[] = [];
+      let supabaseArray: ExtendedHourlyStatistic[] = [];
       if (supabaseData.status === 'fulfilled' && supabaseData.value?.data) {
         // Flatten Supabase grouped data
         supabaseArray = supabaseData.value.data.flatMap((hourGroup: any) => 
-          hourGroup.data.map((record: any) => ({
+          hourGroup.data.map((record: HourlyStatistic) => ({
             ...record,
             hour: hourGroup.hour,
             source: 'supabase'
@@ -114,7 +118,7 @@ export default function TrafficAnalysis() {
       }
       
       // Process live data into hourly format
-      let liveArray: any[] = [];
+      let liveArray: ExtendedHourlyStatistic[] = [];
       if (liveData.status === 'fulfilled' && Array.isArray(liveData.value)) {
         // Convert live counts to hourly format
         const currentHour = new Date().toISOString().slice(0, 13) + ':00:00Z';
@@ -126,7 +130,7 @@ export default function TrafficAnalysis() {
           count: camera.total_in || 0,
           avg_confidence: 0.8, // Default confidence
           source: 'live'
-        })).concat(liveData.value.map((camera: any) => ({
+        } as ExtendedHourlyStatistic)).concat(liveData.value.map((camera: any) => ({
           hour: currentHour,
           camera_id: camera.camera_id,
           vehicle_type: 'car',
@@ -134,7 +138,7 @@ export default function TrafficAnalysis() {
           count: camera.total_out || 0,
           avg_confidence: 0.8,
           source: 'live'
-        })));
+        } as ExtendedHourlyStatistic)));
       }
       
       // Combine all datasets
