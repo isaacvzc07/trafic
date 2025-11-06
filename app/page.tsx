@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   BarChart3, 
   MapPin, 
@@ -62,8 +63,20 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-24 px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="relative py-24 px-6 lg:px-8 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://images.unsplash.com/photo-1488747807830-63789f68bb65?w=1200&h=600&fit=crop"
+            alt="City traffic"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 dark:from-slate-950/95 via-white/90 dark:via-slate-950/90 to-white/80 dark:to-slate-950/80"></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 mb-6">
             <Zap className="w-3 h-3 text-blue-600 dark:text-blue-400 mr-2" />
             <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
@@ -128,47 +141,63 @@ export default function HomePage() {
               {
                 icon: Clock,
                 title: "24/7 Monitoring",
-                description: "Real-time data from cameras and sensors across the city"
+                description: "Real-time data from cameras and sensors across the city",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop"
               },
               {
                 icon: MapPin,
                 title: "Live Location Tracking",
-                description: "Interactive maps with exact incident and congestion locations"
+                description: "Interactive maps with exact incident and congestion locations",
+                image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&h=300&fit=crop"
               },
               {
                 icon: TrendingUp,
                 title: "Predictive Analytics",
-                description: "AI-powered traffic prediction and optimal route recommendations"
+                description: "AI-powered traffic prediction and optimal route recommendations",
+                image: "https://images.unsplash.com/photo-1460925895917-adf4e565db18?w=400&h=300&fit=crop"
               },
               {
                 icon: AlertCircle,
                 title: "Smart Alerts",
-                description: "Automatic notifications for incidents and unusual patterns"
+                description: "Automatic notifications for incidents and unusual patterns",
+                image: "https://images.unsplash.com/photo-1516321318423-f06f70504c8a?w=400&h=300&fit=crop"
               },
               {
                 icon: Shield,
                 title: "Enterprise Security",
-                description: "Bank-level encryption and data protection"
+                description: "Bank-level encryption and data protection",
+                image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&h=300&fit=crop"
               },
               {
                 icon: Users,
                 title: "Expert Support",
-                description: "Dedicated technical team available 24/7"
+                description: "Dedicated technical team available 24/7",
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
               }
             ].map((feature, index) => (
               <div
                 key={index}
-                className="group p-6 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-lg dark:hover:shadow-blue-900/20 transition-all duration-300"
+                className="group rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-lg dark:hover:shadow-blue-900/20 transition-all duration-300 overflow-hidden"
               >
-                <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors">
-                  <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="relative h-40 overflow-hidden bg-gray-200 dark:bg-slate-700">
+                  <Image
+                    src={feature.image}
+                    alt={feature.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
+                <div className="p-6">
+                  <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors">
+                    <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
