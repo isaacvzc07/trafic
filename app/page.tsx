@@ -21,9 +21,9 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-300">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50">
+      <nav className="fixed top-0 w-full z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <motion.div 
@@ -32,7 +32,7 @@ export default function HomePage() {
               className="flex items-center space-x-2"
             >
               <BarChart3 className="w-8 h-8 text-blue-400" />
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-blue-400">
                 TraficMX
               </span>
             </motion.div>
@@ -45,7 +45,7 @@ export default function HomePage() {
               <Link href="/dashboard" className="text-gray-300 hover:text-white transition-colors font-medium">
                 Dashboard
               </Link>
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg font-medium transition-colors">
+              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors border border-blue-600 hover:border-blue-500">
                 Solicitar Demo
               </button>
             </motion.div>
@@ -62,22 +62,22 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-sm font-medium mb-6">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-600/20 border border-blue-600/30 text-blue-400 text-sm font-medium mb-6">
                 <Zap className="w-4 h-4 mr-2" />
                 Revolucionando el Tráfico en México
               </div>
               
               <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                <span className="text-white">
                   Control de Tráfico
                 </span>
                 <br />
-                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="text-blue-400">
                   en Tiempo Real
                 </span>
               </h1>
               
-              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+              <p className="text-xl text-slate-300 mb-8 leading-relaxed">
                 Transforma la gestión del tráfico urbano con nuestra solución económica y 
                 avanzada. Monitorea, analiza y optimiza el flujo vehicular en tiempo real 
                 para reducir congestión y mejorar la movilidad en las ciudades mexicanas.
@@ -87,7 +87,7 @@ export default function HomePage() {
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl"
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl border border-blue-600 hover:border-blue-500"
                   onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                 >
                   Solicitar Cotización
@@ -98,14 +98,14 @@ export default function HomePage() {
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-8 py-4 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold text-lg transition-all border border-slate-600"
+                    className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold text-lg transition-all border border-slate-600 hover:border-slate-500"
                   >
                     Ver Demo
                   </motion.button>
                 </Link>
               </div>
               
-              <div className="flex items-center space-x-8 text-sm text-gray-400">
+              <div className="flex items-center space-x-8 text-sm text-slate-400">
                 <div className="flex items-center">
                   <Users className="w-5 h-5 mr-2 text-blue-400" />
                   <span>50+ Ciudades Activas</span>
@@ -115,7 +115,7 @@ export default function HomePage() {
                   <span>40% Reducción en Congestión</span>
                 </div>
                 <div className="flex items-center">
-                  <Shield className="w-5 h-5 mr-2 text-cyan-400" />
+                  <Shield className="w-5 h-5 mr-2 text-blue-400" />
                   <span>99.9% Uptime</span>
                 </div>
               </div>
@@ -127,37 +127,37 @@ export default function HomePage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative bg-slate-800/50 rounded-2xl p-8 backdrop-blur-sm border border-slate-700/50 shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl" />
+              <div className="relative bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-2xl">
+                <div className="absolute inset-0 bg-slate-800 rounded-2xl" />
                 
                 {/* Mock Dashboard */}
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold">Dashboard en Vivo</h3>
+                    <h3 className="text-lg font-semibold text-white">Dashboard en Vivo</h3>
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <motion.div 
                       whileHover={{ scale: 1.02 }}
-                      className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/30"
+                      className="bg-slate-800 rounded-lg p-4 border border-slate-600"
                     >
                       <Car className="w-8 h-8 text-blue-400 mb-2" />
-                      <div className="text-2xl font-bold">1,247</div>
-                      <div className="text-sm text-gray-400">Vehículos/Hora</div>
+                      <div className="text-2xl font-bold text-white">1,247</div>
+                      <div className="text-sm text-slate-400">Vehículos/Hora</div>
                     </motion.div>
                     
                     <motion.div 
                       whileHover={{ scale: 1.02 }}
-                      className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/30"
+                      className="bg-slate-800 rounded-lg p-4 border border-slate-600"
                     >
                       <TrendingUp className="w-8 h-8 text-green-400 mb-2" />
-                      <div className="text-2xl font-bold">89%</div>
-                      <div className="text-sm text-gray-400">Fluidez</div>
+                      <div className="text-2xl font-bold text-white">89%</div>
+                      <div className="text-sm text-slate-400">Fluidez</div>
                     </motion.div>
                   </div>
                   
-                  <div className="h-32 bg-slate-700/30 rounded-lg flex items-center justify-center">
+                  <div className="h-32 bg-slate-800 rounded-lg flex items-center justify-center border border-slate-600">
                     <BarChart3 className="w-12 h-12 text-slate-500" />
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-800/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -176,13 +176,13 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold mb-4">
+            <h2 className="text-4xl font-bold mb-4 text-white">
               Características que
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-blue-400">
                 {" "}Transforman Ciudades
               </span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
               Tecnología de vanguardia diseñada específicamente para los desafíos del tráfico urbano en México
             </p>
           </motion.div>
@@ -227,11 +227,11 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="bg-slate-700/30 rounded-xl p-6 border border-slate-600/50 hover:border-blue-500/50 transition-all"
+                className="bg-slate-800 rounded-xl p-6 border border-slate-600 hover:border-blue-500 transition-all"
               >
                 <feature.icon className="w-12 h-12 text-blue-400 mb-4" />
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-3 text-white">{feature.title}</h3>
+                <p className="text-slate-300 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -245,13 +245,13 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl p-8 lg:p-12 border border-blue-500/30 backdrop-blur-sm"
+            className="bg-slate-800 rounded-2xl p-8 lg:p-12 border border-blue-600/30"
           >
             <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold mb-4">
+              <h2 className="text-4xl font-bold mb-4 text-white">
                 Comienza la Revolución del Tráfico en tu Ciudad
               </h2>
-              <p className="text-xl text-gray-300">
+              <p className="text-xl text-slate-300">
                 Obtén una cotización personalizada adaptada a las necesidades de tu municipio
               </p>
             </div>
@@ -259,51 +259,51 @@ export default function HomePage() {
             <form onSubmit={(e) => { e.preventDefault(); alert('Gracias por tu interés. Te contactaremos pronto.'); }} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Nombre Completo</label>
+                  <label className="block text-sm font-medium mb-2 text-slate-300">Nombre Completo</label>
                   <input 
                     type="text" 
                     required
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Juan Pérez"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <label className="block text-sm font-medium mb-2 text-slate-300">Email</label>
                   <input 
                     type="email" 
                     required
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="juan@ejemplo.com"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Teléfono</label>
+                  <label className="block text-sm font-medium mb-2 text-slate-300">Teléfono</label>
                   <input 
                     type="tel" 
                     required
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="+52 55 o"
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="+52 55 123 o"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Municipio</label>
+                  <label className="block text-sm font-medium mb-2 text-slate-300">Municipio</label>
                   <input 
                     type="text" 
                     required
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Ci"
                   />
                 </div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-2">Mensaje (Opcional)</label>
+                <label className="block text-sm font-medium mb-2 text-slate-300">Mensaje (Opcional)</label>
                 <textarea 
                   rows={4}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Cuéntanos sobre las necesidades de tráfico en tu ciudad..."
                 />
               </div>
@@ -312,7 +312,7 @@ export default function HomePage() {
                 type="submit"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl mx-auto"
+                className="w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl mx-auto border border-blue-600 hover:border-blue-500"
               >
                 Solicitar Cotización Personalizada
               </motion.button>
