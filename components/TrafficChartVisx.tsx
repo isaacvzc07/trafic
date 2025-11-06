@@ -10,7 +10,6 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { GridRows, GridColumns } from '@visx/grid';
 import { LinePath } from '@visx/shape';
 import { Tooltip, useTooltip } from '@visx/tooltip';
-import { localDateTime } from '@visx/scale';
 
 type TimeRange = '24h' | 'today' | 'yesterday' | '7d';
 
@@ -242,8 +241,12 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
               stroke="#3b82f6"
               strokeWidth={2}
               strokeDasharray="0"
-              onMouseMove={(event, data) => {
+              onMouseMove={(event: React.MouseEvent<SVGPathElement>) => {
                 const point = event.currentTarget.getBoundingClientRect();
+                const dataIndex = chartData.findIndex(d => 
+                  dateScale(d.date.getTime()) === event.currentTarget.getPointAtLength(0).x
+                );
+                const data = chartData[dataIndex] || chartData[0];
                 showTooltip({
                   tooltipData: data,
                   tooltipLeft: point.left,
@@ -261,8 +264,12 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
               stroke="#10b981"
               strokeWidth={2}
               strokeOpacity={0.7}
-              onMouseMove={(event, data) => {
+              onMouseMove={(event: React.MouseEvent<SVGPathElement>) => {
                 const point = event.currentTarget.getBoundingClientRect();
+                const dataIndex = chartData.findIndex(d => 
+                  dateScale(d.date.getTime()) === event.currentTarget.getPointAtLength(0).x
+                );
+                const data = chartData[dataIndex] || chartData[0];
                 showTooltip({
                   tooltipData: data,
                   tooltipLeft: point.left,
@@ -280,8 +287,12 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
               stroke="#8b5cf6"
               strokeWidth={2}
               strokeOpacity={0.7}
-              onMouseMove={(event, data) => {
+              onMouseMove={(event: React.MouseEvent<SVGPathElement>) => {
                 const point = event.currentTarget.getBoundingClientRect();
+                const dataIndex = chartData.findIndex(d => 
+                  dateScale(d.date.getTime()) === event.currentTarget.getPointAtLength(0).x
+                );
+                const data = chartData[dataIndex] || chartData[0];
                 showTooltip({
                   tooltipData: data,
                   tooltipLeft: point.left,
