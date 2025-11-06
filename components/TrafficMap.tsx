@@ -22,7 +22,7 @@ interface CameraMarkerProps {
 }
 
 function TrafficHistoryPanel({ cameraId }: { cameraId?: string }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true); // Default to expanded
   
   return (
     <div className="h-full flex flex-col bg-white border border-gray-200">

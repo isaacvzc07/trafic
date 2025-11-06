@@ -28,11 +28,11 @@ export function TrafficHeatmap({ data, className = '' }: TrafficHeatmapProps) {
   
   const getIntensityColor = (intensity: number) => {
     const ratio = intensity / maxIntensity;
-    if (ratio > 0.8) return 'bg-red-600';
-    if (ratio > 0.6) return 'bg-orange-600';
-    if (ratio > 0.4) return 'bg-yellow-600';
-    if (ratio > 0.2) return 'bg-blue-600';
-    return 'bg-green-600';
+    if (ratio > 0.8) return 'bg-red-500';
+    if (ratio > 0.6) return 'bg-orange-500';
+    if (ratio > 0.4) return 'bg-yellow-500';
+    if (ratio > 0.2) return 'bg-blue-500';
+    return 'bg-green-500';
   };
 
   const getIntensityOpacity = (intensity: number) => {

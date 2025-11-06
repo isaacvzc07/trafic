@@ -255,20 +255,31 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
       </div>
 
       {/* Traffic chart */}
-      <div className="h-64 mb-6 resizable-chart">
+      <div className="h-96 mb-6 resizable-chart bg-white border border-gray-200 rounded-lg p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={processedData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <LineChart data={processedData} margin={{ top: 20, right: 30, left: 80, bottom: 80 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="time" 
               stroke="#6b7280"
               tick={{ fill: '#6b7280', fontSize: 12 }}
+              angle={-45}
+              textAnchor="end"
+              height={80}
             />
             <YAxis 
               stroke="#6b7280"
               tick={{ fill: '#6b7280', fontSize: 12 }}
-              domain={[0, 'dataMax']}
+              domain={[0, 'dataMax + 500']}
               allowDataOverflow={false}
+              label={{
+                value: 'Vehicles',
+                angle: -90,
+                position: 'insideLeft',
+                offset: 10,
+                fill: '#6b7280',
+                style: { fontSize: 14 }
+              }}
             />
             <Tooltip 
               contentStyle={{ 
@@ -278,6 +289,12 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
                 color: '#1f2937'
               }}
               labelStyle={{ color: '#1f2937' }}
+              cursor="crosshair"
+            />
+            <Legend 
+              verticalAlign="top"
+              height={36}
+              wrapperStyle={{ paddingBottom: '20px' }}
             />
             
             {(vehicleType === 'all' || vehicleType === 'car') && (
@@ -285,7 +302,7 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
                 type="monotone" 
                 dataKey="cars" 
                 stroke="#3b82f6" 
-                strokeWidth={2}
+                strokeWidth={2.5}
                 dot={false}
                 name="Cars"
               />
@@ -312,14 +329,26 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
                 name="Trucks"
               />
             )}
+            
+            {(vehicleType === 'all') && (
+              <Line 
+                type="monotone" 
+                dataKey="total" 
+                stroke="#ef4444" 
+                strokeWidth={3}
+                dot={false}
+                name="Total"
+                strokeDasharray="5 5"
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {/* Vehicle type distribution */}
-      <div className="h-32 resizable-chart">
+      <div className="h-48 resizable-chart bg-white border border-gray-200 rounded-lg p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={processedData.slice(-12)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart data={processedData.slice(-12)} margin={{ top: 20, right: 30, left: 60, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="time" 
@@ -329,7 +358,7 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
             <YAxis 
               stroke="#6b7280"
               tick={{ fill: '#6b7280', fontSize: 10 }}
-              domain={[0, 'dataMax']}
+              domain={[0, 'dataMax + 100']}
               allowDataOverflow={false}
             />
             <Tooltip 

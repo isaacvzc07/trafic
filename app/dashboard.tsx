@@ -73,16 +73,23 @@ export default function Dashboard() {
                 <span className="font-bold text-neutral-900">TrafficMX</span>
               </Link>
               <div className="hidden md:block text-sm text-neutral-500">
-                Panel de Control Municipal
+                Monitoreo en Tiempo Real
               </div>
+              <Link 
+                href="/dashboard/analysis"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Análisis
+              </Link>
             </div>
             
             <div className="flex items-center gap-4">
-              <button className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors">
-                <Settings className="w-5 h-5" />
+              <button className="p-2 text-neutral-600 hover:text-primary-600 transition-colors">
+                <Bell className="w-4 h-4" />
               </button>
-              <button className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors">
-                <Bell className="w-5 h-5" />
+              <button className="p-2 text-neutral-600 hover:text-primary-600 transition-colors">
+                <Settings className="w-4 h-4" />
               </button>
               <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-primary-600" />

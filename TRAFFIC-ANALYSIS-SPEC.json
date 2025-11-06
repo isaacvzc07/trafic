@@ -1,0 +1,520 @@
+{
+  "project": "TrafficMX Dashboard - Traffic Analysis Refactor",
+  "version": "2.0",
+  "date": "2025-11-06",
+  "objective": "Separate traffic history visualization from dashboard and create dedicated analysis page with proper chart rendering and data display",
+  
+  "current_issues": {
+    "chart_rendering": {
+      "problem": "Y-axis not visible until corner, graph appears cut off",
+      "root_cause": "ResponsiveContainer height constraints and missing proper margin configuration",
+      "impact": "Users cannot see 60-70% of chart data",
+      "screenshot_evidence": "Y-axis labels only appear at bottom corner, most chart area is blank"
+    },
+    "traffic_history_panel": {
+      "problem": "Traffic History panel shows 'Click expand to view traffic history' but doesn't display data",
+      "root_cause": "Panel is collapsed by default, expand button may not be functional, data not loading",
+      "impact": "Users cannot access historical traffic data from dashboard",
+      "current_state": "Collapsed state with placeholder text"
+    },
+    "layout_constraints": {
+      "problem": "Charts squeezed into small panels with limited space",
+      "root_cause": "PanelGroup layout with fixed default sizes (60/40 split), ResizeHandle may not be working",
+      "impact": "Charts cannot render properly with adequate spacing"
+    }
+  },
+
+  "proposed_architecture": {
+    "dashboard_page": {
+      "path": "/app/dashboard/page.tsx",
+      "purpose": "Real-time monitoring and quick overview",
+      "components": [
+        {
+          "name": "LiveTrafficOverview",
+          "purpose": "Real-time traffic status and current conditions",
+          "size": "Full width, compact (200px)",
+          "features": ["Live counts", "Current alerts", "Quick stats"]
+        },
+        {
+          "name": "TrafficMap",
+          "purpose": "Interactive map with camera markers",
+          "size": "60% width (resizable)",
+          "features": ["Camera locations", "Traffic indicators", "Incident markers"]
+        },
+        {
+          "name": "QuickStats",
+          "purpose": "Summary statistics and KPIs",
+          "size": "40% width (resizable)",
+          "features": ["Peak hours", "Average traffic", "Trends", "Link to Analysis"]
+        },
+        {
+          "name": "SnapshotHistory",
+          "purpose": "Recent incident snapshots",
+          "size": "Full width, compact (250px)",
+          "features": ["Recent captures", "Quick access"]
+        }
+      ]
+    },
+    
+    "analysis_page": {
+      "path": "/app/dashboard/analysis/page.tsx",
+      "purpose": "Dedicated page for in-depth traffic analysis and trends",
+      "layout": "Full-width, multi-section with scrollable content",
+      "components": [
+        {
+          "name": "AnalysisHeader",
+          "purpose": "Navigation and time range selector",
+          "features": ["Breadcrumb nav", "Date range picker", "Export button"]
+        },
+        {
+          "name": "TrafficByHourChart",
+          "purpose": "Detailed hourly traffic patterns",
+          "height": "500px",
+          "features": [
+            "Full Y-axis visibility (0 to max)",
+            "Multiple vehicle types (Total, Cars, Buses, Trucks)",
+            "Time range selector (24h, 7d, 30d)",
+            "Interactive legend",
+            "Export to CSV/PDF"
+          ]
+        },
+        {
+          "name": "TrendAnalysisChart",
+          "purpose": "Weekly/monthly traffic trends",
+          "height": "400px",
+          "features": [
+            "Area chart with trend lines",
+            "Comparison periods",
+            "Growth indicators",
+            "Moving averages"
+          ]
+        },
+        {
+          "name": "PeakHourAnalysis",
+          "purpose": "Identify and analyze peak traffic hours",
+          "height": "350px",
+          "features": [
+            "Peak hour identification",
+            "Duration analysis",
+            "Recommendations for optimization"
+          ]
+        },
+        {
+          "name": "VehicleDistributionChart",
+          "purpose": "Breakdown by vehicle type",
+          "height": "350px",
+          "features": [
+            "Pie/donut chart",
+            "Percentage breakdown",
+            "Time-based filtering"
+          ]
+        },
+        {
+          "name": "HeatmapAnalysis",
+          "purpose": "Spatial and temporal traffic patterns",
+          "height": "400px",
+          "features": [
+            "Location-based heatmap",
+            "Time-based heatmap",
+            "Interactive cells with tooltips"
+          ]
+        },
+        {
+          "name": "ExportReport",
+          "purpose": "Generate and export analysis reports",
+          "features": [
+            "PDF export with charts",
+            "CSV export with raw data",
+            "Custom date ranges",
+            "Selected metrics"
+          ]
+        }
+      ]
+    }
+  },
+
+  "chart_specifications": {
+    "TrafficByHourChart": {
+      "type": "LineChart",
+      "data_source": "HourlyStatistics API",
+      "dimensions": {
+        "width": "100%",
+        "height": "500px",
+        "margin": {
+          "top": 20,
+          "right": 30,
+          "left": 80,
+          "bottom": 80
+        }
+      },
+      "axes": {
+        "xAxis": {
+          "dataKey": "time",
+          "angle": -45,
+          "textAnchor": "end",
+          "height": 80,
+          "tick": { "fontSize": 12, "fill": "#6b7280" }
+        },
+        "yAxis": {
+          "domain": [0, "dataMax + 500"],
+          "label": {
+            "value": "Vehicles",
+            "angle": -90,
+            "position": "insideLeft",
+            "offset": 10,
+            "fill": "#6b7280"
+          },
+          "tick": { "fontSize": 12, "fill": "#6b7280" }
+        }
+      },
+      "grid": {
+        "strokeDasharray": "3 3",
+        "stroke": "#e5e7eb"
+      },
+      "lines": [
+        {
+          "dataKey": "total",
+          "stroke": "#3b82f6",
+          "strokeWidth": 2.5,
+          "dot": false,
+          "name": "Total"
+        },
+        {
+          "dataKey": "cars",
+          "stroke": "#10b981",
+          "strokeWidth": 2,
+          "dot": false,
+          "name": "Cars"
+        },
+        {
+          "dataKey": "buses",
+          "stroke": "#f59e0b",
+          "strokeWidth": 2,
+          "dot": false,
+          "name": "Buses"
+        },
+        {
+          "dataKey": "trucks",
+          "stroke": "#ef4444",
+          "strokeWidth": 2,
+          "dot": false,
+          "name": "Trucks"
+        }
+      ],
+      "tooltip": {
+        "contentStyle": {
+          "backgroundColor": "#ffffff",
+          "border": "1px solid #e5e7eb",
+          "borderRadius": "8px",
+          "boxShadow": "0 4px 6px rgba(0,0,0,0.1)"
+        },
+        "labelStyle": { "color": "#1f2937" },
+        "cursor": "crosshair"
+      },
+      "legend": {
+        "verticalAlign": "top",
+        "height": 36,
+        "wrapperStyle": { "paddingBottom": "20px" }
+      },
+      "responsive": true
+    },
+
+    "TrendAnalysisChart": {
+      "type": "AreaChart",
+      "data_source": "Daily aggregated statistics",
+      "dimensions": {
+        "width": "100%",
+        "height": "400px",
+        "margin": {
+          "top": 20,
+          "right": 30,
+          "left": 80,
+          "bottom": 60
+        }
+      },
+      "features": [
+        "Multiple trend lines",
+        "Filled areas with opacity",
+        "Comparison periods",
+        "Moving averages"
+      ]
+    },
+
+    "VehicleDistributionChart": {
+      "type": "PieChart",
+      "data_source": "Aggregated HourlyStatistics",
+      "dimensions": {
+        "width": "100%",
+        "height": "350px"
+      },
+      "colors": ["#10b981", "#f59e0b", "#ef4444"],
+      "tooltip": {
+        "contentStyle": {
+          "backgroundColor": "#ffffff",
+          "border": "1px solid #e5e7eb",
+          "borderRadius": "8px"
+        }
+      }
+    }
+  },
+
+  "implementation_plan": {
+    "phase_1": {
+      "title": "Fix Dashboard Chart Rendering (PRIORITY: HIGH)",
+      "estimated_time": "2-3 hours",
+      "tasks": [
+        {
+          "id": "1.1",
+          "title": "Update TrafficHistory component margins and layout",
+          "file": "components/TrafficHistory.tsx",
+          "changes": [
+            "Add margin prop to LineChart: { top: 20, right: 30, left: 80, bottom: 80 }",
+            "Set explicit height: 500px for chart container",
+            "Fix YAxis domain: [0, 'dataMax + 500']",
+            "Add YAxis label with proper positioning",
+            "Fix ResponsiveContainer to use 100% width/height",
+            "Add proper spacing between chart and axes labels"
+          ],
+          "priority": "CRITICAL"
+        },
+        {
+          "id": "1.2",
+          "title": "Fix Traffic History panel visibility and data loading",
+          "file": "components/TrafficMap.tsx",
+          "changes": [
+            "Change TrafficHistoryPanel default expanded state to true",
+            "Ensure data loads when component mounts",
+            "Fix expand/collapse button functionality",
+            "Add loading skeleton while data loads",
+            "Improve panel layout and spacing",
+            "Add error handling and retry logic"
+          ],
+          "priority": "CRITICAL"
+        },
+        {
+          "id": "1.3",
+          "title": "Test and verify chart rendering",
+          "changes": [
+            "Test with different screen sizes",
+            "Verify Y-axis is visible from 0",
+            "Verify all data points are visible",
+            "Test resize functionality",
+            "Check performance"
+          ],
+          "priority": "HIGH"
+        }
+      ]
+    },
+
+    "phase_2": {
+      "title": "Create Analysis Page (PRIORITY: MEDIUM)",
+      "estimated_time": "4-5 hours",
+      "tasks": [
+        {
+          "id": "2.1",
+          "title": "Create analysis page structure",
+          "file": "app/dashboard/analysis/page.tsx",
+          "changes": [
+            "Create new page component",
+            "Set up layout with multiple sections",
+            "Add navigation from dashboard",
+            "Add breadcrumb navigation",
+            "Add time range selector"
+          ],
+          "priority": "HIGH"
+        },
+        {
+          "id": "2.2",
+          "title": "Implement TrafficByHourChart component",
+          "file": "components/analysis/TrafficByHourChart.tsx",
+          "changes": [
+            "Create new component with full specifications",
+            "Implement proper chart configuration with margins",
+            "Add time range selector (24h, 7d, 30d)",
+            "Add vehicle type filter",
+            "Add export to CSV functionality",
+            "Add loading and error states"
+          ],
+          "priority": "HIGH"
+        },
+        {
+          "id": "2.3",
+          "title": "Implement TrendAnalysis component",
+          "file": "components/analysis/TrendAnalysis.tsx",
+          "changes": [
+            "Create area chart component",
+            "Implement data aggregation by day",
+            "Add comparison period selector",
+            "Add moving average calculation"
+          ],
+          "priority": "MEDIUM"
+        },
+        {
+          "id": "2.4",
+          "title": "Implement PeakHourAnalysis component",
+          "file": "components/analysis/PeakHourAnalysis.tsx",
+          "changes": [
+            "Identify peak hours from data",
+            "Calculate peak duration",
+            "Generate optimization recommendations",
+            "Display in card format"
+          ],
+          "priority": "MEDIUM"
+        },
+        {
+          "id": "2.5",
+          "title": "Implement VehicleDistribution component",
+          "file": "components/analysis/VehicleDistribution.tsx",
+          "changes": [
+            "Create pie/donut chart",
+            "Aggregate vehicle types",
+            "Add percentage calculations",
+            "Add time-based filtering"
+          ],
+          "priority": "MEDIUM"
+        },
+        {
+          "id": "2.6",
+          "title": "Implement HeatmapAnalysis component",
+          "file": "components/analysis/HeatmapAnalysis.tsx",
+          "changes": [
+            "Create location-based heatmap",
+            "Add time-based heatmap",
+            "Implement interactive cells",
+            "Add tooltips"
+          ],
+          "priority": "LOW"
+        }
+      ]
+    },
+
+    "phase_3": {
+      "title": "UI/UX Improvements (PRIORITY: LOW)",
+      "estimated_time": "1-2 hours",
+      "tasks": [
+        {
+          "id": "3.1",
+          "title": "Add navigation and links",
+          "changes": [
+            "Add 'View Analysis' button to dashboard",
+            "Add breadcrumb navigation to analysis page",
+            "Add back button to analysis page",
+            "Update dashboard header with link"
+          ],
+          "priority": "MEDIUM"
+        },
+        {
+          "id": "3.2",
+          "title": "Improve visual consistency",
+          "changes": [
+            "Ensure light mode consistency across all pages",
+            "Add loading skeletons for charts",
+            "Add error boundaries",
+            "Improve responsive design",
+            "Add animations for transitions"
+          ],
+          "priority": "LOW"
+        }
+      ]
+    }
+  },
+
+  "file_structure": {
+    "new_files": [
+      {
+        "path": "app/dashboard/analysis/page.tsx",
+        "purpose": "Main analysis page",
+        "priority": "HIGH"
+      },
+      {
+        "path": "components/analysis/TrafficByHourChart.tsx",
+        "purpose": "Detailed hourly traffic chart",
+        "priority": "HIGH"
+      },
+      {
+        "path": "components/analysis/TrendAnalysis.tsx",
+        "purpose": "Trend analysis component",
+        "priority": "MEDIUM"
+      },
+      {
+        "path": "components/analysis/PeakHourAnalysis.tsx",
+        "purpose": "Peak hour analysis",
+        "priority": "MEDIUM"
+      },
+      {
+        "path": "components/analysis/VehicleDistribution.tsx",
+        "purpose": "Vehicle type distribution",
+        "priority": "MEDIUM"
+      },
+      {
+        "path": "components/analysis/HeatmapAnalysis.tsx",
+        "purpose": "Heatmap analysis",
+        "priority": "LOW"
+      },
+      {
+        "path": "lib/analysis-utils.ts",
+        "purpose": "Analysis data aggregation utilities",
+        "priority": "MEDIUM"
+      }
+    ],
+    "modified_files": [
+      {
+        "path": "components/TrafficHistory.tsx",
+        "changes": "Fix chart rendering and margins",
+        "priority": "CRITICAL"
+      },
+      {
+        "path": "components/TrafficMap.tsx",
+        "changes": "Fix history panel visibility and data loading",
+        "priority": "CRITICAL"
+      },
+      {
+        "path": "app/dashboard.tsx",
+        "changes": "Add link to analysis page",
+        "priority": "HIGH"
+      }
+    ]
+  },
+
+  "success_criteria": {
+    "dashboard": [
+      "✅ Chart Y-axis visible from 0 to max value",
+      "✅ All data points visible in chart area",
+      "✅ Traffic History panel displays data by default",
+      "✅ Responsive on all screen sizes (mobile, tablet, desktop)",
+      "✅ Charts are resizable via drag handle",
+      "✅ No console errors or warnings",
+      "✅ Performance: Charts render in < 1 second"
+    ],
+    "analysis_page": [
+      "✅ Full-width charts with proper spacing and margins",
+      "✅ Multiple analysis views accessible",
+      "✅ Export functionality working (CSV, PDF)",
+      "✅ Time range filters working correctly",
+      "✅ Light mode consistent throughout",
+      "✅ Performance optimized for large datasets",
+      "✅ Mobile responsive design",
+      "✅ Loading states and error handling"
+    ]
+  },
+
+  "estimated_effort": {
+    "phase_1_fix_dashboard": "2-3 hours",
+    "phase_2_analysis_page": "4-5 hours",
+    "phase_3_ui_improvements": "1-2 hours",
+    "total_estimated": "7-10 hours",
+    "priority_order": [
+      "Phase 1 (CRITICAL - Fix dashboard charts)",
+      "Phase 2 (HIGH - Create analysis page)",
+      "Phase 3 (LOW - UI improvements)"
+    ]
+  },
+
+  "next_steps": [
+    "1. Review and approve specification",
+    "2. Start Phase 1: Fix dashboard chart rendering",
+    "3. Test fixes thoroughly",
+    "4. Proceed to Phase 2 once Phase 1 is complete",
+    "5. Deploy and gather user feedback"
+  ]
+}

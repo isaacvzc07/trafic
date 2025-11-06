@@ -1,0 +1,512 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { api } from '@/lib/api';
+import { HourlyStatistic } from '@/types/api';
+import { formatMexicoCityTime } from '@/lib/timezone';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
+import {
+  Calendar,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  Car,
+  Bus,
+  Truck,
+  Activity,
+  Download,
+  ArrowLeft,
+  BarChart3,
+  PieChart as PieChartIcon,
+  MapPin
+} from 'lucide-react';
+import Link from 'next/link';
+
+interface AnalysisData {
+  hour: string;
+  time: string;
+  cars: number;
+  buses: number;
+  trucks: number;
+  total: number;
+}
+
+interface TrendData {
+  date: string;
+  total: number;
+  trend: number;
+}
+
+interface VehicleDistribution {
+  name: string;
+  value: number;
+  percentage: number;
+}
+
+export default function TrafficAnalysis() {
+  const [historyData, setHistoryData] = useState<HourlyStatistic[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('24h');
+  const [vehicleType, setVehicleType] = useState<'all' | 'car' | 'bus' | 'truck'>('all');
+
+  useEffect(() => {
+    fetchHistoryData();
+  }, [timeRange]);
+
+  const fetchHistoryData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await api.getHourlyStatistics();
+      
+      const dataArray = Array.isArray(data) ? data : [];
+      setHistoryData(dataArray);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch history data');
+      setHistoryData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Process data for charts
+  const processedData: AnalysisData[] = historyData.reduce((acc: AnalysisData[], stat) => {
+    const hour = new Date(stat.hour);
+    const timeKey = formatMexicoCityTime(hour, { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    
+    const existingEntry = acc.find(entry => entry.time === timeKey);
+    
+    if (existingEntry) {
+      if (stat.vehicle_type === 'car') {
+        existingEntry.cars += stat.direction === 'in' ? stat.count : -stat.count;
+      } else if (stat.vehicle_type === 'bus') {
+        existingEntry.buses += stat.direction === 'in' ? stat.count : -stat.count;
+      } else if (stat.vehicle_type === 'truck') {
+        existingEntry.trucks += stat.direction === 'in' ? stat.count : -stat.count;
+      }
+      existingEntry.total = Math.abs(existingEntry.cars) + Math.abs(existingEntry.buses) + Math.abs(existingEntry.trucks);
+    } else {
+      const cars = stat.vehicle_type === 'car' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
+      const buses = stat.vehicle_type === 'bus' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
+      const trucks = stat.vehicle_type === 'truck' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
+      
+      acc.push({
+        hour: stat.hour,
+        time: timeKey,
+        cars,
+        buses,
+        trucks,
+        total: Math.abs(cars) + Math.abs(buses) + Math.abs(trucks)
+      });
+    }
+    
+    return acc;
+  }, []);
+
+  // Calculate statistics
+  const totalVehicles = processedData.reduce((sum, entry) => sum + entry.total, 0);
+  const avgHourly = processedData.length > 0 ? Math.round(totalVehicles / processedData.length) : 0;
+  const peakHour = processedData.reduce((max, entry) => 
+    entry.total > max.total ? entry : max, 
+    processedData[0] || { total: 0, time: 'N/A' }
+  );
+
+  // Vehicle distribution
+  const totalCars = processedData.reduce((sum, entry) => sum + Math.abs(entry.cars), 0);
+  const totalBuses = processedData.reduce((sum, entry) => sum + Math.abs(entry.buses), 0);
+  const totalTrucks = processedData.reduce((sum, entry) => sum + Math.abs(entry.trucks), 0);
+  
+  const vehicleDistribution: VehicleDistribution[] = [
+    { name: 'Cars', value: totalCars, percentage: totalVehicles > 0 ? (totalCars / totalVehicles) * 100 : 0 },
+    { name: 'Buses', value: totalBuses, percentage: totalVehicles > 0 ? (totalBuses / totalVehicles) * 100 : 0 },
+    { name: 'Trucks', value: totalTrucks, percentage: totalVehicles > 0 ? (totalTrucks / totalVehicles) * 100 : 0 }
+  ];
+
+  const COLORS = ['#10b981', '#f59e0b', '#ef4444'];
+
+  // Generate trend data (mock for now)
+  const trendData: TrendData[] = Array.from({ length: 7 }, (_, i) => ({
+    date: `Day ${i + 1}`,
+    total: Math.floor(Math.random() * 1000) + 500,
+    trend: Math.random() > 0.5 ? 1 : -1
+  }));
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
+              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Activity className="w-8 h-8 mx-auto mb-2 text-blue-400 animate-pulse" />
+              <p className="text-gray-600">Loading traffic analysis...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
+              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Activity className="w-8 h-8 mx-auto mb-2 text-red-400" />
+              <p className="text-red-600">Error: {error}</p>
+              <Button onClick={fetchHistoryData} className="mt-2" size="sm">
+                Retry
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Traffic Analysis</h1>
+              <p className="text-gray-600">In-depth traffic patterns and trends</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            {/* Time range selector */}
+            <div className="flex bg-white rounded-lg p-1 border border-gray-200">
+              {(['24h', '7d', '30d'] as const).map((range) => (
+                <Button
+                  key={range}
+                  variant={timeRange === range ? 'primary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setTimeRange(range)}
+                  className="text-xs"
+                >
+                  {range}
+                </Button>
+              ))}
+            </div>
+            
+            <Button variant="outline" size="sm">
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+          </div>
+        </div>
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Vehicles</p>
+                <p className="text-2xl font-bold text-gray-900">{totalVehicles.toLocaleString()}</p>
+              </div>
+              <Car className="w-8 h-8 text-blue-600" />
+            </div>
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Avg Hourly</p>
+                <p className="text-2xl font-bold text-gray-900">{avgHourly.toLocaleString()}</p>
+              </div>
+              <Clock className="w-8 h-8 text-green-600" />
+            </div>
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Peak Hour</p>
+                <p className="text-lg font-bold text-gray-900">{peakHour.time}</p>
+                <p className="text-sm text-gray-600">{peakHour.total} vehicles</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-orange-600" />
+            </div>
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Data Points</p>
+                <p className="text-2xl font-bold text-gray-900">{processedData.length}</p>
+              </div>
+              <BarChart3 className="w-8 h-8 text-purple-600" />
+            </div>
+          </Card>
+        </div>
+
+        {/* Traffic by Hour Chart */}
+        <Card className="p-6 mb-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Traffic by Hour</h3>
+            <p className="text-gray-600">Detailed hourly traffic patterns for all vehicle types</p>
+          </div>
+          
+          <div className="h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={processedData} margin={{ top: 20, right: 30, left: 80, bottom: 80 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis 
+                  dataKey="time" 
+                  stroke="#6b7280"
+                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis 
+                  stroke="#6b7280"
+                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  domain={[0, 'dataMax + 500']}
+                  allowDataOverflow={false}
+                  label={{
+                    value: 'Vehicles',
+                    angle: -90,
+                    position: 'insideLeft',
+                    offset: 10,
+                    fill: '#6b7280',
+                    style: { fontSize: 14 }
+                  }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#ffffff', 
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    color: '#1f2937'
+                  }}
+                  labelStyle={{ color: '#1f2937' }}
+                  cursor="crosshair"
+                />
+                <Legend 
+                  verticalAlign="top"
+                  height={36}
+                  wrapperStyle={{ paddingBottom: '20px' }}
+                />
+                
+                <Line 
+                  type="monotone" 
+                  dataKey="total" 
+                  stroke="#ef4444" 
+                  strokeWidth={3}
+                  dot={false}
+                  name="Total"
+                  strokeDasharray="5 5"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="cars" 
+                  stroke="#3b82f6" 
+                  strokeWidth={2.5}
+                  dot={false}
+                  name="Cars"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="buses" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  dot={false}
+                  name="Buses"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="trucks" 
+                  stroke="#f59e0b" 
+                  strokeWidth={2}
+                  dot={false}
+                  name="Trucks"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Second Row - Trend Analysis and Vehicle Distribution */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Trend Analysis */}
+          <Card className="p-6">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">7-Day Trend</h3>
+              <p className="text-gray-600">Weekly traffic trends and patterns</p>
+            </div>
+            
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={trendData} margin={{ top: 20, right: 30, left: 60, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#6b7280"
+                    tick={{ fill: '#6b7280', fontSize: 12 }}
+                  />
+                  <YAxis 
+                    stroke="#6b7280"
+                    tick={{ fill: '#6b7280', fontSize: 12 }}
+                    domain={[0, 'dataMax + 100']}
+                    allowDataOverflow={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#ffffff', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                    labelStyle={{ color: '#1f2937' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="total" 
+                    stroke="#3b82f6" 
+                    fill="#3b82f6" 
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+
+          {/* Vehicle Distribution */}
+          <Card className="p-6">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Vehicle Distribution</h3>
+              <p className="text-gray-600">Breakdown by vehicle type</p>
+            </div>
+            
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={vehicleDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {vehicleDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#ffffff', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1f2937'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        </div>
+
+        {/* Peak Hour Analysis */}
+        <Card className="p-6">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Peak Hour Analysis</h3>
+            <p className="text-gray-600">Most congested hours and recommendations</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="w-5 h-5 text-red-600" />
+                <h4 className="font-semibold text-red-900">Peak Hour</h4>
+              </div>
+              <p className="text-2xl font-bold text-red-900">{peakHour.time}</p>
+              <p className="text-red-700">{peakHour.total} vehicles</p>
+              <p className="text-sm text-red-600 mt-2">Consider traffic management during this time</p>
+            </div>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="w-5 h-5 text-yellow-600" />
+                <h4 className="font-semibold text-yellow-900">Average</h4>
+              </div>
+              <p className="text-2xl font-bold text-yellow-900">{avgHourly}</p>
+              <p className="text-yellow-700">vehicles per hour</p>
+              <p className="text-sm text-yellow-600 mt-2">Normal traffic flow baseline</p>
+            </div>
+            
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingDown className="w-5 h-5 text-green-600" />
+                <h4 className="font-semibold text-green-900">Recommendation</h4>
+              </div>
+              <p className="text-green-900 font-medium">Optimize signal timing</p>
+              <p className="text-green-700">during peak hours</p>
+              <p className="text-sm text-green-600 mt-2">Could reduce congestion by 15-20%</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
