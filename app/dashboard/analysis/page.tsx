@@ -373,7 +373,6 @@ export default function TrafficAnalysis() {
                     color: '#1f2937'
                   }}
                   labelStyle={{ color: '#1f2937' }}
-                  cursor="pointer"
                 />
                 <Legend 
                   verticalAlign="top"
