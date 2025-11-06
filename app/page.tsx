@@ -90,8 +90,20 @@ export default function HomePage() {
       </nav>
 
       {/* Sección Hero */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="relative py-20 px-6">
+        {/* Low opacity backdrop with gradient fade */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `url('/images/cerro.webp')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+          }}
+        />
+        
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium mb-6">
             <Activity className="w-4 h-4" />
             Inteligencia de Tráfico en Tiempo Real
