@@ -9,6 +9,7 @@ import { DataTable } from '@/components/DataTable';
 import { TrafficHeatmap } from '@/components/TrafficHeatmap';
 import TrafficChartVisx from '@/components/TrafficChartVisx';
 import TrafficMap from '@/components/TrafficMap';
+import { Button } from '@/components/ui/Button';
 import { Activity, TrendingUp, Camera, AlertCircle, Clock, BarChart3, ArrowLeft, Shield, Settings, Bell, User, Car, Zap } from 'lucide-react';
 import { LiveCount, HourlyStatistic } from '@/types/api';
 import { formatMexicoCityTime, MEXICO_CITY_TIMEZONE } from '@/lib/timezone';

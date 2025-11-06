@@ -299,7 +299,7 @@ export default function TrafficHistoryExpanded({ cameraId, className }: TrafficH
                   color: '#1f2937'
                 }}
                 labelStyle={{ color: '#1f2937' }}
-                cursor={{ crosshair: true }}
+                cursor="pointer"
               />
               <Legend 
                 verticalAlign="top"

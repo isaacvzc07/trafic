@@ -373,7 +373,7 @@ export default function TrafficAnalysis() {
                     color: '#1f2937'
                   }}
                   labelStyle={{ color: '#1f2937' }}
-                  cursor={{ crosshair: true }}
+                  cursor="pointer"
                 />
                 <Legend 
                   verticalAlign="top"
@@ -480,7 +480,10 @@ export default function TrafficAnalysis() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percentage }: VehicleDistribution) => `${name}: ${typeof percentage === 'number' ? percentage.toFixed(1) : '0'}%`}
+                    label={(props: any) => {
+                      const { name, percentage } = props;
+                      return `${name}: ${typeof percentage === 'number' ? percentage.toFixed(1) : '0'}%`;
+                    }}
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
