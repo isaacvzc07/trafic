@@ -15,6 +15,7 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
+  Legend,
   BarChart,
   Bar
 } from 'recharts';
