@@ -16,12 +16,12 @@ interface CameraMarkerProps {
   onClick: () => void;
 }
 
-// Camera coordinates (approximate Mexico City coordinates for demonstration)
+// Camera coordinates positioned at the intersection of Av. Homero and Av. Industrias, Mexico City
 const CAMERA_COORDINATES: Record<string, [number, number]> = {
-  'homero_oe': [-99.1332, 19.4326], // Av. Homero Oeste-Este
-  'homero_eo': [-99.1312, 19.4346], // Av. Homero Este-Oeste
-  'industrias_ns': [-99.1352, 19.4306], // Av. Industrias Norte-Sur
-  'industrias_sn': [-99.1372, 19.4286], // Av. Industrias Sur-Norte
+  'homero_oe': [-99.1332, 19.4326], // Av. Homero Oeste-Este (at intersection)
+  'homero_eo': [-99.1330, 19.4328], // Av. Homero Este-Oeste (at intersection, slightly offset)
+  'industrias_ns': [-99.1334, 19.4324], // Av. Industrias Norte-Sur (at intersection, slightly offset)
+  'industrias_sn': [-99.1328, 19.4330], // Av. Industrias Sur-Norte (at intersection, slightly offset)
 };
 
 function CameraMarker({ camera, onClick }: CameraMarkerProps) {
@@ -133,11 +133,11 @@ export default function TrafficMap({ cameras, onCameraClick }: TrafficMapProps) 
 
   if (cameras.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4">Traffic Map</h3>
-        <div className="flex items-center justify-center h-64 text-gray-500">
+      <div className="bg-slate-900 border border-slate-700 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Traffic Map</h3>
+        <div className="flex items-center justify-center h-64 text-slate-500">
           <div className="text-center">
-            <Camera className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <Camera className="w-12 h-12 mx-auto mb-2 text-slate-400" />
             <p>No camera data available</p>
           </div>
         </div>
@@ -146,31 +146,31 @@ export default function TrafficMap({ cameras, onCameraClick }: TrafficMapProps) 
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-slate-900 border border-slate-700 rounded-lg p-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Traffic Map</h3>
-        <div className="flex items-center gap-4 text-sm">
+        <h3 className="text-lg font-semibold text-white">Traffic Map</h3>
+        <div className="flex items-center gap-4 text-sm text-slate-400">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-600"></div>
             <span>Low Traffic</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-600"></div>
             <span>Medium Traffic</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-red-600"></div>
             <span>High Traffic</span>
           </div>
         </div>
       </div>
       
-      <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
+      <div className="h-96 rounded-lg overflow-hidden border border-slate-600">
         <Map
           {...viewState}
           onMove={evt => setViewState(evt.viewState)}
           style={{ width: '100%', height: '100%' }}
-          mapStyle="mapbox://styles/mapbox/streets-v12"
+          mapStyle="mapbox://styles/mapbox/dark-v11"
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
         >
           {/* Navigation controls */}
@@ -196,37 +196,37 @@ export default function TrafficMap({ cameras, onCameraClick }: TrafficMapProps) 
               onClose={() => setSelectedCamera(null)}
               className="rounded-lg"
             >
-              <div className="p-3 min-w-48">
-                <h4 className="font-semibold text-sm mb-2">{selectedCamera.camera_name}</h4>
+              <div className="p-3 min-w-48 bg-slate-900 text-slate-300">
+                <h4 className="font-semibold text-sm mb-2 text-white">{selectedCamera.camera_name}</h4>
                 <div className="space-y-1 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total In:</span>
-                    <span className="font-medium text-green-600">{selectedCamera.total_in}</span>
+                    <span className="text-slate-400">Total In:</span>
+                    <span className="font-medium text-green-400">{selectedCamera.total_in}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total Out:</span>
-                    <span className="font-medium text-red-600">{selectedCamera.total_out}</span>
+                    <span className="text-slate-400">Total Out:</span>
+                    <span className="font-medium text-red-400">{selectedCamera.total_out}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Cars:</span>
+                    <span className="text-slate-400">Cars:</span>
                     <span className="font-medium">
                       {selectedCamera.counts.car_in} / {selectedCamera.counts.car_out}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Buses:</span>
+                    <span className="text-slate-400">Buses:</span>
                     <span className="font-medium">
                       {selectedCamera.counts.bus_in} / {selectedCamera.counts.bus_out}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Trucks:</span>
+                    <span className="text-slate-400">Trucks:</span>
                     <span className="font-medium">
                       {selectedCamera.counts.truck_in} / {selectedCamera.counts.truck_out}
                     </span>
                   </div>
                 </div>
-                <div className="mt-2 pt-2 border-t border-gray-200 text-xs text-gray-500">
+                <div className="mt-2 pt-2 border-t border-slate-700 text-xs text-slate-500">
                   Last updated: {new Date(selectedCamera.timestamp).toLocaleTimeString()}
                 </div>
               </div>
@@ -235,9 +235,9 @@ export default function TrafficMap({ cameras, onCameraClick }: TrafficMapProps) 
         </Map>
       </div>
       
-      <div className="mt-4 text-xs text-gray-500 text-center">
-        <Activity className="w-3 h-3 inline mr-1" />
-        Real-time traffic visualization • Click cameras for details
+      <div className="mt-4 text-xs text-slate-500 text-center">
+        <Activity className="w-3 h-3 inline mr-1 text-blue-400" />
+        Real-time traffic visualization • Click cameras for details • Av. Homero & Av. Industrias Intersection
       </div>
     </div>
   );
