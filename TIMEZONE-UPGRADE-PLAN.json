@@ -1,0 +1,208 @@
+{
+  "upgrade_version": "2.0.0",
+  "title": "Mexico City Timezone Complete Upgrade",
+  "timestamp": "2025-11-06T12:01:00-06:00",
+  "critical_issue": "Charts displaying UTC times instead of Mexico City times (UTC-6)",
+  "current_time_mexico": "12:01 PM (17:01 UTC)",
+  "problem_analysis": {
+    "root_cause": "Data stored in UTC but displayed without proper timezone conversion in chart X-axis labels",
+    "affected_components": [
+      "app/dashboard/analysis/page.tsx - AreaChart X-axis showing UTC times",
+      "app/dashboard/analysis/page.tsx - BarChart X-axis showing UTC times",
+      "processAnalysisData() - Creates time field but uses UTC hour as key",
+      "analyzeTrafficPatterns() - Uses UTC hour directly without conversion"
+    ],
+    "symptom": "Charts show 18:00, 21:00, 00:00, 03:00, 06:00, 09:00, 12:00, 15:00 (UTC) instead of 12:00, 15:00, 18:00, 21:00, 00:00, 03:00, 06:00, 09:00 (Mexico City)",
+    "offset_difference": "6 hours behind UTC"
+  },
+  "fixes_required": [
+    {
+      "id": "FIX-1",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "processAnalysisData()",
+      "issue": "Using UTC hour as map key, causing timezone mismatch",
+      "current_code": {
+        "line": 186,
+        "snippet": "const hour = record.hour; // UTC timestamp",
+        "problem": "hour is UTC, but mexicoCityTime is created from it without proper conversion"
+      },
+      "fix": "Convert UTC hour to Mexico City hour for grouping and display",
+      "implementation": {
+        "step_1": "Convert UTC hour string to Date object",
+        "step_2": "Use toMexicoCityTime() to get Mexico City equivalent",
+        "step_3": "Create Mexico City hour key for grouping",
+        "step_4": "Use Mexico City hour for all calculations",
+        "code_change": {
+          "before": "const hour = record.hour;\nconst mexicoCityTime = new Date(hour);\nconst hourOfDay = mexicoCityTime.getHours();",
+          "after": "const utcHour = record.hour;\nconst mexicoCityTime = toMexicoCityTime(utcHour);\nconst mexicoCityHourKey = mexicoCityTime.toISOString().slice(0, 13) + ':00:00Z'; // Mexico City hour\nconst hourOfDay = mexicoCityTime.getHours();"
+        }
+      },
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "FIX-2",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "analyzeTrafficPatterns()",
+      "issue": "Using UTC hour directly without timezone conversion",
+      "current_code": {
+        "line": 316,
+        "snippet": "const hour = record.hour; // UTC",
+        "problem": "Pattern analysis groups by UTC hour, not Mexico City hour"
+      },
+      "fix": "Convert to Mexico City hour for pattern grouping",
+      "implementation": {
+        "code_change": {
+          "before": "const hour = record.hour;",
+          "after": "const utcHour = record.hour;\nconst mexicoCityHour = toMexicoCityTime(utcHour);\nconst hour = mexicoCityHour.toISOString().slice(0, 13) + ':00:00Z';"
+        }
+      },
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "FIX-3",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "generateCameraInsights()",
+      "issue": "Peak hour formatted as UTC instead of Mexico City time",
+      "current_code": {
+        "line": 298,
+        "snippet": "peak_hour: formatMexicoCityTime(new Date(peakHour), { hour: '2-digit', minute: '2-digit' })",
+        "problem": "peakHour is UTC timestamp, needs proper conversion before formatting"
+      },
+      "fix": "Ensure peakHour is converted to Mexico City time before formatting",
+      "implementation": {
+        "code_change": {
+          "before": "peak_hour: formatMexicoCityTime(new Date(peakHour), { hour: '2-digit', minute: '2-digit' })",
+          "after": "peak_hour: formatMexicoCityTime(toMexicoCityTime(peakHour), { hour: '2-digit', minute: '2-digit' })"
+        }
+      },
+      "priority": "HIGH"
+    },
+    {
+      "id": "FIX-4",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "getFilteredData()",
+      "issue": "Time range filtering using UTC cutoff instead of Mexico City cutoff",
+      "current_code": {
+        "line": 376,
+        "snippet": "const now = new Date();\nconst cutoffTime = new Date(now.getTime() - cutoffHours * 60 * 60 * 1000);",
+        "problem": "Using UTC now instead of Mexico City now for cutoff calculation"
+      },
+      "fix": "Use Mexico City current time for cutoff calculation",
+      "implementation": {
+        "code_change": {
+          "before": "const now = new Date();\nconst cutoffHours = hoursMap[timeRange];\nconst cutoffTime = new Date(now.getTime() - cutoffHours * 60 * 60 * 1000);",
+          "after": "const now = getMexicoCityTime(); // Use Mexico City time\nconst cutoffHours = hoursMap[timeRange];\nconst cutoffTime = new Date(now.getTime() - cutoffHours * 60 * 60 * 1000);"
+        }
+      },
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "FIX-5",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "filteredPatterns calculation",
+      "issue": "Pattern filtering using UTC cutoff instead of Mexico City cutoff",
+      "current_code": {
+        "line": 385,
+        "snippet": "const cutoffTime = new Date(Date.now() - (hoursMap[timeRange] * 60 * 60 * 1000));",
+        "problem": "Using UTC Date.now() instead of Mexico City time"
+      },
+      "fix": "Use Mexico City current time for pattern filtering",
+      "implementation": {
+        "code_change": {
+          "before": "const cutoffTime = new Date(Date.now() - (hoursMap[timeRange] * 60 * 60 * 1000));",
+          "after": "const now = getMexicoCityTime();\nconst cutoffTime = new Date(now.getTime() - (hoursMap[timeRange] * 60 * 60 * 1000));"
+        }
+      },
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "FIX-6",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "X-axis tickFormatter for AreaChart",
+      "issue": "X-axis labels show UTC times due to incorrect interval calculation",
+      "current_code": {
+        "line": 595,
+        "snippet": "tickFormatter={(value, index) => {\n  const dataLength = filteredData.length;\n  const step = dataLength > 12 ? 3 : dataLength > 6 ? 2 : 1;\n  return index % step === 0 ? value : '';\n}",
+        "problem": "value is already formatted as Mexico City time in 'time' field, but interval logic may skip labels"
+      },
+      "fix": "Improve interval logic to show at least 4-6 labels evenly spaced",
+      "implementation": {
+        "code_change": {
+          "before": "interval=\"preserveStartEnd\"\nticketFormatter={(value, index) => {\n  const dataLength = filteredData.length;\n  const step = dataLength > 12 ? 3 : dataLength > 6 ? 2 : 1;\n  return index % step === 0 ? value : '';\n}",
+          "after": "interval={Math.floor(filteredData.length / 6) || 0}\nticketFormatter={(value) => value}"
+        }
+      },
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "FIX-7",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "X-axis tickFormatter for BarChart",
+      "issue": "X-axis labels show UTC times in traffic patterns chart",
+      "current_code": {
+        "line": 793,
+        "snippet": "tickFormatter={(hour, index) => {\n  const dataLength = filteredPatterns.length;\n  const step = dataLength > 12 ? 3 : dataLength > 6 ? 2 : 1;\n  const formattedTime = formatMexicoCityTime(new Date(hour), { hour: '2-digit', minute: '2-digit' });\n  return index % step === 0 ? formattedTime : '';\n}",
+        "problem": "hour is UTC, needs conversion before formatting"
+      },
+      "fix": "Convert UTC hour to Mexico City time before formatting",
+      "implementation": {
+        "code_change": {
+          "before": "const formattedTime = formatMexicoCityTime(new Date(hour), { hour: '2-digit', minute: '2-digit' });",
+          "after": "const formattedTime = formatMexicoCityTime(toMexicoCityTime(hour), { hour: '2-digit', minute: '2-digit' });"
+        }
+      },
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "FIX-8",
+      "component": "lib/timezone.ts",
+      "function": "Add new helper function",
+      "issue": "No direct way to convert UTC hour to Mexico City hour key",
+      "fix": "Add helper function to create Mexico City hour keys for grouping",
+      "implementation": {
+        "new_function": "getMexicoCityHourKey(utcHourString: string): string",
+        "purpose": "Convert UTC hour timestamp to Mexico City hour key for consistent grouping",
+        "code": "export function getMexicoCityHourKey(utcHourString: string): string {\n  const mexicoCityTime = toMexicoCityTime(utcHourString);\n  return mexicoCityTime.toISOString().slice(0, 13) + ':00:00Z';\n}"
+      },
+      "priority": "HIGH"
+    }
+  ],
+  "implementation_order": [
+    "FIX-8: Add helper function to timezone.ts",
+    "FIX-4: Fix getFilteredData() to use Mexico City time",
+    "FIX-5: Fix filteredPatterns to use Mexico City time",
+    "FIX-1: Fix processAnalysisData() to use Mexico City hour keys",
+    "FIX-2: Fix analyzeTrafficPatterns() to use Mexico City hour keys",
+    "FIX-3: Fix generateCameraInsights() peak hour formatting",
+    "FIX-6: Fix AreaChart X-axis interval",
+    "FIX-7: Fix BarChart X-axis formatting"
+  ],
+  "expected_results": {
+    "before": {
+      "current_time": "12:01 PM Mexico City (17:01 UTC)",
+      "chart_shows": "18:00, 21:00, 00:00, 03:00, 06:00, 09:00, 12:00, 15:00 (UTC times)",
+      "issue": "Timeline shows old/future hours"
+    },
+    "after": {
+      "current_time": "12:01 PM Mexico City",
+      "chart_shows": "12:00 PM, 01:00 PM, 02:00 PM, 03:00 PM, 04:00 PM, 05:00 PM, 06:00 PM (Mexico City times)",
+      "benefit": "Timeline shows correct current and recent hours"
+    }
+  },
+  "testing_checklist": [
+    "✓ Verify X-axis shows Mexico City times (not UTC)",
+    "✓ Verify current hour (12:00 PM) is visible on chart",
+    "✓ Verify 24h range shows last 24 hours from now (12:01 PM yesterday to 12:01 PM today)",
+    "✓ Verify 6h range shows last 6 hours (6:01 AM to 12:01 PM)",
+    "✓ Verify camera peak hours show Mexico City times",
+    "✓ Verify traffic patterns show correct entry/exit times",
+    "✓ Verify time range selector (6H, 12H, 24H, 48H) works correctly",
+    "✓ Verify no timezone offset errors in console"
+  ],
+  "files_to_modify": [
+    "lib/timezone.ts - Add getMexicoCityHourKey() function",
+    "app/dashboard/analysis/page.tsx - Apply all 7 fixes"
+  ],
+  "estimated_effort": "30 minutes",
+  "risk_level": "LOW - Only affects display logic, not data storage"
+}

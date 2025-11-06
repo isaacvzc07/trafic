@@ -4,12 +4,8 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { api } from '@/lib/api';
-import { HourlyStatistic } from '@/types/api';
-import { formatMexicoCityTime, getMexicoCityTime, getMexicoCityHourTimestamp } from '@/lib/timezone';
+import { formatMexicoCityTime, getMexicoCityTime, toMexicoCityTime, getMexicoCityHourKey } from '@/lib/timezone';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -20,25 +16,19 @@ import {
   Area,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  BarChart,
+  Bar
 } from 'recharts';
-import { 
-  ArrowLeft, 
-  Download, 
-  Calendar, 
-  TrendingUp, 
-  TrendingDown, 
-  Car, 
-  Bus, 
-  Truck,
+import {
+  ArrowLeft,
+  Download,
+  TrendingUp,
   Activity,
-  Database,
-  Zap,
-  Camera,
-  BarChart3,
-  PieChart as PieChartIcon,
-  MapPin,
-  Clock
+  AlertTriangle,
+  Brain,
+  Target,
+  Globe
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -49,241 +39,444 @@ interface AnalysisData {
   buses: number;
   trucks: number;
   total: number;
+  hour_of_day: number;
+  day_of_week: string;
+  is_weekend: boolean;
+  peak_hour: boolean;
+  traffic_level: 'BAJO' | 'MEDIO' | 'ALTO' | 'CRÍTICO';
 }
 
-interface ExtendedHourlyStatistic extends HourlyStatistic {
-  source: 'api' | 'supabase' | 'live';
+interface CameraInsights {
+  camera_id: string;
+  total_vehicles: number;
+  peak_hour: string;
+  peak_count: number;
+  avg_hourly: number;
+  efficiency: number;
+  congestion_level: 'FLUIDO' | 'MODERADO' | 'CONGESTIONADO' | 'CRÍTICO';
+  dominant_direction: 'in' | 'out';
+  flow_ratio: number;
 }
 
-interface TrendData {
-  date: string;
-  total: number;
-  trend: number;
+interface TrafficPattern {
+  hour: string;
+  inbound: number;
+  outbound: number;
+  net_flow: number;
+  flow_pattern: 'SALIDA' | 'ENTRADA' | 'EQUILIBRADO';
+  congestion_index: number;
 }
 
-interface VehicleDistribution {
-  name: string;
-  value: number;
-  percentage: number;
-  [key: string]: any; // Add index signature for ChartDataInput compatibility
-}
+const COLORS = {
+  cars: '#3b82f6',
+  buses: '#10b981', 
+  trucks: '#f59e0b',
+  total: '#ef4444',
+  inbound: '#8b5cf6',
+  outbound: '#ec4899',
+  net: '#06b6d4'
+};
 
-export default function TrafficAnalysis() {
-  const [historyData, setHistoryData] = useState<ExtendedHourlyStatistic[]>([]);
-  const [summaryStats, setSummaryStats] = useState<any>(null);
+const TRAFFIC_LEVELS = {
+  BAJO: { color: '#10b981', threshold: 500 },
+  MEDIO: { color: '#f59e0b', threshold: 1000 },
+  ALTO: { color: '#ef4444', threshold: 1500 },
+  CRÍTICO: { color: '#991b1b', threshold: 9999 }
+};
+
+export default function AnalysisPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('24h');
-  const [vehicleType, setVehicleType] = useState<'all' | 'car' | 'bus' | 'truck'>('all');
+  const [analysisData, setAnalysisData] = useState<AnalysisData[]>([]);
+  const [cameraInsights, setCameraInsights] = useState<CameraInsights[]>([]);
+  const [trafficPatterns, setTrafficPatterns] = useState<TrafficPattern[]>([]);
+  const [timeRange, setTimeRange] = useState<'6h' | '12h' | '24h' | '48h'>('24h');
 
-  useEffect(() => {
-    fetchHistoryData();
-  }, [timeRange]);
-
-  const fetchHistoryData = async () => {
+  // Fetch real data from API
+  const fetchAnalysisData = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Fetch data from multiple sources
-      const [apiData, supabaseData, liveData, summaryData] = await Promise.allSettled([
-        api.getHourlyStatistics(),
-        fetch('/api/history/hourly').then(res => res.json()).catch(() => ({ data: [] })),
-        api.getLiveCounts(60), // Last hour of live data
-        api.getSummary() // Summary statistics
+      console.log('🚀 Obteniendo datos reales de API para análisis gubernamental...');
+      
+      const [hourlyResponse, liveResponse, summaryResponse] = await Promise.allSettled([
+        fetch('https://api.trafic.mx/api/v1/statistics/hourly'),
+        fetch('https://api.trafic.mx/api/v1/live/counts'),
+        fetch('https://api.trafic.mx/api/v1/statistics/summary')
       ]);
       
-      console.log('Datos de API por hora:', apiData.status === 'fulfilled' ? apiData.value.length : 'falló');
-      console.log('Datos de Supabase:', supabaseData.status === 'fulfilled' ? supabaseData.value?.data?.length || 0 : 'falló');
-      console.log('Datos en vivo:', liveData.status === 'fulfilled' ? liveData.value.length : 'falló');
-      console.log('Datos de resumen:', summaryData.status === 'fulfilled' ? 'éxito' : 'falló');
+      let hourlyData: Record<string, unknown>[] = [];
+      let liveData: Record<string, unknown>[] = [];
+      let summaryData: Record<string, unknown> = {};
       
-      // Process API data
-      let apiArray: ExtendedHourlyStatistic[] = [];
-      if (apiData.status === 'fulfilled') {
-        apiArray = Array.isArray(apiData.value) ? apiData.value.map((item: HourlyStatistic) => ({...item, source: 'api'})) : [];
+      if (hourlyResponse.status === 'fulfilled') {
+        const result = await hourlyResponse.value.json();
+        console.log('🔍 Hourly API Response:', result);
+        hourlyData = Array.isArray(result) ? result : (result.data || []);
+        console.log(`✅ Datos horarios: ${hourlyData.length} registros`);
+      } else {
+        console.error('❌ Error en datos horarios:', hourlyResponse.reason);
       }
       
-      // Process Supabase data
-      let supabaseArray: ExtendedHourlyStatistic[] = [];
-      if (supabaseData.status === 'fulfilled' && supabaseData.value?.data) {
-        // Flatten Supabase grouped data
-        supabaseArray = supabaseData.value.data.flatMap((hourGroup: any) => 
-          hourGroup.data.map((record: HourlyStatistic) => ({
-            ...record,
-            hour: hourGroup.hour,
-            source: 'supabase'
-          }))
-        );
+      if (liveResponse.status === 'fulfilled') {
+        const result = await liveResponse.value.json();
+        console.log('🔍 Live API Response:', result);
+        liveData = Array.isArray(result) ? result : [];
+        console.log(`✅ Datos en vivo: ${liveData.length} registros`);
+      } else {
+        console.error('❌ Error en datos en vivo:', liveResponse.reason);
       }
       
-      // Process live data into hourly format
-      let liveArray: ExtendedHourlyStatistic[] = [];
-      if (liveData.status === 'fulfilled' && Array.isArray(liveData.value)) {
-        // Convert live counts to hourly format using Mexico City time
-        const currentHour = getMexicoCityHourTimestamp();
-        
-        liveArray = liveData.value.map((camera: any) => ({
-          hour: currentHour,
-          camera_id: camera.camera_id,
-          vehicle_type: 'car', // Live data doesn't specify vehicle type, assume car
-          direction: 'in',
-          count: camera.total_in || 0,
-          avg_confidence: 0.8, // Default confidence
-          source: 'live'
-        } as ExtendedHourlyStatistic)).concat(liveData.value.map((camera: any) => ({
-          hour: currentHour,
-          camera_id: camera.camera_id,
-          vehicle_type: 'car',
-          direction: 'out',
-          count: camera.total_out || 0,
-          avg_confidence: 0.8,
-          source: 'live'
-        } as ExtendedHourlyStatistic)));
+      if (summaryResponse.status === 'fulfilled') {
+        const result = await summaryResponse.value.json();
+        console.log('🔍 Summary API Response:', result);
+        summaryData = result;
+        console.log('✅ Datos de resumen obtenidos');
+      } else {
+        console.error('❌ Error en resumen:', summaryResponse.reason);
       }
       
-      // Combine all datasets
-      const combinedData = [...apiArray, ...supabaseArray, ...liveArray];
-      console.log('Longitud total de datos combinados:', combinedData.length);
+      // Process data
+      const processedAnalysisData = processAnalysisData(hourlyData);
+      const processedCameraInsights = generateCameraInsights(hourlyData);
+      const processedTrafficPatterns = analyzeTrafficPatterns(hourlyData);
       
-      setHistoryData(combinedData);
+      console.log('🔍 FINAL PROCESSED DATA:');
+      console.log('Analysis data length:', processedAnalysisData.length);
+      console.log('Camera insights length:', processedCameraInsights.length);
+      console.log('Traffic patterns length:', processedTrafficPatterns.length);
       
-      // Store summary data if available
-      if (summaryData.status === 'fulfilled') {
-        setSummaryStats(summaryData.value);
-      }
+      setAnalysisData(processedAnalysisData);
+      setCameraInsights(processedCameraInsights);
+      setTrafficPatterns(processedTrafficPatterns);
+      
     } catch (err) {
-      console.error('Error al obtener datos históricos:', err);
-      setError(err instanceof Error ? err.message : 'Error al obtener datos históricos');
-      setHistoryData([]);
+      console.error('❌ Error general al obtener datos de análisis:', err);
+      setError(err instanceof Error ? err.message : 'Error al obtener datos de análisis');
     } finally {
       setLoading(false);
     }
   };
 
-  // Process data for charts - improved to handle real API data
-  const processedData: AnalysisData[] = historyData.reduce((acc: AnalysisData[], stat) => {
+  // Fetch snapshots data
+  const [snapshots, setSnapshots] = useState<any[]>([]);
+  const [loadingSnapshots, setLoadingSnapshots] = useState(false);
+
+  const fetchSnapshots = async () => {
     try {
-      const hour = new Date(stat.hour);
-      const timeKey = formatMexicoCityTime(hour, { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
+      setLoadingSnapshots(true);
+      const response = await fetch('/api/snapshots?limit=20');
+      const data = await response.json();
       
-      const existingEntry = acc.find(entry => entry.time === timeKey);
-      
-      if (existingEntry) {
-        if (stat.vehicle_type === 'car') {
-          existingEntry.cars += stat.direction === 'in' ? stat.count : -stat.count;
-        } else if (stat.vehicle_type === 'bus') {
-          existingEntry.buses += stat.direction === 'in' ? stat.count : -stat.count;
-        } else if (stat.vehicle_type === 'truck') {
-          existingEntry.trucks += stat.direction === 'in' ? stat.count : -stat.count;
-        }
-        existingEntry.total = Math.abs(existingEntry.cars) + Math.abs(existingEntry.buses) + Math.abs(existingEntry.trucks);
+      if (data.success) {
+        setSnapshots(data.data || []);
+        console.log('✅ Snapshots loaded:', data.count);
       } else {
-        const cars = stat.vehicle_type === 'car' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-        const buses = stat.vehicle_type === 'bus' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-        const trucks = stat.vehicle_type === 'truck' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-        
-        acc.push({
-          hour: stat.hour,
-          time: timeKey,
-          cars,
-          buses,
-          trucks,
-          total: Math.abs(cars) + Math.abs(buses) + Math.abs(trucks)
-        });
+        console.error('❌ Error loading snapshots:', data.error);
       }
-    } catch (err) {
-      console.warn('Error processing stat:', stat, err);
-    }
-    
-    return acc;
-  }, []);
-
-  console.log('Processed data:', processedData);
-  console.log('Processed data length:', processedData.length);
-
-  // Calculate comprehensive statistics
-  const totalVehicles = processedData.reduce((sum, entry) => sum + entry.total, 0);
-  const avgHourly = processedData.length > 0 ? Math.round(totalVehicles / processedData.length) : 0;
-  const peakHour = processedData.reduce((max, entry) => 
-    entry.total > max.total ? entry : max, 
-    processedData[0] || { total: 0, time: 'N/A' }
-  );
-
-  // Vehicle distribution
-  const totalCars = processedData.reduce((sum, entry) => sum + Math.abs(entry.cars), 0);
-  const totalBuses = processedData.reduce((sum, entry) => sum + Math.abs(entry.buses), 0);
-  const totalTrucks = processedData.reduce((sum, entry) => sum + Math.abs(entry.trucks), 0);
-  
-  const vehicleDistribution: VehicleDistribution[] = [
-    { name: 'Cars', value: totalCars, percentage: totalVehicles > 0 ? (totalCars / totalVehicles) * 100 : 0 },
-    { name: 'Buses', value: totalBuses, percentage: totalVehicles > 0 ? (totalBuses / totalVehicles) * 100 : 0 },
-    { name: 'Trucks', value: totalTrucks, percentage: totalVehicles > 0 ? (totalTrucks / totalVehicles) * 100 : 0 }
-  ];
-
-  const COLORS = ['#10b981', '#f59e0b', '#ef4444'];
-
-  // Generate trend data from real data
-  const trendData: TrendData[] = processedData.reduce((acc: TrendData[], entry, index) => {
-    if (index % Math.ceil(processedData.length / 7) === 0) { // Sample 7 data points
-      acc.push({
-        date: entry.time,
-        total: entry.total,
-        trend: acc.length > 0 ? (entry.total > acc[acc.length - 1].total ? 1 : -1) : 1
-      });
-    }
-    return acc;
-  }, []);
-
-  // Data source statistics
-  const dataSourceStats = {
-    apiRecords: historyData.filter(d => d.source === 'api').length,
-    supabaseRecords: historyData.filter(d => d.source === 'supabase').length,
-    liveRecords: historyData.filter(d => d.source === 'live').length,
-    totalRecords: historyData.length,
-    uniqueCameras: [...new Set(historyData.map(d => d.camera_id))].length,
-    timeRange: {
-      start: processedData.length > 0 ? processedData[0].hour : 'N/A',
-      end: processedData.length > 0 ? processedData[processedData.length - 1].hour : 'N/A'
+    } catch (error) {
+      console.error('❌ Error fetching snapshots:', error);
+    } finally {
+      setLoadingSnapshots(false);
     }
   };
 
-  // If no real data, show empty state
-  if (processedData.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver al Dashboard
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
-              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Activity className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-              <p className="text-gray-600">No hay datos de tráfico disponibles</p>
-              <p className="text-sm text-gray-500 mt-2">Por favor regrese más tarde cuando se hayan recolectado datos</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Load snapshots on component mount
+  useEffect(() => {
+    fetchSnapshots();
+  }, []);
+
+  // Process raw data into analysis-ready format
+  const processAnalysisData = (rawData: Record<string, unknown>[]): AnalysisData[] => {
+    const hourlyMap = new Map<string, AnalysisData>();
+    
+    console.log('🔍 TIMEZONE DEBUG: processAnalysisData');
+    console.log('Raw data sample:', rawData.slice(0, 2));
+    console.log('Current Mexico City Time:', getMexicoCityTime());
+    
+    rawData.forEach(record => {
+      const utcHour = record.hour as string;
+      const mexicoCityTime = toMexicoCityTime(utcHour);
+      const mexicoCityHourKey = getMexicoCityHourKey(utcHour);
+      const hourOfDay = mexicoCityTime.getHours();
+      const dayOfWeek = formatMexicoCityTime(mexicoCityTime, { weekday: 'long' });
+      const isWeekend = [0, 6].includes(mexicoCityTime.getDay());
+      
+      // Debug first few records
+      if (hourlyMap.size < 3) {
+        console.log(`Record ${hourlyMap.size + 1}:`, {
+          utcHour,
+          mexicoCityTime: mexicoCityTime.toISOString(),
+          mexicoCityHourKey,
+          formattedTime: formatMexicoCityTime(mexicoCityTime, { hour: '2-digit', minute: '2-digit' })
+        });
+      }
+      
+      if (!hourlyMap.has(mexicoCityHourKey)) {
+        hourlyMap.set(mexicoCityHourKey, {
+          hour: mexicoCityHourKey,
+          time: formatMexicoCityTime(mexicoCityTime, { hour: '2-digit', minute: '2-digit' }),
+          cars: 0,
+          buses: 0,
+          trucks: 0,
+          total: 0,
+          hour_of_day: hourOfDay,
+          day_of_week: dayOfWeek.toUpperCase(),
+          is_weekend: isWeekend,
+          peak_hour: false,
+          traffic_level: 'BAJO'
+        });
+      }
+      
+      const data = hourlyMap.get(mexicoCityHourKey)!;
+      const count = Number(record.count) || 0;
+      const vehicleType = record.vehicle_type as string;
+      
+      if (vehicleType === 'car') data.cars += count;
+      else if (vehicleType === 'bus') data.buses += count;
+      else if (vehicleType === 'truck') data.trucks += count;
+      
+      data.total = data.cars + data.buses + data.trucks;
+      
+      // Determine traffic level
+      if (data.total >= TRAFFIC_LEVELS.CRÍTICO.threshold) data.traffic_level = 'CRÍTICO';
+      else if (data.total >= TRAFFIC_LEVELS.ALTO.threshold) data.traffic_level = 'ALTO';
+      else if (data.total >= TRAFFIC_LEVELS.MEDIO.threshold) data.traffic_level = 'MEDIO';
+      else data.traffic_level = 'BAJO';
+    });
+    
+    // Mark peak hours
+    const totals = Array.from(hourlyMap.values()).map(d => d.total);
+    const avgTotal = totals.reduce((a, b) => a + b, 0) / totals.length;
+    const threshold = avgTotal * 1.5;
+    
+    hourlyMap.forEach(data => {
+      data.peak_hour = data.total >= threshold;
+    });
+    
+    const result = Array.from(hourlyMap.values()).sort((a, b) => 
+      new Date(a.hour).getTime() - new Date(b.hour).getTime()
     );
-  }
+    
+    console.log('Processed data sample:', result.slice(0, 3));
+    console.log('Latest processed hour:', result[result.length - 1]);
+    
+    return result;
+  };
+
+  // Generate camera-specific insights
+  const generateCameraInsights = (rawData: Record<string, unknown>[]): CameraInsights[] => {
+    const cameraMap = new Map<string, Record<string, unknown>[]>();
+    
+    // Group by camera
+    rawData.forEach(record => {
+      const cameraId = record.camera_id as string;
+      if (!cameraMap.has(cameraId)) {
+        cameraMap.set(cameraId, []);
+      }
+      cameraMap.get(cameraId)!.push(record);
+    });
+    
+    const insights: CameraInsights[] = [];
+    
+    cameraMap.forEach((records, cameraId) => {
+      const hourlyTotals = new Map<string, number>();
+      const utcHourToMexicoCityHour = new Map<string, string>();
+      let totalVehicles = 0;
+      let inboundTotal = 0;
+      let outboundTotal = 0;
+      
+      records.forEach(record => {
+        const utcHour = record.hour as string;
+        const mexicoCityHourKey = getMexicoCityHourKey(utcHour);
+        const count = Number(record.count) || 0;
+        
+        // Store mapping from UTC hour to Mexico City hour for later lookup
+        utcHourToMexicoCityHour.set(utcHour, mexicoCityHourKey);
+        
+        if (!hourlyTotals.has(mexicoCityHourKey)) {
+          hourlyTotals.set(mexicoCityHourKey, 0);
+        }
+        hourlyTotals.set(mexicoCityHourKey, hourlyTotals.get(mexicoCityHourKey)! + count);
+        
+        totalVehicles += count;
+        if (record.direction === 'in') inboundTotal += count;
+        else outboundTotal += count;
+      });
+      
+      // Find peak hour (using Mexico City hour keys)
+      let peakHourMexicoCityKey = '';
+      let peakCount = 0;
+      hourlyTotals.forEach((count, hour) => {
+        if (count > peakCount) {
+          peakCount = count;
+          peakHourMexicoCityKey = hour;
+        }
+      });
+      
+      // Find the original UTC hour that corresponds to the peak Mexico City hour
+      let originalUtcPeakHour = '';
+      utcHourToMexicoCityHour.forEach((mexicoCityHour, utcHour) => {
+        if (mexicoCityHour === peakHourMexicoCityKey) {
+          originalUtcPeakHour = utcHour;
+        }
+      });
+      
+      console.log(`🔍 Camera ${cameraId} hourly totals:`, Object.fromEntries(hourlyTotals));
+      console.log(`🔍 Camera ${cameraId} peak hour found:`, { 
+        peakHourMexicoCityKey, 
+        originalUtcPeakHour,
+        peakCount 
+      });
+      
+      const avgHourly = totalVehicles / hourlyTotals.size;
+      const flowRatio = inboundTotal / (outboundTotal || 1);
+      const dominantDirection = inboundTotal > outboundTotal ? 'in' : 'out';
+      
+      // Calculate efficiency (inverse of peak-to-average ratio)
+      const efficiency = Math.min(100, (avgHourly / (peakCount || 1)) * 100);
+      
+      // Determine congestion level
+      let congestionLevel: CameraInsights['congestion_level'] = 'FLUIDO';
+      if (peakCount >= 2000) congestionLevel = 'CRÍTICO';
+      else if (peakCount >= 1500) congestionLevel = 'CONGESTIONADO';
+      else if (peakCount >= 1000) congestionLevel = 'MODERADO';
+      
+      // Format peak hour properly using the original UTC hour
+      let formattedPeakHour = 'N/A';
+      if (originalUtcPeakHour) {
+        try {
+          const peakHourDate = toMexicoCityTime(originalUtcPeakHour);
+          formattedPeakHour = formatMexicoCityTime(peakHourDate, { hour: '2-digit', minute: '2-digit' });
+        } catch (error) {
+          console.error(`Error formatting peak hour for camera ${cameraId}:`, error);
+          formattedPeakHour = 'Error';
+        }
+      }
+      
+      console.log(`🔍 Camera ${cameraId} insights:`, {
+        peakHourMexicoCityKey,
+        originalUtcPeakHour,
+        formattedPeakHour,
+        peakCount,
+        hourlyTotalsSize: hourlyTotals.size,
+        avgHourly: Math.round(avgHourly),
+        efficiency: Math.round(efficiency)
+      });
+      
+      insights.push({
+        camera_id: cameraId,
+        total_vehicles: totalVehicles,
+        peak_hour: formattedPeakHour,
+        peak_count: peakCount,
+        avg_hourly: Math.round(avgHourly),
+        efficiency: Math.round(efficiency),
+        congestion_level: congestionLevel,
+        dominant_direction: dominantDirection,
+        flow_ratio: Math.round(flowRatio * 100) / 100
+      });
+    });
+    
+    return insights.sort((a, b) => b.total_vehicles - a.total_vehicles);
+  };
+
+  // Analyze traffic patterns
+  const analyzeTrafficPatterns = (rawData: Record<string, unknown>[]): TrafficPattern[] => {
+    const patternMap = new Map<string, TrafficPattern>();
+    
+    rawData.forEach(record => {
+      const utcHour = record.hour as string;
+      const mexicoCityHourKey = getMexicoCityHourKey(utcHour);
+      
+      if (!patternMap.has(mexicoCityHourKey)) {
+        patternMap.set(mexicoCityHourKey, {
+          hour: mexicoCityHourKey,
+          inbound: 0,
+          outbound: 0,
+          net_flow: 0,
+          flow_pattern: 'EQUILIBRADO',
+          congestion_index: 0
+        });
+      }
+      
+      const pattern = patternMap.get(mexicoCityHourKey)!;
+      const count = Number(record.count) || 0;
+      
+      if (record.direction === 'in') pattern.inbound += count;
+      else pattern.outbound += count;
+    });
+    
+    // Calculate patterns
+    patternMap.forEach(pattern => {
+      pattern.net_flow = pattern.inbound - pattern.outbound;
+      
+      if (pattern.net_flow > 100) pattern.flow_pattern = 'ENTRADA';
+      else if (pattern.net_flow < -100) pattern.flow_pattern = 'SALIDA';
+      else pattern.flow_pattern = 'EQUILIBRADO';
+      
+      pattern.congestion_index = (pattern.inbound + pattern.outbound) / 2;
+    });
+    
+    return Array.from(patternMap.values()).sort((a, b) => 
+      new Date(a.hour).getTime() - new Date(b.hour).getTime()
+    );
+  };
+
+  useEffect(() => {
+    fetchAnalysisData();
+  }, [timeRange]);
+
+  // Calculate summary statistics
+  const totalVehicles = analysisData.reduce((sum, d) => sum + d.total, 0);
+  const avgHourly = analysisData.length > 0 ? Math.round(totalVehicles / analysisData.length) : 0;
+  const peakHourData = analysisData.reduce((max, d) => d.total > max.total ? d : max, analysisData[0] || { total: 0, time: '00:00' });
+  const criticalHours = analysisData.filter(d => d.traffic_level === 'CRÍTICO').length;
+  
+  // Vehicle distribution
+  const totalCars = analysisData.reduce((sum, d) => sum + d.cars, 0);
+  const totalBuses = analysisData.reduce((sum, d) => sum + d.buses, 0);
+  const totalTrucks = analysisData.reduce((sum, d) => sum + d.trucks, 0);
+  
+  const vehicleDistribution = [
+    { name: 'AUTOS', value: totalCars, percentage: Math.round((totalCars / totalVehicles) * 100) },
+    { name: 'AUTOBUSES', value: totalBuses, percentage: Math.round((totalBuses / totalVehicles) * 100) },
+    { name: 'CAMIONES', value: totalTrucks, percentage: Math.round((totalTrucks / totalVehicles) * 100) }
+  ];
+
+  // Filter data based on time range
+  const hoursMap = { '6h': 6, '12h': 12, '24h': 24, '48h': 48 };
+  
+  const getFilteredData = () => {
+    const now = getMexicoCityTime(); // Use Mexico City time
+    const cutoffHours = hoursMap[timeRange];
+    const cutoffTime = new Date(now.getTime() - cutoffHours * 60 * 60 * 1000);
+    
+    console.log('🔍 FILTER DEBUG: getFilteredData');
+    console.log('Current Mexico City Time:', now.toISOString());
+    console.log('Time range:', timeRange, 'Cutoff hours:', cutoffHours);
+    console.log('Cutoff time:', cutoffTime.toISOString());
+    
+    const filtered = analysisData.filter(d => new Date(d.hour) >= cutoffTime);
+    
+    console.log('Total analysis data:', analysisData.length);
+    console.log('Filtered data count:', filtered.length);
+    console.log('Filtered data sample:', filtered.slice(0, 3));
+    console.log('Latest filtered hour:', filtered[filtered.length - 1]);
+    
+    return filtered;
+  };
+
+  const filteredData = getFilteredData();
+  const filteredPatterns = trafficPatterns.filter(p => {
+    const now = getMexicoCityTime();
+    const cutoffTime = new Date(now.getTime() - (hoursMap[timeRange] * 60 * 60 * 1000));
+    return new Date(p.hour) >= cutoffTime;
+  });
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
             <Link href="/dashboard">
@@ -293,15 +486,16 @@ export default function TrafficAnalysis() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
-              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
+              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico Urbano</h1>
+              <p className="text-gray-600">Sistema Inteligente de Monitoreo Vial</p>
             </div>
           </div>
           
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <Activity className="w-8 h-8 mx-auto mb-2 text-blue-400 animate-pulse" />
-              <p className="text-gray-600">Cargando datos de análisis...</p>
+              <Brain className="w-12 h-12 mx-auto mb-4 text-blue-500 animate-pulse" />
+              <p className="text-xl text-gray-700 font-semibold">Procesando datos de tráfico...</p>
+              <p className="text-gray-500 mt-2">Analizando patrones para la toma de decisiones</p>
             </div>
           </div>
         </div>
@@ -311,7 +505,7 @@ export default function TrafficAnalysis() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
             <Link href="/dashboard">
@@ -321,22 +515,19 @@ export default function TrafficAnalysis() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
-              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
+              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico Urbano</h1>
+              <p className="text-gray-600">Sistema Inteligente de Monitoreo Vial</p>
             </div>
           </div>
           
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <Activity className="w-8 h-8 mx-auto mb-2 text-red-400" />
-              <p className="text-red-600">Error al cargar datos</p>
-              <p className="text-sm text-gray-500 mt-2">{error}</p>
-              <Button 
-                onClick={() => window.location.reload()} 
-                className="mt-4"
-                size="sm"
-              >
-                Reintentar
+              <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-red-500" />
+              <p className="text-xl text-red-600 font-semibold">Error en el Sistema</p>
+              <p className="text-gray-500 mt-2">{error}</p>
+              <Button onClick={fetchAnalysisData} className="mt-4">
+                <Activity className="w-4 h-4 mr-2" />
+                Reintentar Análisis
               </Button>
             </div>
           </div>
@@ -346,7 +537,7 @@ export default function TrafficAnalysis() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -358,153 +549,330 @@ export default function TrafficAnalysis() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico</h1>
-              <p className="text-gray-600">Patrones y tendencias de tráfico en profundidad</p>
+              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico Urbano</h1>
+              <p className="text-gray-600">Sistema Inteligente de Monitoreo Vial para Toma de Decisiones</p>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            {/* Time range selector */}
-            <div className="flex bg-white rounded-lg p-1 border border-gray-200">
-              {(['24h', '7d', '30d'] as const).map((range) => (
-                <Button
-                  key={range}
-                  variant={timeRange === range ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setTimeRange(range)}
-                  className="text-xs"
+            {/* Time Range Selector */}
+            <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-1">
+              {[
+                { key: '6h', label: '6H', hours: 6 },
+                { key: '12h', label: '12H', hours: 12 },
+                { key: '24h', label: '24H', hours: 24 },
+                { key: '48h', label: '48H', hours: 48 }
+              ].map((range) => (
+                <button
+                  key={range.key}
+                  onClick={() => setTimeRange(range.key as '6h' | '12h' | '24h' | '48h')}
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                    timeRange === range.key
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
                 >
-                  {range}
-                </Button>
+                  {range.label}
+                </button>
               ))}
+            </div>
+            
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border">
+              <Globe className="w-4 h-4 text-blue-500" />
+              <span className="text-sm font-medium">
+                {formatMexicoCityTime(new Date(), { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                }).toUpperCase()}
+              </span>
             </div>
             
             <Button variant="ghost" size="sm">
               <Download className="w-4 h-4 mr-2" />
-              Exportar
+              Exportar Informe
             </Button>
           </div>
         </div>
 
-        {/* Data Sources Overview */}
+        {/* Key Metrics Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6">
+          <Card className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Registros API</p>
-                <p className="text-2xl font-bold text-blue-600">{dataSourceStats.apiRecords}</p>
+                <p className="text-blue-100 text-sm font-medium">VOLUMEN TOTAL</p>
+                <p className="text-3xl font-bold">{totalVehicles.toLocaleString()}</p>
+                <p className="text-blue-100 text-xs mt-1">Vehículos monitoreados</p>
               </div>
-              <Activity className="w-8 h-8 text-blue-600" />
+              <Activity className="w-10 h-10 text-blue-200" />
             </div>
           </Card>
           
-          <Card className="p-6">
+          <Card className="p-6 bg-gradient-to-br from-green-500 to-green-600 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Registros Supabase</p>
-                <p className="text-2xl font-bold text-green-600">{dataSourceStats.supabaseRecords}</p>
+                <p className="text-green-100 text-sm font-medium">PROMEDIO HORARIO</p>
+                <p className="text-3xl font-bold">{avgHourly.toLocaleString()}</p>
+                <p className="text-green-100 text-xs mt-1">Vehículos por hora</p>
               </div>
-              <Database className="w-8 h-8 text-green-600" />
+              <TrendingUp className="w-10 h-10 text-green-200" />
             </div>
           </Card>
           
-          <Card className="p-6">
+          <Card className="p-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Registros en Vivo</p>
-                <p className="text-2xl font-bold text-orange-600">{dataSourceStats.liveRecords}</p>
+                <p className="text-orange-100 text-sm font-medium">HORA PICO</p>
+                <p className="text-3xl font-bold">{peakHourData.time}</p>
+                <p className="text-orange-100 text-xs mt-1">{peakHourData.total.toLocaleString()} vehículos</p>
               </div>
-              <Zap className="w-8 h-8 text-orange-600" />
+              <Target className="w-10 h-10 text-orange-200" />
             </div>
           </Card>
           
-          <Card className="p-6">
+          <Card className="p-6 bg-gradient-to-br from-red-500 to-red-600 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Cámaras Activas</p>
-                <p className="text-2xl font-bold text-purple-600">{dataSourceStats.uniqueCameras}</p>
+                <p className="text-red-100 text-sm font-medium">HORAS CRÍTICAS</p>
+                <p className="text-3xl font-bold">{criticalHours}</p>
+                <p className="text-red-100 text-xs mt-1">Requieren atención</p>
               </div>
-              <Camera className="w-8 h-8 text-purple-600" />
+              <AlertTriangle className="w-10 h-10 text-red-200" />
             </div>
           </Card>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total de Vehículos</p>
-                <p className="text-2xl font-bold text-gray-900">{totalVehicles.toLocaleString()}</p>
+        {/* Main Analysis Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Traffic Flow Analysis */}
+          <div className="lg:col-span-2">
+            <Card className="p-6 h-full">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Análisis de Flujo Vehicular</h3>
+                <p className="text-gray-600">Patrones de tráfico por tipo de vehículo y hora del día</p>
               </div>
-              <Car className="w-8 h-8 text-blue-600" />
-            </div>
-          </Card>
-          
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Promedio por Hora</p>
-                <p className="text-2xl font-bold text-gray-900">{avgHourly.toLocaleString()}</p>
+              
+              <div className="h-[500px] w-full min-h-[400px] min-w-[300px]">
+                <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={400}>
+                  <AreaChart data={filteredData} margin={{ top: 40, right: 30, left: 60, bottom: 80 }}>
+                    <defs>
+                      <linearGradient id="colorCars" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={COLORS.cars} stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor={COLORS.cars} stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="colorBuses" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={COLORS.buses} stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor={COLORS.buses} stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="colorTrucks" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={COLORS.trucks} stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor={COLORS.trucks} stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis 
+                      dataKey="hour" 
+                      stroke="#6b7280"
+                      tick={{ fill: '#6b7280', fontSize: 12 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                      interval={Math.floor(filteredData.length / 8) || 0}
+                      tickFormatter={(hour) => formatMexicoCityTime(toMexicoCityTime(hour), { hour: '2-digit', minute: '2-digit' })}
+                    />
+                    <YAxis 
+                      stroke="#6b7280"
+                      tick={{ fill: '#6b7280', fontSize: 12 }}
+                      label={{
+                        value: 'VÉHICULOS',
+                        angle: -90,
+                        position: 'insideLeft',
+                        offset: 40,
+                        fill: '#6b7280',
+                        style: { fontSize: 14, fontWeight: 'bold' }
+                      }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#ffffff', 
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        color: '#1f2937',
+                        fontSize: '14px'
+                      }}
+                      labelFormatter={(hour) => `Hora: ${formatMexicoCityTime(toMexicoCityTime(hour), { hour: '2-digit', minute: '2-digit' })}`}
+                    />
+                    <Legend 
+                      verticalAlign="top"
+                      height={50}
+                      wrapperStyle={{ paddingBottom: '20px' }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="cars" 
+                      stroke={COLORS.cars} 
+                      fillOpacity={1} 
+                      fill="url(#colorCars)"
+                      strokeWidth={2}
+                      name="AUTOS"
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="buses" 
+                      stroke={COLORS.buses} 
+                      fillOpacity={1} 
+                      fill="url(#colorBuses)"
+                      strokeWidth={2}
+                      name="AUTOBUSES"
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="trucks" 
+                      stroke={COLORS.trucks} 
+                      fillOpacity={1} 
+                      fill="url(#colorTrucks)"
+                      strokeWidth={2}
+                      name="CAMIONES"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
-              <Clock className="w-8 h-8 text-green-600" />
-            </div>
-          </Card>
-          
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Hora Pico</p>
-                <p className="text-2xl font-bold text-gray-900">{peakHour.time}</p>
+            </Card>
+          </div>
+
+          {/* Vehicle Distribution */}
+          <div>
+            <Card className="p-6 h-full">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Distribución Vehicular</h3>
+                <p className="text-gray-600">Composición del tráfico total</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-orange-600" />
-            </div>
-          </Card>
-          
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Puntos de Datos</p>
-                <p className="text-2xl font-bold text-gray-900">{processedData.length}</p>
+              
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={vehicleDistribution}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percentage }) => `${name}: ${percentage}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      <Cell fill={COLORS.cars} />
+                      <Cell fill={COLORS.buses} />
+                      <Cell fill={COLORS.trucks} />
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-              <BarChart3 className="w-8 h-8 text-purple-600" />
-            </div>
-          </Card>
+              
+              <div className="mt-6 space-y-3">
+                {vehicleDistribution.map((item, index) => (
+                  <div key={item.name} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ 
+                          backgroundColor: index === 0 ? COLORS.cars : 
+                                         index === 1 ? COLORS.buses : COLORS.trucks 
+                        }}
+                      />
+                      <span className="text-sm font-medium text-gray-700">{item.name}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-gray-900">{item.value.toLocaleString()}</p>
+                      <p className="text-xs text-gray-500">{item.percentage}%</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
         </div>
 
-        {/* Traffic by Hour Chart - Full Width */}
+        {/* Camera Performance Analysis */}
         <Card className="p-6 mb-8">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Tráfico por Hora</h3>
-            <p className="text-gray-600">Patrones de tráfico horario detallados para todos los tipos de vehículos</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Análisis por Cámara</h3>
+            <p className="text-gray-600">Rendimiento y patrones de congestión por punto de monitoreo</p>
           </div>
           
-          <div className="h-[600px] w-full">
-            <ResponsiveContainer width="100%" height="100%" minWidth={800}>
-              <LineChart data={processedData} margin={{ top: 40, right: 60, left: 120, bottom: 120 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {cameraInsights.map((camera) => (
+              <div key={camera.camera_id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-gray-900">{camera.camera_id.toUpperCase()}</h4>
+                  <Badge 
+                    variant={camera.congestion_level === 'FLUIDO' ? 'green' :
+                            camera.congestion_level === 'MODERADO' ? 'yellow' :
+                            camera.congestion_level === 'CONGESTIONADO' ? 'orange' : 'red'}
+                  >
+                    {camera.congestion_level}
+                  </Badge>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Total:</span>
+                    <span className="font-medium">{camera.total_vehicles.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Promedio/h:</span>
+                    <span className="font-medium">{camera.avg_hourly.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Hora pico:</span>
+                    <span className="font-medium">{camera.peak_hour}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Eficiencia:</span>
+                    <span className="font-medium">{camera.efficiency}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Flujo dominante:</span>
+                    <span className="font-medium">{camera.dominant_direction === 'in' ? 'ENTRADA' : 'SALIDA'}</span>
+                  </div>
+                </div>
+                
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-green-400 to-red-500 h-2 rounded-full"
+                      style={{ width: `${camera.efficiency}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Índice de eficiencia vial</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Traffic Flow Patterns */}
+        <Card className="p-6">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Patrones de Flujo Direccional</h3>
+            <p className="text-gray-600">Análisis de entrada/salida y congestión por hora</p>
+          </div>
+          
+          <div className="h-80 w-full min-h-[300px] min-w-[300px]">
+            <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={300}>
+              <BarChart data={filteredPatterns} margin={{ top: 40, right: 30, left: 60, bottom: 80 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis 
-                  dataKey="time" 
+                  dataKey="hour" 
                   stroke="#6b7280"
-                  tick={{ fill: '#6b7280', fontSize: 14 }}
+                  tick={{ fill: '#6b7280', fontSize: 12 }}
                   angle={-45}
                   textAnchor="end"
-                  height={120}
-                  interval="preserveStartEnd"
-                />
-                <YAxis 
-                  stroke="#6b7280"
-                  tick={{ fill: '#6b7280', fontSize: 14 }}
-                  domain={[0, 'dataMax + 500']}
-                  allowDataOverflow={false}
-                  label={{
-                    value: 'Vehículos',
-                    angle: -90,
-                    position: 'insideLeft',
-                    offset: 40,
-                    fill: '#6b7280',
-                    style: { fontSize: 16, fontWeight: 'bold' }
-                  }}
+                  height={80}
+                  interval={Math.floor(filteredPatterns.length / 6) || 0}
+                  tickFormatter={(hour) => formatMexicoCityTime(toMexicoCityTime(hour), { hour: '2-digit', minute: '2-digit' })}
                 />
                 <Tooltip 
                   contentStyle={{ 
@@ -514,189 +882,86 @@ export default function TrafficAnalysis() {
                     color: '#1f2937',
                     fontSize: '14px'
                   }}
-                  labelStyle={{ color: '#1f2937', fontWeight: 'bold' }}
+                  labelFormatter={(hour) => `Hora: ${formatMexicoCityTime(toMexicoCityTime(hour), { hour: '2-digit', minute: '2-digit' })}`}
                 />
-                <Legend 
-                  verticalAlign="top"
-                  height={50}
-                  wrapperStyle={{ paddingBottom: '30px', fontSize: '14px' }}
-                  iconSize={20}
-                />
-                
-                {(vehicleType === 'all' || vehicleType === 'car') && (
-                  <Line 
-                    type="monotone" 
-                    dataKey="total" 
-                    stroke="#ef4444" 
-                    strokeWidth={4}
-                    dot={false}
-                    name="Total"
-                    strokeDasharray="8 4"
-                  />
-                )}
-                
-                {(vehicleType === 'all' || vehicleType === 'car') && (
-                  <Line 
-                    type="monotone" 
-                    dataKey="cars" 
-                    stroke="#3b82f6" 
-                    strokeWidth={3}
-                    dot={false}
-                    name="Autos"
-                  />
-                )}
-                
-                {(vehicleType === 'all' || vehicleType === 'bus') && (
-                  <Line 
-                    type="monotone" 
-                    dataKey="buses" 
-                    stroke="#10b981" 
-                    strokeWidth={2.5}
-                    dot={false}
-                    name="Autobuses"
-                  />
-                )}
-                
-                {(vehicleType === 'all' || vehicleType === 'truck') && (
-                  <Line 
-                    type="monotone" 
-                    dataKey="trucks" 
-                    stroke="#f59e0b" 
-                    strokeWidth={2.5}
-                    dot={false}
-                    name="Camiones"
-                  />
-                )}
-              </LineChart>
+                <Legend />
+                <Bar dataKey="inbound" fill={COLORS.inbound} name="ENTRADA" />
+                <Bar dataKey="outbound" fill={COLORS.outbound} name="SALIDA" />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        {/* Second Row - Trend Analysis and Vehicle Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Trend Analysis */}
-          <Card className="p-6">
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">7-Day Trend</h3>
-              <p className="text-gray-600">Weekly traffic trends and patterns</p>
-            </div>
-            
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trendData} margin={{ top: 20, right: 30, left: 60, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="#6b7280"
-                    tick={{ fill: '#6b7280', fontSize: 12 }}
-                  />
-                  <YAxis 
-                    stroke="#6b7280"
-                    tick={{ fill: '#6b7280', fontSize: 12 }}
-                    domain={[0, 'dataMax + 100']}
-                    allowDataOverflow={false}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#ffffff', 
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                    labelStyle={{ color: '#1f2937' }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="total" 
-                    stroke="#3b82f6" 
-                    fill="#3b82f6" 
-                    fillOpacity={0.3}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-
-          {/* Vehicle Distribution */}
-          <Card className="p-6">
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Vehicle Distribution</h3>
-              <p className="text-gray-600">Breakdown by vehicle type</p>
-            </div>
-            
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={vehicleDistribution}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={(props: any) => {
-                      const { name, percentage } = props;
-                      return `${name}: ${typeof percentage === 'number' ? percentage.toFixed(1) : '0'}%`;
-                    }}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {vehicleDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#ffffff', 
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      color: '#1f2937'
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </div>
-
-        {/* Peak Hour Analysis */}
+        {/* Historical Snapshots */}
         <Card className="p-6">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Peak Hour Analysis</h3>
-            <p className="text-gray-600">Most congested hours and recommendations</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Snapshots Históricos</h3>
+            <p className="text-gray-600">Registro de imágenes capturadas del sistema de monitoreo</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-5 h-5 text-red-600" />
-                <h4 className="font-semibold text-red-900">Peak Hour</h4>
-              </div>
-              <p className="text-2xl font-bold text-red-900">{peakHour.time}</p>
-              <p className="text-red-700">{peakHour.total} vehicles</p>
-              <p className="text-sm text-red-600 mt-2">Consider traffic management during this time</p>
+          {loadingSnapshots ? (
+            <div className="flex items-center justify-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             </div>
-            
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-5 h-5 text-yellow-600" />
-                <h4 className="font-semibold text-yellow-900">Average</h4>
-              </div>
-              <p className="text-2xl font-bold text-yellow-900">{avgHourly}</p>
-              <p className="text-yellow-700">vehicles per hour</p>
-              <p className="text-sm text-yellow-600 mt-2">Normal traffic flow baseline</p>
+          ) : snapshots.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No hay snapshots guardados</p>
+              <p className="text-sm text-gray-400 mt-2">Las imágenes capturadas aparecerán aquí después de ser guardadas</p>
             </div>
-            
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingDown className="w-5 h-5 text-green-600" />
-                <h4 className="font-semibold text-green-900">Recommendation</h4>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {snapshots.slice(0, 8).map((snapshot) => (
+                  <div key={snapshot.id} className="relative group">
+                    <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                      <img 
+                        src={snapshot.snapshot_url} 
+                        alt={`Snapshot ${snapshot.camera_id}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Use a data URL placeholder if image fails to load
+                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Y5ZmFhYiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPgogICAgSW1hZ2VuIE5vIERpc3BvbmlibGUKICA8L3RleHQ+Cjwvc3ZnPg==';
+                        }}
+                      />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                      <p className="text-white text-xs font-medium">{snapshot.camera_id.toUpperCase()}</p>
+                      <p className="text-white/80 text-xs">
+                        {formatMexicoCityTime(snapshot.timestamp, { 
+                          hour: '2-digit', 
+                          minute: '2-digit',
+                          day: '2-digit',
+                          month: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {snapshot.incident_type && (
+                        <Badge variant="orange" className="text-xs">
+                          {snapshot.incident_type}
+                        </Badge>
+                      )}
+                    </div>
+                    {snapshot.description && (
+                      <div className="absolute bottom-8 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <p className="text-white text-xs bg-black/80 rounded p-1">
+                          {snapshot.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              <p className="text-green-900 font-medium">Optimize signal timing</p>
-              <p className="text-green-700">during peak hours</p>
-              <p className="text-sm text-green-600 mt-2">Could reduce congestion by 15-20%</p>
+              
+              {snapshots.length > 8 && (
+                <div className="text-center">
+                  <Button variant="ghost" size="sm">
+                    Ver todos los {snapshots.length} snapshots
+                  </Button>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </Card>
       </div>
     </div>

@@ -1,0 +1,272 @@
+{
+  "investigation_request": {
+    "timestamp": "2025-11-06T12:25:00-06:00",
+    "current_mexico_city_time": "12:25 PM",
+    "current_utc_time": "18:25 UTC",
+    "issue": "Charts still showing UTC times instead of Mexico City times despite timezone fixes",
+    "urgency": "HIGH - Government meeting imminent",
+    "status": "FIXES APPLIED BUT NOT WORKING"
+  },
+  "problem_description": {
+    "symptoms": [
+      "Charts show times like 18:00, 21:00, 00:00, 03:00, 06:00, 09:00, 12:00, 15:00",
+      "Current time is 12:25 PM Mexico City but charts don't reflect this",
+      "Time range selector (6H, 12H, 24H, 48H) shows old/future hours",
+      "Timeline appears to be 6 hours ahead of actual local time"
+    ],
+    "expected_behavior": [
+      "Charts should show Mexico City times (UTC-6)",
+      "Current hour (12:00 PM) should be visible on charts",
+      "24h range should show 12:25 PM yesterday to 12:25 PM today",
+      "6h range should show 6:25 AM to 12:25 PM"
+    ],
+    "actual_behavior": [
+      "Charts display UTC times",
+      "Timeline shows hours that don't match current local time",
+      "Data appears to be from wrong timezone"
+    ]
+  },
+  "previous_fixes_attempted": [
+    {
+      "fix_id": "FIX-1",
+      "component": "lib/timezone.ts",
+      "description": "Added getMexicoCityHourKey() helper function",
+      "code": "export function getMexicoCityHourKey(utcHourString: string): string",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "fix_id": "FIX-2", 
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "processAnalysisData()",
+      "description": "Convert UTC hour to Mexico City hour for grouping",
+      "changes": [
+        "Import toMexicoCityTime, getMexicoCityHourKey",
+        "Use mexicoCityHourKey for Map grouping",
+        "Convert utcHour to mexicoCityTime before formatting"
+      ],
+      "status": "IMPLEMENTED"
+    },
+    {
+      "fix_id": "FIX-3",
+      "component": "app/dashboard/analysis/page.tsx", 
+      "function": "analyzeTrafficPatterns()",
+      "description": "Use Mexico City hour keys for pattern analysis",
+      "changes": [
+        "Replace UTC hour with mexicoCityHourKey",
+        "Group patterns by Mexico City time"
+      ],
+      "status": "IMPLEMENTED"
+    },
+    {
+      "fix_id": "FIX-4",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "getFilteredData()",
+      "description": "Use Mexico City time for cutoff calculation",
+      "changes": [
+        "Replace new Date() with getMexicoCityTime()",
+        "Calculate cutoff from Mexico City current time"
+      ],
+      "status": "IMPLEMENTED"
+    },
+    {
+      "fix_id": "FIX-5",
+      "component": "app/dashboard/analysis/page.tsx",
+      "function": "filteredPatterns calculation",
+      "description": "Use Mexico City time for pattern filtering",
+      "changes": [
+        "Replace Date.now() with getMexicoCityTime()",
+        "Calculate Mexico City cutoff time"
+      ],
+      "status": "IMPLEMENTED"
+    },
+    {
+      "fix_id": "FIX-6",
+      "component": "app/dashboard/analysis/page.tsx",
+      "element": "AreaChart X-axis",
+      "description": "Fix X-axis interval and formatting",
+      "changes": [
+        "Update interval calculation",
+        "Prevent label overlap"
+      ],
+      "status": "IMPLEMENTED"
+    },
+    {
+      "fix_id": "FIX-7",
+      "component": "app/dashboard/analysis/page.tsx",
+      "element": "BarChart X-axis", 
+      "description": "Convert UTC to Mexico City time in tickFormatter",
+      "changes": [
+        "Use formatMexicoCityTime(toMexicoCityTime(hour))",
+        "Smart interval calculation"
+      ],
+      "status": "IMPLEMENTED"
+    }
+  ],
+  "current_code_state": {
+    "file": "app/dashboard/analysis/page.tsx",
+    "imports": [
+      "import { formatMexicoCityTime, getMexicoCityTime, getMexicoCityHourTimestamp, toMexicoCityTime, getMexicoCityHourKey } from '@/lib/timezone';"
+    ],
+    "data_processing": {
+      "processAnalysisData": "Uses getMexicoCityHourKey() for grouping",
+      "analyzeTrafficPatterns": "Uses getMexicoCityHourKey() for patterns", 
+      "filtering": "Uses getMexicoCityTime() for cutoff",
+      "chart_data": "filteredData used in AreaChart"
+    },
+    "area_chart_xaxis": {
+      "dataKey": "time",
+      "current_formatter": "index % step === 0 ? value : ''",
+      "data_source": "filteredData.time field",
+      "potential_issue": "time field may still be UTC despite formatting"
+    },
+    "bar_chart_xaxis": {
+      "dataKey": "hour", 
+      "current_formatter": "formatMexicoCityTime(toMexicoCityTime(hour))",
+      "data_source": "filteredPatterns.hour field",
+      "status": "Should be working"
+    }
+  },
+  "investigation_areas": [
+    {
+      "area": "Data Source Analysis",
+      "priority": "CRITICAL",
+      "questions": [
+        "What is the actual format of raw data from api.getHourlyStatistics()?",
+        "Are the hour timestamps in the API response actually in UTC?",
+        "Is the toMexicoCityTime() function working correctly?",
+        "What does the filteredData.time field actually contain?"
+      ],
+      "debug_steps": [
+        "Add console.log('Raw API data:', rawData) in processAnalysisData",
+        "Add console.log('Mexico City time:', toMexicoCityTime(utcHour))",
+        "Add console.log('Filtered data sample:', filteredData.slice(0, 3))",
+        "Check browser console for timezone conversion logs"
+      ]
+    },
+    {
+      "area": "Chart Data Flow",
+      "priority": "CRITICAL", 
+      "questions": [
+        "Is the 'time' field in AnalysisData actually Mexico City time?",
+        "Are the chart X-axis labels using the correct data field?",
+        "Is the interval logic skipping all the correct labels?"
+      ],
+      "debug_steps": [
+        "Log filteredData.map(d => ({ hour: d.hour, time: d.time }))",
+        "Check if time field contains Mexico City formatted strings",
+        "Verify interval calculation doesn't skip current hour"
+      ]
+    },
+    {
+      "area": "Timezone Function Verification",
+      "priority": "HIGH",
+      "questions": [
+        "Is toMexicoCityTime() actually converting correctly?",
+        "Is getMexicoCityHourKey() creating the right keys?",
+        "Is there a timezone offset issue in the conversion?"
+      ],
+      "debug_steps": [
+        "Test toMexicoCityTime('2025-11-06T18:00:00Z') should return 12:00 PM",
+        "Verify getMexicoCityHourKey() returns Mexico City hour keys",
+        "Check browser timezone vs server timezone"
+      ]
+    },
+    {
+      "area": "Time Range Filtering",
+      "priority": "MEDIUM",
+      "questions": [
+        "Is the filtering logic working correctly?",
+        "Are we filtering the right time range?",
+        "Is the cutoff calculation correct?"
+      ],
+      "debug_steps": [
+        "Log current Mexico City time vs cutoff time",
+        "Verify filteredData contains expected number of records",
+        "Check if current hour is included in filtered data"
+      ]
+    }
+  ],
+  "potential_root_causes": [
+    {
+      "cause": "API Data Format",
+      "description": "The hour timestamps from API might not be in expected UTC format",
+      "likelihood": "HIGH",
+      "test": "Console log raw API data to verify timestamp format"
+    },
+    {
+      "cause": "Timezone Conversion Bug",
+      "description": "toMexicoCityTime() function might not be working as expected",
+      "likelihood": "MEDIUM", 
+      "test": "Test conversion with known UTC timestamp"
+    },
+    {
+      "cause": "Chart Data Mismatch",
+      "description": "Charts might be using wrong data field or unconverted data",
+      "likelihood": "HIGH",
+      "test": "Verify data flow from processing to chart rendering"
+    },
+    {
+      "cause": "Interval Logic Issue",
+      "description": "X-axis interval might be skipping the correct labels",
+      "likelihood": "MEDIUM",
+      "test": "Check interval calculation and label visibility"
+    },
+    {
+      "cause": "Browser Timezone Conflict",
+      "description": "Browser timezone might interfere with display formatting",
+      "likelihood": "LOW",
+      "test": "Test in different timezone or incognito mode"
+    }
+  ],
+  "immediate_debugging_commands": [
+    "console.log('=== TIMEZONE DEBUG ===');",
+    "console.log('Current Mexico City Time:', getMexicoCityTime());",
+    "console.log('Raw API Sample:', rawData.slice(0, 2));",
+    "console.log('Mexico City Conversion Test:', toMexicoCityTime('2025-11-06T18:00:00Z'));",
+    "console.log('Filtered Data Sample:', filteredData.slice(0, 3).map(d => ({ hour: d.hour, time: d.time })));",
+    "console.log('Chart Data Length:', filteredData.length);",
+    "console.log('Time Range:', timeRange, 'Cutoff Hours:', hoursMap[timeRange]);"
+  ],
+  "testing_checklist": [
+    "☐ Add debugging console logs to processAnalysisData()",
+    "☐ Verify API data timestamp format", 
+    "☐ Test toMexicoCityTime() conversion manually",
+    "☐ Check filteredData.time field contents",
+    "☐ Verify current hour appears in filtered data",
+    "☐ Test with different time ranges (6H, 12H, 24H)",
+    "☐ Check browser console for timezone errors",
+    "☐ Verify chart X-axis labels show Mexico City times"
+  ],
+  "expected_debug_output": {
+    "if_working": [
+      "Current Mexico City Time: [Date object showing 12:25 PM]",
+      "Mexico City Conversion Test: 12:00 PM (for 18:00 UTC input)",
+      "Filtered Data Sample: [{hour: '2025-11-06T12:00:00Z', time: '12:00'}, ...]",
+      "Chart should show times ending around current hour"
+    ],
+    "if_broken": [
+      "Raw API data shows unexpected timestamp format",
+      "Mexico City conversion shows wrong time",
+      "Filtered data contains UTC times instead of Mexico City",
+      "Chart shows 18:00, 21:00 etc instead of local times"
+    ]
+  },
+  "next_steps": [
+    "1. Add comprehensive debugging logs",
+    "2. Verify API data format and timezone",
+    "3. Test timezone conversion functions manually", 
+    "4. Check data flow from API to chart",
+    "5. Fix any identified issues in conversion logic",
+    "6. Test with current time visible on charts",
+    "7. Verify all time ranges work correctly"
+  ],
+  "contact_info": {
+    "original_developer": "Cascade AI Assistant",
+    "context": "Government meeting preparation - urgent timezone fix needed",
+    "files_to_check": [
+      "lib/timezone.ts",
+      "app/dashboard/analysis/page.tsx",
+      "browser console logs"
+    ]
+  }
+}

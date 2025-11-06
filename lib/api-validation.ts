@@ -10,13 +10,27 @@ import {
 // Enhanced fetcher with validation
 export async function validatedFetch<T>(url: string, validator: (data: unknown) => { success: boolean; data?: T; error?: any }): Promise<T> {
   try {
-    const response = await fetch(url);
+    console.log('🔍 API DEBUG: Fetching URL:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; TrafficDashboard/1.0)',
+      },
+      // Add timeout to prevent hanging
+      signal: AbortSignal.timeout(10000), // 10 second timeout
+    });
+    
+    console.log('🔍 API DEBUG: Response status:', response.status);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
     }
     
     const data = await response.json();
+    console.log('🔍 API DEBUG: Raw response data type:', typeof data, 'keys:', Object.keys(data || {}));
+    
     const result = validator(data);
     
     if (!result.success) {
@@ -24,10 +38,17 @@ export async function validatedFetch<T>(url: string, validator: (data: unknown) 
       throw new Error(`Invalid API response: ${result.error?.issues?.map((i: any) => i.message).join(', ') || 'Unknown validation error'}`);
     }
     
+    console.log('🔍 API DEBUG: Validation passed, returning data');
     return result.data;
   } catch (error) {
-    console.error('API fetch error:', error);
-    throw error;
+    console.error('API fetch error for URL:', url, error);
+    
+    // Re-throw with more context
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch ${url}: ${error.message}`);
+    } else {
+      throw new Error(`Failed to fetch ${url}: Unknown error`);
+    }
   }
 }
 

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { 
   Activity, 
-  Camera, 
   TrendingUp, 
   Shield,
   BarChart3,
@@ -16,8 +15,25 @@ import {
   AlertCircle,
   Zap,
   Eye,
-  MapPin
+  MapPin,
+  Car,
+  Truck,
+  Bus,
+  Bike,
+  User,
+  Users2
 } from 'lucide-react';
+import {
+  Icon1,
+  Icon2,
+  Icon3,
+  Icon4,
+  Icon5,
+  Icon6,
+  Icon7,
+  Icon8,
+  Icon9
+} from '../components/TrafficIcons';
 
 export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -138,9 +154,7 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="card p-6">
-              <div className="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-4">
-                <Camera className="w-6 h-6 text-primary-600" />
-              </div>
+              <Icon1 size={48} className="text-primary-600 mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
                 Monitoreo en Tiempo Real
               </h3>
@@ -158,9 +172,7 @@ export default function HomePage() {
             </div>
 
             <div className="card p-6">
-              <div className="w-12 h-12 bg-info-light rounded-lg flex items-center justify-center mb-4">
-                <AlertCircle className="w-6 h-6 text-info" />
-              </div>
+              <Icon2 size={48} className="text-info mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
                 Detección de Incidentes con IA
               </h3>
@@ -178,9 +190,7 @@ export default function HomePage() {
             </div>
 
             <div className="card p-6">
-              <div className="w-12 h-12 bg-success-light rounded-lg flex items-center justify-center mb-4">
-                <TrendingUp className="w-6 h-6 text-success" />
-              </div>
+              <Icon9 size={48} className="text-success mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
                 Analítica Predictiva
               </h3>
@@ -198,9 +208,7 @@ export default function HomePage() {
             </div>
 
             <div className="card p-6">
-              <div className="w-12 h-12 bg-warning-light rounded-lg flex items-center justify-center mb-4">
-                <Zap className="w-6 h-6 text-warning" />
-              </div>
+              <Icon9 size={48} className="text-warning mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
                 Ahorro de Costos Municipal
               </h3>
@@ -218,9 +226,7 @@ export default function HomePage() {
             </div>
 
             <div className="card p-6">
-              <div className="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-4">
-                <Eye className="w-6 h-6 text-primary-600" />
-              </div>
+              <Icon1 size={48} className="text-primary-600 mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
                 Captura de Evidencia 4K
               </h3>
@@ -238,9 +244,7 @@ export default function HomePage() {
             </div>
 
             <div className="card p-6">
-              <div className="w-12 h-12 bg-neutral-100 rounded-lg flex items-center justify-center mb-4">
-                <MapPin className="w-6 h-6 text-neutral-600" />
-              </div>
+              <Icon7 size={48} className="text-neutral-600 mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
                 Cobertura Urbana Completa
               </h3>
@@ -275,20 +279,20 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
               <img 
-                src="/images/hero-traffic-dashboard.jpg" 
+                src="/images/IMG1.png" 
                 alt="Panel de Control de Tráfico"
                 className="w-full h-64 object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                <h3 className="text-white font-semibold">Panel de Analítica Avanzada</h3>
-                <p className="text-white/80 text-sm">Datos en tiempo real para decisiones municipales</p>
+                <h3 className="text-white font-semibold">Panel de Control de Tráfico</h3>
+                <p className="text-white/80 text-sm">Panel de Analítica Avanzada</p>
               </div>
             </div>
 
             <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
               <img 
-                src="/images/smart-camera-installation.jpg" 
-                alt="Instalación de Cámara Inteligente"
+                src="/images/IMG2.png" 
+                alt="Cámaras de Alta Resolución"
                 className="w-full h-64 object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
@@ -299,8 +303,8 @@ export default function HomePage() {
 
             <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
               <img 
-                src="/images/incident-detection-visualization.jpg" 
-                alt="Detección de Incidentes"
+                src="/images/IMG3.png" 
+                alt="Detección Automática de Incidentes"
                 className="w-full h-64 object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
@@ -311,8 +315,8 @@ export default function HomePage() {
 
             <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
               <img 
-                src="/images/data-analytics-center.jpg" 
-                alt="Centro de Analítica de Datos"
+                src="/images/IMG4.png" 
+                alt="Centro de Operaciones Municipal"
                 className="w-full h-64 object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
@@ -323,8 +327,8 @@ export default function HomePage() {
 
             <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow">
               <img 
-                src="/images/mobile-command-interface.jpg" 
-                alt="Interfaz de Comando Móvil"
+                src="/images/IMG5.png" 
+                alt="Comando Móvil para Emergencias"
                 className="w-full h-64 object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
@@ -335,7 +339,7 @@ export default function HomePage() {
 
             <div className="relative overflow-hidden rounded-xl shadow-medium hover:shadow-large transition-shadow bg-neutral-100 flex items-center justify-center">
               <div className="text-center p-8">
-                <Camera className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+                <Icon1 size={128} className="text-neutral-400 mx-auto mb-4" />
                 <h3 className="text-neutral-600 font-semibold mb-2">Próximamente</h3>
                 <p className="text-neutral-500 text-sm">Más visualizaciones de nuestra tecnología</p>
               </div>
@@ -344,36 +348,65 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección de Métricas Gubernamentales */}
-      <section className="py-20 px-6 bg-neutral-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-neutral-900 mb-12">
-            Resultados Comprobados para Gobiernos Municipales
-          </h2>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* Sección de Tipos de Vehículos */}
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
+              Detección Completa de Todos los Tipos de Vehículos
+            </h2>
+            <p className="text-lg text-neutral-600">
+              Nuestra IA identifica y clasifica automáticamente todos los tipos de tráfico urbano
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 mb-2">40%</div>
-              <div className="text-neutral-600 font-medium">Reducción en Tiempo de Respuesta</div>
-              <div className="text-neutral-500 text-sm mt-1">Emergencias atendidas más rápido</div>
+              <div className="w-16 h-16 bg-primary-50 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                <Car className="w-6 h-6 text-primary-600" />
+              </div>
+              <h4 className="font-semibold text-neutral-900 mb-1">Automóviles</h4>
+              <p className="text-sm text-neutral-600">Detección precisa de vehículos particulares</p>
             </div>
-            
+
             <div className="text-center">
-              <div className="text-4xl font-bold text-success mb-2">$2.3M</div>
-              <div className="text-neutral-600 font-medium">Ahorro Anual en Congestión</div>
-              <div className="text-neutral-500 text-sm mt-1">Costos operativos reducidos</div>
+              <div className="w-16 h-16 bg-info-light rounded-lg flex items-center justify-center mb-3 mx-auto">
+                <Truck className="w-6 h-6 text-info" />
+              </div>
+              <h4 className="font-semibold text-neutral-900 mb-1">Camiones</h4>
+              <p className="text-sm text-neutral-600">Vehículos de carga y transporte pesado</p>
             </div>
-            
+
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 mb-2">95%</div>
-              <div className="text-neutral-600 font-medium">Precisión en Datos</div>
-              <div className="text-neutral-500 text-sm mt-1">Planificación urbana mejorada</div>
+              <div className="w-16 h-16 bg-success-light rounded-lg flex items-center justify-center mb-3 mx-auto">
+                <Bus className="w-6 h-6 text-success" />
+              </div>
+              <h4 className="font-semibold text-neutral-900 mb-1">Autobuses</h4>
+              <p className="text-sm text-neutral-600">Transporte público y escolar</p>
             </div>
-            
+
             <div className="text-center">
-              <div className="text-4xl font-bold text-warning mb-2">12</div>
-              <div className="text-neutral-600 font-medium">Meses de ROI</div>
-              <div className="text-neutral-500 text-sm mt-1">Inversión recuperada rápidamente</div>
+              <div className="w-16 h-16 bg-warning-light rounded-lg flex items-center justify-center mb-3 mx-auto">
+                <Bike className="w-6 h-6 text-warning" />
+              </div>
+              <h4 className="font-semibold text-neutral-900 mb-1">Motocicletas</h4>
+              <p className="text-sm text-neutral-600">Vehículos de dos ruedas motorizados</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary-50 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                <Bike className="w-6 h-6 text-primary-600" />
+              </div>
+              <h4 className="font-semibold text-neutral-900 mb-1">Bicicletas</h4>
+              <p className="text-sm text-neutral-600">Ciclistas y movilidad sostenible</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-neutral-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                <User className="w-6 h-6 text-neutral-600" />
+              </div>
+              <h4 className="font-semibold text-neutral-900 mb-1">Peatones</h4>
+              <p className="text-sm text-neutral-600">Detección de personas y cruces</p>
             </div>
           </div>
         </div>
