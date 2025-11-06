@@ -73,8 +73,8 @@ export default function HomePage() {
           </ul>
           
           <div className="nav-actions">
-            <button className="btn-secondary">OPERATOR LOGIN</button>
-            <button className="btn-primary">ACCESS CONTROL</button>
+            <button className="btn-secondary">Operator Login</button>
+            <button className="btn-primary">Access Control</button>
           </div>
         </div>
       </nav>
@@ -105,34 +105,34 @@ export default function HomePage() {
             {/* Stats Grid */}
             <div className="stats-grid">
               <StatCard 
-                value="50+"
+                value="0"
                 label="Protected Cities"
-                icon={<Shield className="w-4 h-4" />}
+                icon={<Shield className="w-5 h-5" />}
                 animated={statsAnimated}
               />
               <StatCard 
                 value="99.9%"
                 label="System Uptime"
-                icon={<Server className="w-4 h-4" />}
+                icon={<Server className="w-5 h-5" />}
                 animated={statsAnimated}
               />
               <StatCard 
-                value="40%"
+                value="0%"
                 label="Congestion Reduced"
-                icon={<TrendingDown className="w-4 h-4" />}
+                icon={<TrendingDown className="w-5 h-5" />}
                 animated={statsAnimated}
               />
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
               <button className="btn-primary">
-                <Shield className="w-4 h-4 mr-2" />
-                ACCESS CONTROL
-                <ChevronRight className="w-4 h-4 ml-2" />
+                <Shield className="w-4 h-4" />
+                Access Control
+                <ChevronRight className="w-4 h-4" />
               </button>
               <Link href="/dashboard" className="btn-secondary">
-                VIEW COMMAND CENTER
+                View Command Center
               </Link>
             </div>
           </motion.div>
@@ -156,7 +156,7 @@ export default function HomePage() {
           </p>
           <div className="bento-card-metrics">
             <span className="metric-badge">99.8% Accuracy</span>
-            <span className="metric-badge">Real-time Processing</span>
+            <span className="metric-badge">Real-time</span>
             <span className="metric-badge">ML-Powered</span>
           </div>
         </motion.div>
@@ -194,7 +194,7 @@ export default function HomePage() {
             End-to-end encryption with zero-knowledge architecture protecting sensitive traffic data.
           </p>
           <div className="bento-card-metrics">
-            <span className="metric-badge">AES-*</span>
+            <span className="metric-badge">AES-256</span>
             <span className="metric-badge">Zero-Knowledge</span>
           </div>
         </motion.div>
@@ -267,11 +267,10 @@ export default function HomePage() {
             className="security-form"
           >
             <div className="text-center mb-8">
-              <h2 className="hero-title text-3xl mb-4">
-                Request Government<br />
-                <span className="accent">Access</span>
+              <h2 className="text-4xl font-bold mb-4">
+                Request <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">Government Access</span>
               </h2>
-              <p className="hero-subtitle text-lg">
+              <p className="text-lg text-gray-600">
                 Secure platform access for municipal authorities and government agencies.
               </p>
             </div>
@@ -333,16 +332,16 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2 mb-6">
-                <Shield className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs text-gray-400">
+              <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900 mb-6">
+                <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">
                   This platform is exclusively available to government entities and authorized agencies.
                 </span>
               </div>
               
               <button type="submit" className="btn-primary w-full">
-                <Lock className="w-4 h-4 mr-2" />
-                SUBMIT SECURE REQUEST
+                <Lock className="w-4 h-4" />
+                Submit Secure Request
               </button>
             </form>
           </motion.div>

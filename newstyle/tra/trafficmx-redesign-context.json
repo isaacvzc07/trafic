@@ -1,0 +1,482 @@
+{
+  "project": "TrafficMX - TradingView Style Redesign",
+  "version": "2.0",
+  "context": {
+    "projectName": "TrafficMX",
+    "projectPath": "/Users/lukatenbosch/Downloads/trafic_isaac",
+    "framework": "Next.js 14+ with TypeScript",
+    "styling": "Tailwind CSS + Custom CSS",
+    "currentTheme": "Dark cyberpunk with neon accents",
+    "targetTheme": "TradingView-inspired professional dashboard",
+    "priority": "CRITICAL - Government presentation readiness"
+  },
+  
+  "designPhilosophy": {
+    "inspiration": "TradingView's clean, professional interface",
+    "principles": [
+      "Clean, minimal design with focus on data",
+      "Professional appearance suitable for government presentations",
+      "Light mode by default with subtle colors",
+      "Excellent typography hierarchy",
+      "Clear data visualization",
+      "Minimalist UI elements",
+      "No excessive gradients or glows",
+      "Information density without clutter"
+    ],
+    "colorStrategy": {
+      "primary": "Use blues for primary actions and highlights",
+      "background": "White and light grays (#FFFFFF, #F7F9FB, #F1F3F5)",
+      "text": "Dark grays for excellent readability (#18181B, #3F3F46, #71717A)",
+      "borders": "Very subtle borders (#E4E4E7, #D4D4D8)",
+      "success": "Green for positive metrics (#22C55E, #16A34A)",
+      "warning": "Amber for warnings (#F59E0B, #EAB308)",
+      "error": "Red for critical items (#EF4444, #DC2626)",
+      "charts": "Use TradingView-style chart colors"
+    }
+  },
+
+  "fileChanges": {
+    "criticalFiles": [
+      {
+        "file": "app/globals.css",
+        "action": "REPLACE",
+        "description": "Replace with TradingView-inspired base styles",
+        "changes": [
+          "Remove all dark theme as default",
+          "Implement clean light theme",
+          "Add Inter font family as primary",
+          "Clean, minimal scrollbars",
+          "Professional color variables"
+        ]
+      },
+      {
+        "file": "app/traficmx-security.css",
+        "action": "ARCHIVE_AND_REPLACE",
+        "newFile": "app/traficmx-professional.css",
+        "description": "Replace cyberpunk theme with professional TradingView-style theme",
+        "changes": [
+          "Remove all neon glows and gradients",
+          "Implement clean card styles",
+          "Professional button designs",
+          "Clean form inputs",
+          "Subtle hover states",
+          "Minimal shadows"
+        ]
+      },
+      {
+        "file": "app/page.tsx",
+        "action": "REDESIGN",
+        "description": "Redesign landing page with clean, professional aesthetic",
+        "changes": [
+          "Remove background mesh, grid patterns, noise overlay",
+          "Simplify hero section with clean typography",
+          "Replace bento grid with clean feature cards",
+          "Professional CTA buttons",
+          "Clean navigation bar",
+          "Minimal animations"
+        ]
+      },
+      {
+        "file": "app/dashboard.tsx",
+        "action": "REDESIGN",
+        "description": "Redesign dashboard to match TradingView aesthetic",
+        "changes": [
+          "Clean header with subtle shadow",
+          "Professional metric cards",
+          "TradingView-style charts",
+          "Clean data tables",
+          "Professional color scheme",
+          "Better spacing and hierarchy"
+        ]
+      },
+      {
+        "file": "components/MetricCard.tsx",
+        "action": "REDESIGN",
+        "description": "Create TradingView-style metric cards",
+        "changes": [
+          "Clean white background",
+          "Subtle borders",
+          "Professional typography",
+          "Color-coded trend indicators",
+          "Minimal shadows"
+        ]
+      },
+      {
+        "file": "components/DataTable.tsx",
+        "action": "REDESIGN",
+        "description": "Professional data table design",
+        "changes": [
+          "Clean table headers",
+          "Subtle row hover states",
+          "Professional borders",
+          "Better column alignment",
+          "Clean sorting indicators"
+        ]
+      },
+      {
+        "file": "components/TrafficChartVisx.tsx",
+        "action": "REDESIGN",
+        "description": "TradingView-inspired chart design",
+        "changes": [
+          "Clean axis styling",
+          "Professional color scheme",
+          "Minimal grid lines",
+          "Clean tooltips",
+          "Better legends"
+        ]
+      }
+    ]
+  },
+
+  "newDesignSystem": {
+    "typography": {
+      "fontFamilies": {
+        "primary": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        "mono": "'SF Mono', 'Monaco', 'Cascadia Code', monospace",
+        "display": "Inter, sans-serif"
+      },
+      "fontSizes": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem",
+        "5xl": "3rem"
+      },
+      "fontWeights": {
+        "normal": "400",
+        "medium": "500",
+        "semibold": "600",
+        "bold": "700"
+      }
+    },
+    
+    "colors": {
+      "background": {
+        "primary": "#FFFFFF",
+        "secondary": "#F7F9FB",
+        "tertiary": "#F1F3F5"
+      },
+      "text": {
+        "primary": "#18181B",
+        "secondary": "#3F3F46",
+        "tertiary": "#71717A",
+        "muted": "#A1A1AA"
+      },
+      "border": {
+        "light": "#F1F3F5",
+        "default": "#E4E4E7",
+        "dark": "#D4D4D8"
+      },
+      "semantic": {
+        "success": "#22C55E",
+        "successLight": "#DCFCE7",
+        "warning": "#F59E0B",
+        "warningLight": "#FEF3C7",
+        "error": "#EF4444",
+        "errorLight": "#FEE2E2",
+        "info": "#3B82F6",
+        "infoLight": "#DBEAFE"
+      },
+      "charts": {
+        "blue": "#3B82F6",
+        "green": "#22C55E",
+        "red": "#EF4444",
+        "purple": "#A855F7",
+        "amber": "#F59E0B",
+        "cyan": "#06B6D4"
+      }
+    },
+
+    "spacing": {
+      "xs": "0.25rem",
+      "sm": "0.5rem",
+      "md": "1rem",
+      "lg": "1.5rem",
+      "xl": "2rem",
+      "2xl": "3rem",
+      "3xl": "4rem"
+    },
+
+    "shadows": {
+      "none": "none",
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "default": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+      "md": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+    },
+
+    "borderRadius": {
+      "none": "0",
+      "sm": "0.25rem",
+      "default": "0.375rem",
+      "md": "0.5rem",
+      "lg": "0.75rem",
+      "xl": "1rem",
+      "full": "9999px"
+    }
+  },
+
+  "componentSpecs": {
+    "MetricCard": {
+      "structure": "Clean card with icon, value, label, and change indicator",
+      "styling": {
+        "background": "white",
+        "border": "1px solid #E4E4E7",
+        "borderRadius": "0.75rem",
+        "padding": "1.5rem",
+        "shadow": "0 1px 3px 0 rgb(0 0 0 / 0.1)",
+        "hoverShadow": "0 4px 6px -1px rgb(0 0 0 / 0.1)"
+      },
+      "typography": {
+        "label": "text-sm font-medium text-gray-600",
+        "value": "text-3xl font-bold text-gray-900",
+        "change": "text-sm font-medium with color based on trend"
+      }
+    },
+
+    "Button": {
+      "primary": {
+        "background": "#3B82F6",
+        "text": "white",
+        "hover": "#2563EB",
+        "padding": "0.625rem 1.25rem",
+        "fontSize": "0.875rem",
+        "fontWeight": "600",
+        "borderRadius": "0.5rem"
+      },
+      "secondary": {
+        "background": "white",
+        "border": "1px solid #E4E4E7",
+        "text": "#3F3F46",
+        "hover": "#F7F9FB",
+        "padding": "0.625rem 1.25rem",
+        "fontSize": "0.875rem",
+        "fontWeight": "600",
+        "borderRadius": "0.5rem"
+      }
+    },
+
+    "DataTable": {
+      "styling": {
+        "header": {
+          "background": "#F7F9FB",
+          "text": "#3F3F46",
+          "fontSize": "0.75rem",
+          "fontWeight": "600",
+          "textTransform": "uppercase",
+          "letterSpacing": "0.05em",
+          "padding": "0.75rem 1rem"
+        },
+        "row": {
+          "background": "white",
+          "hoverBackground": "#F7F9FB",
+          "border": "1px solid #F1F3F5",
+          "padding": "0.875rem 1rem"
+        },
+        "cell": {
+          "fontSize": "0.875rem",
+          "color": "#18181B"
+        }
+      }
+    },
+
+    "Chart": {
+      "styling": {
+        "background": "white",
+        "grid": "#F1F3F5",
+        "axis": "#71717A",
+        "tooltip": {
+          "background": "white",
+          "border": "1px solid #E4E4E7",
+          "shadow": "0 4px 6px -1px rgb(0 0 0 / 0.1)"
+        }
+      },
+      "colors": {
+        "line": "#3B82F6",
+        "area": "rgba(59, 130, 246, 0.1)",
+        "positive": "#22C55E",
+        "negative": "#EF4444"
+      }
+    },
+
+    "Navigation": {
+      "styling": {
+        "background": "white",
+        "border": "1px solid #E4E4E7",
+        "shadow": "0 1px 3px 0 rgb(0 0 0 / 0.1)",
+        "height": "4rem",
+        "backdropBlur": "blur(8px)"
+      },
+      "links": {
+        "color": "#3F3F46",
+        "hoverColor": "#18181B",
+        "activeColor": "#3B82F6",
+        "fontSize": "0.875rem",
+        "fontWeight": "500"
+      }
+    }
+  },
+
+  "implementationSteps": [
+    {
+      "step": 1,
+      "title": "Update globals.css",
+      "description": "Replace base styles with clean, professional foundation",
+      "priority": "CRITICAL",
+      "dependencies": []
+    },
+    {
+      "step": 2,
+      "title": "Create new professional.css",
+      "description": "Replace security.css with TradingView-inspired styles",
+      "priority": "CRITICAL",
+      "dependencies": ["step 1"]
+    },
+    {
+      "step": 3,
+      "title": "Redesign landing page",
+      "description": "Clean up page.tsx - remove all cyberpunk elements",
+      "priority": "HIGH",
+      "dependencies": ["step 1", "step 2"]
+    },
+    {
+      "step": 4,
+      "title": "Redesign dashboard",
+      "description": "Update dashboard.tsx with clean professional design",
+      "priority": "CRITICAL",
+      "dependencies": ["step 1", "step 2"]
+    },
+    {
+      "step": 5,
+      "title": "Update MetricCard component",
+      "description": "Professional metric card design",
+      "priority": "HIGH",
+      "dependencies": ["step 1", "step 2"]
+    },
+    {
+      "step": 6,
+      "title": "Update DataTable component",
+      "description": "Clean table design",
+      "priority": "HIGH",
+      "dependencies": ["step 1", "step 2"]
+    },
+    {
+      "step": 7,
+      "title": "Update chart components",
+      "description": "TradingView-style chart styling",
+      "priority": "HIGH",
+      "dependencies": ["step 1", "step 2"]
+    },
+    {
+      "step": 8,
+      "title": "Update all UI components",
+      "description": "Ensure all components follow new design system",
+      "priority": "MEDIUM",
+      "dependencies": ["step 1", "step 2", "step 5", "step 6", "step 7"]
+    },
+    {
+      "step": 9,
+      "title": "Test and refine",
+      "description": "Review all pages and components for consistency",
+      "priority": "HIGH",
+      "dependencies": ["step 8"]
+    }
+  ],
+
+  "codeExamples": {
+    "newGlobalCSS": {
+      "description": "Clean professional base styles",
+      "code": "@import \"tailwindcss\";\n\n/* Professional Design System */\n:root {\n  --bg-primary: #FFFFFF;\n  --bg-secondary: #F7F9FB;\n  --bg-tertiary: #F1F3F5;\n  \n  --text-primary: #18181B;\n  --text-secondary: #3F3F46;\n  --text-tertiary: #71717A;\n  --text-muted: #A1A1AA;\n  \n  --border-light: #F1F3F5;\n  --border-default: #E4E4E7;\n  --border-dark: #D4D4D8;\n  \n  --color-blue: #3B82F6;\n  --color-green: #22C55E;\n  --color-red: #EF4444;\n  --color-amber: #F59E0B;\n  \n  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);\n  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);\n}\n\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;\n  background: var(--bg-primary);\n  color: var(--text-primary);\n  line-height: 1.5;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n/* Clean Scrollbar */\n::-webkit-scrollbar {\n  width: 8px;\n  height: 8px;\n}\n\n::-webkit-scrollbar-track {\n  background: var(--bg-secondary);\n}\n\n::-webkit-scrollbar-thumb {\n  background: var(--border-dark);\n  border-radius: 4px;\n}\n\n::-webkit-scrollbar-thumb:hover {\n  background: #A1A1AA;\n}"
+    },
+
+    "professionalCard": {
+      "description": "TradingView-style card component",
+      "code": "const Card = ({ children, className = '' }) => {\n  return (\n    <div className={`\n      bg-white\n      border border-gray-200\n      rounded-xl\n      shadow-sm\n      hover:shadow-md\n      transition-shadow\n      duration-200\n      ${className}\n    `}>\n      {children}\n    </div>\n  );\n};"
+    },
+
+    "professionalMetricCard": {
+      "description": "Professional metric display",
+      "code": "interface MetricCardProps {\n  title: string;\n  value: string | number;\n  change?: number;\n  trend?: 'up' | 'down' | 'neutral';\n  icon?: React.ReactNode;\n}\n\nconst MetricCard = ({ title, value, change, trend, icon }: MetricCardProps) => {\n  const trendColor = trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-600';\n  const trendBg = trend === 'up' ? 'bg-green-50' : trend === 'down' ? 'bg-red-50' : 'bg-gray-50';\n  \n  return (\n    <div className=\"bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow\">\n      <div className=\"flex items-start justify-between mb-4\">\n        <span className=\"text-sm font-medium text-gray-600\">{title}</span>\n        {icon && (\n          <div className=\"w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600\">\n            {icon}\n          </div>\n        )}\n      </div>\n      <div className=\"text-3xl font-bold text-gray-900 mb-2\">{value}</div>\n      {change !== undefined && (\n        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${trendColor} ${trendBg}`}>\n          {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}\n          {Math.abs(change)}%\n        </div>\n      )}\n    </div>\n  );\n};"
+    },
+
+    "professionalButton": {
+      "description": "Clean button components",
+      "code": "// Primary Button\n<button className=\"\n  px-5 py-2.5\n  bg-blue-600\n  text-white\n  text-sm\n  font-semibold\n  rounded-lg\n  hover:bg-blue-700\n  active:bg-blue-800\n  transition-colors\n  shadow-sm\n\">\n  Primary Action\n</button>\n\n// Secondary Button\n<button className=\"\n  px-5 py-2.5\n  bg-white\n  text-gray-700\n  text-sm\n  font-semibold\n  rounded-lg\n  border border-gray-300\n  hover:bg-gray-50\n  active:bg-gray-100\n  transition-colors\n\">\n  Secondary Action\n</button>"
+    },
+
+    "professionalTable": {
+      "description": "Clean data table styling",
+      "code": "<div className=\"border border-gray-200 rounded-xl overflow-hidden\">\n  <table className=\"w-full\">\n    <thead className=\"bg-gray-50\">\n      <tr>\n        <th className=\"px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider\">\n          Camera\n        </th>\n        <th className=\"px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider\">\n          Traffic\n        </th>\n        <th className=\"px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider\">\n          Status\n        </th>\n      </tr>\n    </thead>\n    <tbody className=\"bg-white divide-y divide-gray-100\">\n      <tr className=\"hover:bg-gray-50 transition-colors\">\n        <td className=\"px-4 py-3.5 text-sm text-gray-900\">cam_01</td>\n        <td className=\"px-4 py-3.5 text-sm text-gray-900\">561</td>\n        <td className=\"px-4 py-3.5\">\n          <span className=\"inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800\">\n            Active\n          </span>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n</div>"
+    },
+
+    "professionalNavigation": {
+      "description": "Clean navigation bar",
+      "code": "<nav className=\"sticky top-0 z-50 bg-white border-b border-gray-200 backdrop-blur-sm bg-white/80\">\n  <div className=\"max-w-7xl mx-auto px-6\">\n    <div className=\"flex items-center justify-between h-16\">\n      <div className=\"flex items-center gap-8\">\n        <Link href=\"/\" className=\"flex items-center gap-2 font-semibold text-gray-900\">\n          <div className=\"w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center\">\n            <Shield className=\"w-4 h-4 text-white\" />\n          </div>\n          TrafficMX\n        </Link>\n        <div className=\"hidden md:flex items-center gap-6\">\n          <Link href=\"/dashboard\" className=\"text-sm font-medium text-gray-600 hover:text-gray-900\">\n            Dashboard\n          </Link>\n          <Link href=\"/analytics\" className=\"text-sm font-medium text-gray-600 hover:text-gray-900\">\n            Analytics\n          </Link>\n        </div>\n      </div>\n      <div className=\"flex items-center gap-3\">\n        <button className=\"px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900\">\n          Sign In\n        </button>\n        <button className=\"px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700\">\n          Get Started\n        </button>\n      </div>\n    </div>\n  </div>\n</nav>"
+    }
+  },
+
+  "keyRemovalItems": [
+    "Remove all neon glow effects",
+    "Remove background mesh animations",
+    "Remove grid pattern overlays",
+    "Remove noise overlays",
+    "Remove excessive gradients",
+    "Remove cyberpunk aesthetic elements",
+    "Remove heavy animations",
+    "Remove complex clip-paths",
+    "Remove futuristic fonts like Orbitron",
+    "Remove military/security terminology unless necessary"
+  ],
+
+  "marketingRecommendations": {
+    "hardwareHighlights": [
+      {
+        "feature": "NVIDIA Jetson Nano Edge Computing",
+        "description": "On-site AI processing eliminates cloud latency and ensures data privacy",
+        "benefits": ["Real-time response", "Data sovereignty", "Lower bandwidth costs"]
+      },
+      {
+        "feature": "Professional Hikvision Cameras",
+        "description": "Industrial-grade video capture with PoE connectivity",
+        "benefits": ["24/7 reliability", "Weather-resistant", "Easy installation"]
+      },
+      {
+        "feature": "Intelligent Snapshot System",
+        "description": "Automated capture of critical incidents for forensic analysis",
+        "benefits": ["Evidence collection", "Quick response", "Historical review"]
+      },
+      {
+        "feature": "Real-Time Traffic Analytics",
+        "description": "Vehicle counting and flow analysis updated every 5 seconds",
+        "benefits": ["Immediate insights", "Pattern detection", "Congestion prediction"]
+      },
+      {
+        "feature": "Scalable Infrastructure",
+        "description": "Modular system that grows with your municipality's needs",
+        "benefits": ["Cost-effective expansion", "Future-proof", "Flexible deployment"]
+      }
+    ],
+    "governmentPitchPoints": [
+      "ROI: 20-30% reduction in congestion can save millions in economic productivity",
+      "Safety: Automated incident detection enables faster emergency response",
+      "Planning: Historical data supports evidence-based infrastructure decisions",
+      "Transparency: Real-time public dashboards increase citizen trust",
+      "Compliance: All data stored locally ensuring municipal data sovereignty",
+      "Proven: Already deployed and operational at [Your Intersection]"
+    ]
+  },
+
+  "nextSteps": [
+    "Review this design context thoroughly",
+    "Decide between gradual migration or complete redesign",
+    "Back up current codebase",
+    "Start with globals.css and new professional.css",
+    "Update one page at a time (dashboard first, then landing)",
+    "Test on actual government stakeholders for feedback",
+    "Iterate based on real-world presentation results"
+  ]
+}
