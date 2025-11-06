@@ -10,7 +10,7 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { GridRows, GridColumns } from '@visx/grid';
 import { LinePath } from '@visx/shape';
 import { Tooltip, useTooltip } from '@visx/tooltip';
-import { getMexicoCityTime } from '@/lib/timezone';
+import { getMexicoCityTime, formatMexicoCityTime } from '@/lib/timezone';
 
 type TimeRange = '24h' | 'today' | 'yesterday' | '7d';
 
@@ -66,8 +66,12 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
     const groupedByHour = rawData.reduce((acc: Record<string, ChartData>, stat) => {
       const hour = stat.hour;
       if (!acc[hour]) {
+        // Convert UTC hour to Mexico City time for display
+        const utcDate = new Date(hour);
+        const mexicoCityDate = new Date(utcDate.toLocaleString('en-US', { timeZone: 'America/Mexico_City' }));
+        
         acc[hour] = {
-          date: new Date(hour),
+          date: mexicoCityDate,
           total: 0,
           cars: 0,
           buses: 0,
@@ -130,9 +134,13 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
   // Tooltip content
   const getTooltipContent = () => {
     if (!tooltipData) return null;
+    const d = tooltipData.date;
+    const timeStr = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+    const dateStr = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
-        <p className="font-semibold text-gray-900 mb-2">{format(tooltipData.date, 'dd MMM yyyy HH:mm', { timeZone: 'America/Mexico_City' })}</p>
+        <p className="font-semibold text-gray-900 mb-2">{dateStr} {timeStr}</p>
         <p className="text-blue-600 text-sm">Total: {tooltipData.total}</p>
         <p className="text-green-600 text-sm">Autos: {tooltipData.cars}</p>
         <p className="text-purple-600 text-sm">Autobuses: {tooltipData.buses}</p>
@@ -232,7 +240,10 @@ export default function TrafficChartVisx({ data: propData }: TrafficChartProps) 
                 fontSize: 12,
                 textAnchor: 'middle',
               })}
-              tickFormat={(date) => format(new Date(date as number), 'HH:mm', { timeZone: 'America/Mexico_City' })}
+              tickFormat={(date) => {
+  const d = new Date(date as number);
+  return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+}}
             />
 
             {/* Total line */}
