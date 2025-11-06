@@ -10,6 +10,22 @@ import TrafficChartVisx from '@/components/TrafficChartVisx';
 import TrafficMap from '@/components/TrafficMap';
 import { Activity, TrendingUp, Camera, Car, AlertCircle, Clock } from 'lucide-react';
 
+// Type definitions for dashboard data
+interface LiveCount {
+  camera_id: string;
+  direction: string;
+  total_in: number;
+  total_out: number;
+  timestamp: string;
+}
+
+interface HourlyStat {
+  hour: string;
+  camera_id: string;
+  total_in: number;
+  total_out: number;
+}
+
 export default function Dashboard() {
   const { liveCounts, isLoading: loadingLive, isError: errorLive } = useLiveCounts(5000);
   const { hourlyStats, isLoading: loadingHourly, isError: errorHourly } = useHourlyStatistics(60000);
@@ -49,9 +65,10 @@ export default function Dashboard() {
   }
 
   // Calculate total traffic across all cameras
-  const totalTraffic = liveCounts?.reduce((sum, count) => sum + count.total_in + count.total_out, 0) || 0;
-  const totalIn = liveCounts?.reduce((sum, count) => sum + count.total_in, 0) || 0;
-  const totalOut = liveCounts?.reduce((sum, count) => sum + count.total_out, 0) || 0;
+  const liveCountsData = liveCounts as LiveCount[] | undefined;
+  const totalTraffic = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_in + count.total_out, 0) || 0;
+  const totalIn = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_in, 0) || 0;
+  const totalOut = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_out, 0) || 0;
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -84,7 +101,7 @@ export default function Dashboard() {
                 transition={{ delay: 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl font-bold text-green-400">{liveCounts?.length || 0}</div>
+                <div className="text-3xl font-bold text-green-400">{liveCountsData?.length || 0}</div>
                 <div className="text-sm text-slate-400">Cámaras Activas</div>
               </motion.div>
             </div>
@@ -120,7 +137,7 @@ export default function Dashboard() {
           
           <MetricCard
             title="Cámaras Activas"
-            value={liveCounts?.length || 0}
+            value={liveCountsData?.length || 0}
             change={0}
             trend="neutral"
             changeLabel="Monitoreando 2 avenidas"
@@ -136,9 +153,9 @@ export default function Dashboard() {
           className="mb-8"
         >
           <h2 className="text-2xl font-bold text-white mb-6">Datos en Tiempo Real</h2>
-          {liveCounts && (
+          {liveCountsData && liveCountsData.length > 0 && (
             <DataTable
-              data={liveCounts.map(count => ({
+              data={liveCountsData.map((count: LiveCount) => ({
                 ...count,
                 efficiency: count.total_in > 0 ? Math.round((count.total_out / count.total_in) * 100) : 0,
                 timestamp: new Date(count.timestamp).toLocaleTimeString('es-MX')
@@ -184,7 +201,7 @@ export default function Dashboard() {
           >
             <Card>
               <h3 className="text-xl font-semibold text-white mb-4">Mapa de Tráfico</h3>
-              {liveCounts && <TrafficMap cameras={liveCounts} />}
+              {liveCountsData && liveCountsData.length > 0 && <TrafficMap cameras={liveCountsData} />}
             </Card>
           </motion.div>
         </div>
@@ -198,7 +215,7 @@ export default function Dashboard() {
             className="mb-8"
           >
             <TrafficHeatmap 
-              data={hourlyStats.map(stat => ({
+              data={(hourlyStats as HourlyStat[]).map((stat: HourlyStat) => ({
                 hour: new Date(stat.hour).getHours().toString(),
                 location: stat.camera_id,
                 intensity: stat.total_in + stat.total_out,
