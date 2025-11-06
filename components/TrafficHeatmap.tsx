@@ -44,10 +44,10 @@ export function TrafficHeatmap({ data, className = '' }: TrafficHeatmapProps) {
     <Card className={className}>
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-white mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Traffic Intensity Heatmap
           </h3>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-gray-600">
             Visual representation of traffic patterns by hour and location
           </p>
         </div>
@@ -63,7 +63,7 @@ export function TrafficHeatmap({ data, className = '' }: TrafficHeatmapProps) {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.02 }}
-                  className="flex-1 h-8 flex items-center justify-center text-xs text-slate-400 font-medium"
+                  className="flex-1 h-8 flex items-center justify-center text-xs text-gray-600 font-medium"
                 >
                   {hour}
                 </motion.div>
@@ -77,7 +77,7 @@ export function TrafficHeatmap({ data, className = '' }: TrafficHeatmapProps) {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: locationIndex * 0.05 }}
-                  className="w-24 h-12 flex-shrink-0 flex items-center text-xs text-slate-400 font-medium truncate pr-2"
+                  className="w-24 h-12 flex-shrink-0 flex items-center text-xs text-gray-600 font-medium truncate pr-2"
                 >
                   {location}
                 </motion.div>
@@ -100,7 +100,7 @@ export function TrafficHeatmap({ data, className = '' }: TrafficHeatmapProps) {
                       }}
                       className="flex-1 h-12 mx-0.5 rounded cursor-pointer relative group"
                       style={{
-                        backgroundColor: intensity > 0 ? `rgba(239, 68, 68, ${getIntensityOpacity(intensity)})` : 'rgba(71, 85, 105, 0.3)'
+                        backgroundColor: intensity > 0 ? `rgba(239, 68, 68, ${getIntensityOpacity(intensity)})` : 'rgba(229, 231, 235, 0.5)'
                       }}
                       onMouseEnter={() => setHoveredCell(cellData || null)}
                       onMouseLeave={() => setHoveredCell(null)}
@@ -118,15 +118,15 @@ export function TrafficHeatmap({ data, className = '' }: TrafficHeatmapProps) {
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg shadow-lg z-50 whitespace-nowrap"
+                          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 whitespace-nowrap"
                         >
-                          <div className="text-xs text-white">
+                          <div className="text-xs text-gray-700">
                             <div className="font-semibold">{location} - {hour}</div>
                             <div>Intensity: {intensity}</div>
                             <div>Vehicles: {count}</div>
                           </div>
                           <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                            <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800" />
+                            <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white" />
                           </div>
                         </motion.div>
                       )}
@@ -139,30 +139,30 @@ export function TrafficHeatmap({ data, className = '' }: TrafficHeatmapProps) {
         </div>
         
         {/* Legend */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-700">
-          <div className="text-xs text-slate-400">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          <div className="text-xs text-gray-600">
             Traffic Intensity
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-600 rounded" />
-              <span className="text-xs text-slate-400">Low</span>
+              <div className="w-4 h-4 bg-green-500 rounded" />
+              <span className="text-xs text-gray-600">Low</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-blue-600 rounded" />
-              <span className="text-xs text-slate-400">Moderate</span>
+              <div className="w-4 h-4 bg-blue-500 rounded" />
+              <span className="text-xs text-gray-600">Moderate</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-yellow-600 rounded" />
-              <span className="text-xs text-slate-400">High</span>
+              <div className="w-4 h-4 bg-yellow-500 rounded" />
+              <span className="text-xs text-gray-600">High</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-orange-600 rounded" />
-              <span className="text-xs text-slate-400">Very High</span>
+              <div className="w-4 h-4 bg-orange-500 rounded" />
+              <span className="text-xs text-gray-600">Very High</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-600 rounded" />
-              <span className="text-xs text-slate-400">Critical</span>
+              <div className="w-4 h-4 bg-red-500 rounded" />
+              <span className="text-xs text-gray-600">Critical</span>
             </div>
           </div>
         </div>
