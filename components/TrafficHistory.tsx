@@ -62,10 +62,13 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
       setError(null);
       const data = await api.getHourlyStatistics();
       
+      // Ensure data is an array
+      const dataArray = Array.isArray(data) ? data : [];
+      
       // Filter by camera if specified
       const filteredData = cameraId 
-        ? data.filter(stat => stat.camera_id === cameraId)
-        : data;
+        ? dataArray.filter(stat => stat.camera_id === cameraId)
+        : dataArray;
 
       // Filter by time range (simplified - in real app would use proper date filtering)
       const now = new Date();
@@ -90,6 +93,7 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
       setHistoryData(timeFilteredData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch history data');
+      setHistoryData([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -251,26 +255,29 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
       </div>
 
       {/* Traffic chart */}
-      <div className="h-64 mb-6">
+      <div className="h-64 mb-6 resizable-chart">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={processedData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+          <LineChart data={processedData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="time" 
-              stroke="#94a3b8"
-              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              stroke="#6b7280"
+              tick={{ fill: '#6b7280', fontSize: 12 }}
             />
             <YAxis 
-              stroke="#94a3b8"
-              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              stroke="#6b7280"
+              tick={{ fill: '#6b7280', fontSize: 12 }}
+              domain={[0, 'dataMax']}
+              allowDataOverflow={false}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#1e293b', 
-                border: '1px solid #475569',
-                borderRadius: '8px'
+                backgroundColor: '#ffffff', 
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                color: '#1f2937'
               }}
-              labelStyle={{ color: '#e2e8f0' }}
+              labelStyle={{ color: '#1f2937' }}
             />
             
             {(vehicleType === 'all' || vehicleType === 'car') && (
@@ -310,26 +317,29 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
       </div>
 
       {/* Vehicle type distribution */}
-      <div className="h-32">
+      <div className="h-32 resizable-chart">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={processedData.slice(-12)}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+          <BarChart data={processedData.slice(-12)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="time" 
-              stroke="#94a3b8"
-              tick={{ fill: '#94a3b8', fontSize: 10 }}
+              stroke="#6b7280"
+              tick={{ fill: '#6b7280', fontSize: 10 }}
             />
             <YAxis 
-              stroke="#94a3b8"
-              tick={{ fill: '#94a3b8', fontSize: 10 }}
+              stroke="#6b7280"
+              tick={{ fill: '#6b7280', fontSize: 10 }}
+              domain={[0, 'dataMax']}
+              allowDataOverflow={false}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#1e293b', 
-                border: '1px solid #475569',
-                borderRadius: '8px'
+                backgroundColor: '#ffffff', 
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                color: '#1f2937'
               }}
-              labelStyle={{ color: '#e2e8f0' }}
+              labelStyle={{ color: '#1f2937' }}
             />
             <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} />
           </BarChart>

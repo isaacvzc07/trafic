@@ -25,17 +25,17 @@ function TrafficHistoryPanel({ cameraId }: { cameraId?: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex justify-between items-center p-4 border-b border-slate-700">
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-          <History className="w-5 h-5 text-blue-400" />
+    <div className="h-full flex flex-col bg-white border border-gray-200">
+      <div className="flex justify-between items-center p-4 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <History className="w-5 h-5 text-blue-600" />
           Traffic History
         </h3>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-slate-400 hover:text-white"
+          className="text-gray-600 hover:text-gray-900"
         >
           {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
         </Button>
@@ -45,8 +45,8 @@ function TrafficHistoryPanel({ cameraId }: { cameraId?: string }) {
         {isExpanded ? (
           <TrafficHistory cameraId={cameraId} className="h-full border-0 rounded-none" />
         ) : (
-          <div className="p-4 text-center text-slate-500">
-            <History className="w-8 h-8 mx-auto mb-2 text-slate-600" />
+          <div className="p-4 text-center text-gray-500">
+            <History className="w-8 h-8 mx-auto mb-2 text-gray-400" />
             <p className="text-sm">Click expand to view traffic history</p>
           </div>
         )}
@@ -173,11 +173,11 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
 
   if (cameras.length === 0) {
     return (
-      <div className="bg-slate-900 border border-slate-700 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Traffic Map</h3>
-        <div className="flex items-center justify-center h-64 text-slate-500">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Traffic Map</h3>
+        <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
-            <Camera className="w-12 h-12 mx-auto mb-2 text-slate-400" />
+            <Camera className="w-12 h-12 mx-auto mb-2 text-gray-400" />
             <p>No camera data available</p>
           </div>
         </div>
@@ -186,24 +186,24 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       <PanelGroup direction="horizontal" className="h-full min-h-[500px]">
         {/* Map Panel */}
         <Panel defaultSize={showHistory ? 60 : 100} minSize={30}>
           <div className="h-full flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b border-slate-700">
-              <h3 className="text-lg font-semibold text-white">Traffic Map</h3>
-              <div className="flex items-center gap-4 text-sm text-slate-400">
+            <div className="flex justify-between items-center p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Traffic Map</h3>
+              <div className="flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-green-600"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   <span>Low Traffic</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-yellow-600"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <span>Medium Traffic</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-red-600"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <span>High Traffic</span>
                 </div>
               </div>
@@ -214,7 +214,7 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
                 {...viewState}
                 onMove={evt => setViewState(evt.viewState)}
                 style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/dark-v11"
+                mapStyle="mapbox://styles/mapbox/light-v11"
                 mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
               >
                 {/* Navigation controls */}
@@ -240,37 +240,37 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
                     onClose={() => setSelectedCamera(null)}
                     className="rounded-lg"
                   >
-                    <div className="p-3 min-w-48 bg-slate-900 text-slate-300">
-                      <h4 className="font-semibold text-sm mb-2 text-white">{selectedCamera.camera_name}</h4>
+                    <div className="p-3 min-w-48 bg-white text-gray-700">
+                      <h4 className="font-semibold text-sm mb-2 text-gray-900">{selectedCamera.camera_name}</h4>
                       <div className="space-y-1 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Total In:</span>
-                          <span className="font-medium text-green-400">{selectedCamera.total_in}</span>
+                          <span className="text-gray-500">Total In:</span>
+                          <span className="font-medium text-green-600">{selectedCamera.total_in}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Total Out:</span>
-                          <span className="font-medium text-red-400">{selectedCamera.total_out}</span>
+                          <span className="text-gray-500">Total Out:</span>
+                          <span className="font-medium text-red-600">{selectedCamera.total_out}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Cars:</span>
+                          <span className="text-gray-500">Cars:</span>
                           <span className="font-medium">
                             {selectedCamera.counts.car_in} / {selectedCamera.counts.car_out}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Buses:</span>
+                          <span className="text-gray-500">Buses:</span>
                           <span className="font-medium">
                             {selectedCamera.counts.bus_in} / {selectedCamera.counts.bus_out}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Trucks:</span>
+                          <span className="text-gray-500">Trucks:</span>
                           <span className="font-medium">
                             {selectedCamera.counts.truck_in} / {selectedCamera.counts.truck_out}
                           </span>
                         </div>
                       </div>
-                      <div className="mt-2 pt-2 border-t border-slate-700 text-xs text-slate-500">
+                      <div className="mt-2 pt-2 border-t border-gray-200 text-xs text-gray-500">
                         Last updated: {formatMexicoCityTime(selectedCamera.timestamp)}
                       </div>
                     </div>
@@ -279,8 +279,8 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
               </Map>
             </div>
             
-            <div className="p-2 text-xs text-slate-500 text-center border-t border-slate-700">
-              <Activity className="w-3 h-3 inline mr-1 text-blue-400" />
+            <div className="p-2 text-xs text-gray-500 text-center border-t border-gray-200">
+              <Activity className="w-3 h-3 inline mr-1 text-blue-600" />
               Real-time traffic visualization • Click cameras for details • Location: 28.712335611426948, -106.10549703573227
             </div>
           </div>
@@ -288,7 +288,7 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
 
         {/* Resize Handle */}
         {showHistory && (
-          <PanelResizeHandle className="w-1 bg-slate-700 hover:bg-slate-600 transition-colors cursor-col-resize" />
+          <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-gray-300 transition-colors cursor-col-resize" />
         )}
 
         {/* History Panel */}

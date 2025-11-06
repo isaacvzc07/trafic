@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Inter_Tight, JetBrains_Mono, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import "../styles/resizable.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { WebSocketProvider } from "@/providers/WebSocketProvider";
 import { PostHogProvider } from "@/providers/PostHogProvider";

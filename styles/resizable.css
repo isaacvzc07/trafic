@@ -1,0 +1,52 @@
+/* Resizable charts and panels */
+.resizable-chart {
+  resize: both;
+  overflow: auto;
+  min-width: 300px;
+  min-height: 200px;
+  max-width: 100%;
+}
+
+.resizable-chart::-webkit-resizer {
+  background: #3b82f6;
+  cursor: nwse-resize;
+  opacity: 0.5;
+  border-radius: 2px;
+}
+
+.resizable-chart::-moz-resizer {
+  background: #3b82f6;
+  cursor: nwse-resize;
+  opacity: 0.5;
+  border-radius: 2px;
+}
+
+/* Panel resize handle improvements */
+[data-panel-resize-handle] {
+  background: #e5e7eb !important;
+  transition: background-color 0.2s ease;
+}
+
+[data-panel-resize-handle]:hover {
+  background: #d1d5db !important;
+}
+
+[data-panel-resize-handle]:active {
+  background: #9ca3af !important;
+}
+
+/* Light mode chart container */
+.chart-container-light {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+/* Ensure proper contrast in light mode */
+.recharts-tooltip-wrapper {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
