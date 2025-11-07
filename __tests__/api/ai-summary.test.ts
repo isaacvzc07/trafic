@@ -31,27 +31,29 @@ interface MockOpenAIResponse {
 }
 
 describe('AI Summary API', () => {
-  let mockCreate: jest.MockedFunction<any>;
-  let mockSupabaseClient: any;
+  let mockCreate: jest.MockedFunction<(...args: unknown[]) => Promise<MockOpenAIResponse>>;
+  let mockSupabaseClient: Record<string, jest.Mock>;
 
   beforeEach(() => {
-    mockCreate = jest.fn();
+    mockCreate = jest.fn() as jest.MockedFunction<(...args: unknown[]) => Promise<MockOpenAIResponse>>;
     mockSupabaseClient = {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       gte: jest.fn().mockReturnThis(),
       order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       single: jest.fn().mockResolvedValue({
         data: { id: 1, report_content: 'Test report' },
         error: null
       })
     };
-
-    (createClient as jest.MockedFunction<typeof createClient>).mockReturnValue(mockSupabaseClient);
-    (OpenAI as jest.MockedClass<typeof OpenAI>).mockImplementation(() => ({
+    
+    (createClient as jest.MockedFunction<(...args: unknown[]) => Record<string, jest.Mock>>).mockReturnValue(mockSupabaseClient);
+    (OpenAI as jest.MockedClass<(...args: unknown[]) => Record<string, jest.Mock>>).mockImplementation(() => ({
       chat: { completions: { create: mockCreate } }
-    } as any));
+    } as Record<string, jest.Mock>));
+    jest.clearAllMocks();
   });
 
   describe('GET /api/cron/ai-summary', () => {
@@ -97,7 +99,7 @@ describe('AI Summary API', () => {
       mockCreate.mockResolvedValue(mockAIResponse);
 
       // Mock Supabase data responses
-      mockSupabaseClient.from.mockImplementation((table: string) => {
+      const mockSupabaseFrom = jest.fn().mockImplementation((table: string) => {
         if (table === 'traffic_hourly_stats') {
           return {
             select: jest.fn().mockReturnThis(),
@@ -134,6 +136,8 @@ describe('AI Summary API', () => {
         }
         return mockSupabaseClient;
       });
+      
+      mockSupabaseClient.from = mockSupabaseFrom;
 
       // Create mock request
       const request = new NextRequest('http://localhost:3000/api/cron/ai-summary', {
@@ -162,7 +166,7 @@ describe('AI Summary API', () => {
 
     it('should handle OpenAI API errors', async () => {
       // Mock successful data fetch but OpenAI error
-      mockSupabaseClient.from.mockReturnValue({
+      mockSupabaseClient.from = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnThis(),
         gte: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
@@ -201,7 +205,7 @@ describe('AI Summary API', () => {
       mockCreate.mockResolvedValue(mockAIResponse);
 
       // Mock daily data
-      mockSupabaseClient.from.mockReturnValue({
+      mockSupabaseClient.from = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnThis(),
         gte: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
@@ -269,7 +273,7 @@ describe('AI Summary API', () => {
 
       mockCreate.mockResolvedValue(mockAIResponse);
 
-      mockSupabaseClient.from.mockReturnValue({
+      mockSupabaseClient.from = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnThis(),
         gte: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
@@ -326,8 +330,9 @@ describe('AI Summary API Integration Tests', () => {
       }]
     };
 
-    const mockCreate = jest.fn().mockResolvedValue(mockAIResponse);
-    const mockSupabaseClient = {
+    const mockCreate = jest.fn() as jest.MockedFunction<(...args: unknown[]) => Promise<MockOpenAIResponse>>;
+    mockCreate.mockResolvedValue(mockAIResponse);
+    const mockSupabaseClientIntegration: Record<string, jest.Mock> = {
       from: jest.fn().mockReturnValue({
         select: jest.fn().mockReturnThis(),
         gte: jest.fn().mockReturnThis(),
@@ -344,10 +349,10 @@ describe('AI Summary API Integration Tests', () => {
       })
     };
 
-    (createClient as jest.MockedFunction<typeof createClient>).mockReturnValue(mockSupabaseClient);
-    (OpenAI as jest.MockedClass<typeof OpenAI>).mockImplementation(() => ({
+    (createClient as jest.MockedFunction<(...args: unknown[]) => Record<string, jest.Mock>>).mockReturnValue(mockSupabaseClientIntegration);
+    (OpenAI as jest.MockedClass<(...args: unknown[]) => Record<string, jest.Mock>>).mockImplementation(() => ({
       chat: { completions: { create: mockCreate } }
-    } as any));
+    } as Record<string, jest.Mock>));
 
     const request = new NextRequest('http://localhost:3000/api/cron/ai-summary');
     const response = await GET(request);

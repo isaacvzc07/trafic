@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { 
   generateTrafficInsights, 
   generateSmartAlert, 
@@ -7,7 +7,7 @@ import {
 } from '@/lib/ai/insights-generator';
 
 // Mock OpenAI before importing
-const mockCreate = jest.fn();
+const mockCreate = jest.fn() as jest.MockedFunction<(...args: unknown[]) => Promise<MockOpenAIResponse>>;
 jest.mock('openai', () => {
   return jest.fn().mockImplementation(() => ({
     chat: {
@@ -31,8 +31,6 @@ interface MockOpenAIResponse {
     };
   }>;
 }
-
-import OpenAI from 'openai';
 
 describe('AI Insights Generator', () => {
   beforeEach(() => {

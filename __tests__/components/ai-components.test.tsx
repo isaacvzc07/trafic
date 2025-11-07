@@ -8,7 +8,6 @@ import { AICostSavings } from '@/components/AICostSavings';
 // Mock AI functions
 jest.mock('@/lib/ai/insights-generator', () => ({
   generateTrafficInsights: jest.fn(),
-  generateSmartAlert: jest.fn(),
   calculateAICostSavings: jest.fn(),
   answerTrafficQuery: jest.fn(),
 }));
@@ -33,24 +32,20 @@ jest.mock('@/hooks/useTrafficData', () => ({
 
 import { 
   generateTrafficInsights, 
-  generateSmartAlert, 
   calculateAICostSavings,
   answerTrafficQuery 
 } from '@/lib/ai/insights-generator';
 
 const mockGenerateTrafficInsights = generateTrafficInsights as jest.MockedFunction<typeof generateTrafficInsights>;
-const mockGenerateSmartAlert = generateSmartAlert as jest.MockedFunction<typeof generateSmartAlert>;
 const mockCalculateAICostSavings = calculateAICostSavings as jest.MockedFunction<typeof calculateAICostSavings>;
 const mockAnswerTrafficQuery = answerTrafficQuery as jest.MockedFunction<typeof answerTrafficQuery>;
 
 // Extend Jest matchers
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toBeInTheDocument(): R;
-      toBeDisabled(): R;
-      toHaveValue(value: string): R;
-    }
+declare module '@jest/globals' {
+  interface Matchers<R = void> {
+    toBeInTheDocument(): R;
+    toBeDisabled(): R;
+    toHaveValue(value: string): R;
   }
 }
 
@@ -321,7 +316,7 @@ describe('AICostSavings Component', () => {
       click: jest.fn(),
       setAttribute: jest.fn()
     };
-    jest.spyOn(document, 'createElement').mockReturnValue(mockAnchor as any);
+    jest.spyOn(document, 'createElement').mockReturnValue(mockAnchor as HTMLElement);
     jest.spyOn(document.body, 'appendChild').mockImplementation();
     jest.spyOn(document.body, 'removeChild').mockImplementation();
 
