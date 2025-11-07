@@ -112,15 +112,15 @@ export function useHistoricalData(startDate?: string, endDate?: string, refreshI
 // Combined hook for all traffic data
 export function useTrafficData() {
   const { liveCounts } = useLiveCounts();
-  const { hourlyStatistics } = useHourlyStatistics();
-  const { summaryStatistics } = useSummaryStatistics();
+  const { hourlyStats } = useHourlyStatistics();
+  const { summary } = useSummaryStatistics();
   const { historicalData } = useHistoricalData();
 
   // Process live data for AI components
   const liveData = liveCounts?.map(count => ({
     camera_id: count.camera_id,
-    count: count.total_in + count.total_out,
-    hour: count.created_at,
+    count: (count.total_in || 0) + (count.total_out || 0),
+    hour: count.timestamp || new Date().toISOString(),
     direction: 'total'
   })) || [];
 
@@ -136,9 +136,9 @@ export function useTrafficData() {
   // Generate camera insights for AI components
   const cameraInsights = liveCounts?.map(count => ({
     camera_id: count.camera_id,
-    peak_hour: new Date(count.created_at).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
-    total_vehicles: count.total_in + count.total_out,
-    flow_rate: ((count.total_in + count.total_out) / 60).toFixed(1) // vehicles per minute
+    peak_hour: count.timestamp ? new Date(count.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+    total_vehicles: (count.total_in || 0) + (count.total_out || 0),
+    flow_rate: ((count.total_in || 0) + (count.total_out || 0)) > 0 ? (((count.total_in || 0) + (count.total_out || 0)) / 60).toFixed(1) : '0.0' // vehicles per minute
   })) || [];
 
   return {
@@ -146,8 +146,8 @@ export function useTrafficData() {
     historicalData: processedHistoricalData,
     cameraInsights,
     liveCounts,
-    hourlyStatistics,
-    summaryStatistics,
+    hourlyStatistics: hourlyStats,
+    summaryStatistics: summary,
     isLoading: false,
     isError: false
   };
