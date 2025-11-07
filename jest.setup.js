@@ -1,6 +1,14 @@
 import '@testing-library/jest-dom'
 import React from 'react'
 
+// Set up environment variables for testing
+process.env.OPENAI_API_KEY = 'test-key-for-testing'
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key'
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key'
+process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
+process.env.NEXT_PUBLIC_MAPBOX_TOKEN = 'test-mapbox-token'
+
 // Mock Next.js server components
 jest.mock('next/server', () => ({
   NextRequest: class MockNextRequest {
@@ -91,3 +99,14 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Add global fetch mock
 global.fetch = jest.fn()
+
+// Mock OpenAI module
+jest.mock('openai', () => {
+  return jest.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: jest.fn()
+      }
+    }
+  }))
+})

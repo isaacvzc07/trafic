@@ -31,6 +31,9 @@ import {
   Globe
 } from 'lucide-react';
 import Link from 'next/link';
+import { AITrafficInsights } from '@/components/AITrafficInsights';
+import { TrafficChat } from '@/components/TrafficChat';
+import { AICostSavings } from '@/components/AICostSavings';
 
 interface AnalysisData {
   hour: string;
@@ -963,6 +966,26 @@ export default function AnalysisPage() {
             </div>
           )}
         </Card>
+
+        {/* AI Features Section */}
+        <div className="space-y-8 mb-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+              <Brain className="w-6 h-6 text-blue-600" />
+              Inteligencia Artificial de Tráfico
+            </h2>
+            <p className="text-gray-600">
+              Análisis avanzado con IA GPT-4 para toma de decisiones municipales
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <AITrafficInsights />
+            <TrafficChat />
+          </div>
+
+          <AICostSavings />
+        </div>
       </div>
     </div>
   );
