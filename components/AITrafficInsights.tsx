@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Brain, TrendingUp, DollarSign, AlertTriangle, MessageCircle } from 'lucide-react';
-import { generateTrafficInsights, generateSmartAlert, calculateAICostSavings } from '@/lib/ai/insights-generator';
+import { generateTrafficInsightsClient, generateSmartAlertClient, calculateAICostSavingsClient } from '@/lib/ai/client-service';
 import { useTrafficData } from '@/hooks/useTrafficData';
 
 export function AITrafficInsights() {
@@ -20,11 +20,11 @@ export function AITrafficInsights() {
     
     setLoading(true);
     try {
-      const result = await generateTrafficInsights(liveData, historicalData);
+      const result = await generateTrafficInsightsClient(liveData, historicalData);
       setInsights(result);
     } catch (error) {
       console.error('Error generating insights:', error);
-      setInsights('❌ Error al generar insights. Por favor intenta nuevamente.');
+      setInsights('ERROR: Error al generar insights. Por favor intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -37,17 +37,16 @@ export function AITrafficInsights() {
     try {
       const alertData = {
         camera_id: 'cam_01',
-        congestion_level: 'ALTO',
-        duration: 15,
+        threshold: 100,
         timestamp: new Date().toISOString(),
         current_count: Math.max(...liveData.map(d => d.count || 0))
       };
       
-      const result = await generateSmartAlert(alertData);
+      const result = await generateSmartAlertClient(alertData);
       setRecommendations(result.alertTitle);
     } catch (error) {
       console.error('Error generating alert:', error);
-      setRecommendations('❌ Error al generar alerta');
+      setRecommendations('ERROR: Error al generar alerta');
     } finally {
       setLoading(false);
     }
@@ -58,11 +57,11 @@ export function AITrafficInsights() {
     
     setLoading(true);
     try {
-      const result = await calculateAICostSavings(historicalData);
+      const result = await calculateAICostSavingsClient(historicalData);
       setRecommendations(JSON.stringify(result, null, 2));
     } catch (error) {
       console.error('Error calculating savings:', error);
-      setRecommendations('❌ Error al calcular ahorros');
+      setRecommendations('ERROR: Error al calcular ahorros');
     } finally {
       setLoading(false);
     }

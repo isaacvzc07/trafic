@@ -27,7 +27,7 @@ export async function generateTrafficInsights(
 ): Promise<string> {
   try {
     if (!openai) {
-      return "❌ Funciones de IA no disponibles. Por favor configure la clave de API de OpenAI.";
+      return "ERROR: Funciones de IA no disponibles. Por favor configure la clave de API de OpenAI.";
     }
 
     const prompt = `
@@ -47,7 +47,7 @@ Proporciona un resumen ejecutivo en español con:
 
 Sé específico con números y proporciona insights accionables.
 Usa un tono profesional pero accesible.
-Incluye emojis relevantes para mayor claridad.
+Usa viñetas y formato claro para mayor legibilidad.
     `;
 
     const response = await openai.chat.completions.create({
@@ -168,7 +168,7 @@ export async function answerTrafficQuery(query: string, availableData: {
 }) {
   try {
     if (!openai) {
-      return "❌ Funciones de IA no disponibles. Por favor configure la clave de API de OpenAI para poder responder preguntas sobre el tráfico.";
+      return "ERROR: Funciones de IA no disponibles. Por favor configure la clave de API de OpenAI para poder responder preguntas sobre el tráfico.";
     }
 
     const prompt = `

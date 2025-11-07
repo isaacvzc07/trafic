@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { MessageCircle, Send, Bot, User } from 'lucide-react';
-import { answerTrafficQuery } from '@/lib/ai/insights-generator';
+import { answerTrafficQueryClient } from '@/lib/ai/client-service';
 import { useTrafficData } from '@/hooks/useTrafficData';
 
 interface ChatMessage {
@@ -45,7 +45,7 @@ export function TrafficChat() {
     setQuery('');
 
     try {
-      const response = await answerTrafficQuery(query, {
+      const response = await answerTrafficQueryClient(query, {
         liveData,
         historicalData,
         cameraInsights: cameraInsights || []

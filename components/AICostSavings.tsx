@@ -13,7 +13,7 @@ import {
   Download,
   Calculator
 } from 'lucide-react';
-import { calculateAICostSavings } from '@/lib/ai/insights-generator';
+import { calculateAICostSavingsClient } from '@/lib/ai/client-service';
 import { useTrafficData } from '@/hooks/useTrafficData';
 
 interface CostSavings {
@@ -37,7 +37,7 @@ export function AICostSavings() {
     
     setLoading(true);
     try {
-      const result = await calculateAICostSavings(historicalData);
+      const result = await calculateAICostSavingsClient(historicalData);
       setSavings(result);
     } catch (error) {
       console.error('Error calculating savings:', error);
@@ -54,18 +54,18 @@ export function AICostSavings() {
 INFORME DE AHORROS - ANÁLISIS IA
 Generado: ${new Date().toLocaleDateString('es-MX')}
 
-💰 AHORRO ECONÓMICO
+AHORRO ECONÓMICO
 Ahorro diario en combustible: ${savings.dailyFuelSavings}
 Ahorro semanal estimado: ${savings.weeklySavings}
 Proyección ROI: ${savings.roiProjection}
 
-⏱️ AHORRO DE TIEMPO
+AHORRO DE TIEMPO
 Tiempo ahorrado para ciudadanos: ${savings.timeSavingsHours}
 
-🌍 IMPACTO AMBIENTAL
+IMPACTO AMBIENTAL
 Reducción de CO2: ${savings.co2ReductionKg}
 
-🎯 RECOMENDACIONES
+RECOMENDACIONES
 ${savings.optimizationRecommendations.map((rec, i) => `${i + 1}. ${rec}`).join('\n')}
 
 ---
