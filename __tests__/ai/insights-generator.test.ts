@@ -18,6 +18,20 @@ jest.mock('openai', () => {
   }));
 });
 
+// Type for OpenAI response
+interface MockOpenAIResponse {
+  id: string;
+  created: number;
+  model: string;
+  object: string;
+  choices: Array<{
+    message: {
+      content: string | null;
+      role: string;
+    };
+  }>;
+}
+
 import OpenAI from 'openai';
 
 describe('AI Insights Generator', () => {
@@ -27,10 +41,15 @@ describe('AI Insights Generator', () => {
 
   describe('generateTrafficInsights', () => {
     it('should generate traffic insights successfully', async () => {
-      const mockResponse = {
+      const mockResponse: MockOpenAIResponse = {
+        id: 'test-id',
+        created: Date.now(),
+        model: 'gpt-4',
+        object: 'chat.completion',
         choices: [{
           message: {
-            content: '🚗 **Insight 1**: Tráfico pesado detectado en hora pico\n💡 **Recomendación**: Optimizar semáforos\n🔮 **Predicción**: Congestión moderada próxima hora\n💰 **Impacto**: Ahorro estimado de $2,000 MXN en combustible'
+            content: '🚗 **Insight 1**: Tráfico pesado detectado en hora pico\n💡 **Recomendación**: Optimizar semáforos\n🔮 **Predicción**: Congestión moderada próxima hora\n💰 **Impacto**: Ahorro estimado de $2,000 MXN en combustible',
+            role: 'assistant'
           }
         }]
       };
@@ -73,9 +92,16 @@ describe('AI Insights Generator', () => {
     });
 
     it('should handle empty response from OpenAI', async () => {
-      const mockResponse = {
+      const mockResponse: MockOpenAIResponse = {
+        id: 'test-id',
+        created: Date.now(),
+        model: 'gpt-4',
+        object: 'chat.completion',
         choices: [{
-          message: { content: null }
+          message: {
+            content: null,
+            role: 'assistant'
+          }
         }]
       };
 
@@ -89,7 +115,11 @@ describe('AI Insights Generator', () => {
 
   describe('generateSmartAlert', () => {
     it('should generate smart alert with JSON response', async () => {
-      const mockResponse = {
+      const mockResponse: MockOpenAIResponse = {
+        id: 'test-id',
+        created: Date.now(),
+        model: 'gpt-4',
+        object: 'chat.completion',
         choices: [{
           message: {
             content: JSON.stringify({
@@ -98,7 +128,8 @@ describe('AI Insights Generator', () => {
               resolutionTime: '30 minutos',
               alternativeRoutes: ['Av. Tecnológico', 'Periférico'],
               urgency: 'alta'
-            })
+            }),
+            role: 'assistant'
           }
         }]
       };
@@ -129,7 +160,11 @@ describe('AI Insights Generator', () => {
 
   describe('calculateAICostSavings', () => {
     it('should calculate cost savings with specific metrics', async () => {
-      const mockResponse = {
+      const mockResponse: MockOpenAIResponse = {
+        id: 'test-id',
+        created: Date.now(),
+        model: 'gpt-4',
+        object: 'chat.completion',
         choices: [{
           message: {
             content: JSON.stringify({
@@ -143,7 +178,8 @@ describe('AI Insights Generator', () => {
               ],
               roiProjection: 'ROI de 200% en 12 meses',
               weeklySavings: '$35,000 MXN'
-            })
+            }),
+            role: 'assistant'
           }
         }]
       };
@@ -171,10 +207,15 @@ describe('AI Insights Generator', () => {
 
   describe('answerTrafficQuery', () => {
     it('should answer traffic queries in Spanish', async () => {
-      const mockResponse = {
+      const mockResponse: MockOpenAIResponse = {
+        id: 'test-id',
+        created: Date.now(),
+        model: 'gpt-4',
+        object: 'chat.completion',
         choices: [{
           message: {
-            content: 'La hora pico hoy es entre las 14:00 y 16:00, con un promedio de 200 vehículos por hora. Recomiendo optimizar los semáforos en este horario.'
+            content: 'La hora pico hoy es entre las 14:00 y 16:00, con un promedio de 200 vehículos por hora. Recomiendo optimizar los semáforos en este horario.',
+            role: 'assistant'
           }
         }]
       };

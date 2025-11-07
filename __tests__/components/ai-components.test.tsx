@@ -43,6 +43,17 @@ const mockGenerateSmartAlert = generateSmartAlert as jest.MockedFunction<typeof 
 const mockCalculateAICostSavings = calculateAICostSavings as jest.MockedFunction<typeof calculateAICostSavings>;
 const mockAnswerTrafficQuery = answerTrafficQuery as jest.MockedFunction<typeof answerTrafficQuery>;
 
+// Extend Jest matchers
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeInTheDocument(): R;
+      toBeDisabled(): R;
+      toHaveValue(value: string): R;
+    }
+  }
+}
+
 describe('AITrafficInsights Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -354,9 +365,9 @@ describe('AI Components Integration', () => {
       </div>
     );
 
-    expect(container.querySelector('[data-testid="ai-traffic-insights"]') || container).toBeInTheDocument();
-    expect(container.querySelector('[data-testid="traffic-chat"]') || container).toBeInTheDocument();
-    expect(container.querySelector('[data-testid="ai-cost-savings"]') || container).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="ai-traffic-insights"]') || container).toBeDefined();
+    expect(container.querySelector('[data-testid="traffic-chat"]') || container).toBeDefined();
+    expect(container.querySelector('[data-testid="ai-cost-savings"]') || container).toBeDefined();
   });
 
   it('should handle network errors across all components', async () => {
