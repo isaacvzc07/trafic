@@ -54,11 +54,10 @@ export default function HomePage() {
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="flex items-center gap-4 font-semibold text-neutral-900">
               <img 
-                src="/images/logo.png" 
+                src="/images/logo2.png" 
                 alt="Trafic.mx Logo" 
-                className="w-15 h-15 object-contain"
+                className="h-12 object-contain"
               />
-              <span className="text-2xl font-bold">Trafic.mx</span>
             </Link>
             
             <div className="hidden md:flex items-center gap-8">
@@ -465,11 +464,10 @@ export default function HomePage() {
           <div>
             <Link href="/" className="flex items-center gap-4 font-semibold text-white mb-4">
                 <img 
-                  src="/images/logo.png" 
+                  src="/images/logo2.png" 
                   alt="Trafic.mx Logo" 
-                  className="w-12 h-12 object-contain"
+                  className="h-10 object-contain"
                 />
-                <span className="font-bold text-white text-xl">Trafic.mx</span>
               </Link>
             <p className="text-sm text-neutral-400">
               Tecnología de inteligencia de tráfico de nivel gubernamental 
