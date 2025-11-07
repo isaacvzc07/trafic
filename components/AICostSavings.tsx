@@ -167,7 +167,7 @@ Sistema de Tráfico Inteligente - Chihuahua
                 <Target className="w-6 h-6 text-purple-600" />
                 <h5 className="font-semibold text-purple-900">Proyección ROI</h5>
               </div>
-              <Badge variant="purple" className="text-xs">12 Meses</Badge>
+              <Badge variant="blue" className="text-xs">12 Meses</Badge>
             </div>
             <p className="text-lg font-medium text-purple-800 mb-2">{savings.roiProjection}</p>
             <p className="text-purple-700 font-medium">Ahorro semanal: {savings.weeklySavings}</p>
@@ -178,7 +178,7 @@ Sistema de Tráfico Inteligente - Chihuahua
             <div className="flex items-center justify-between mb-3">
               <h5 className="font-semibold text-gray-900">Recomendaciones de Optimización</h5>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => setShowDetails(!showDetails)}
               >
@@ -205,7 +205,7 @@ Sistema de Tráfico Inteligente - Chihuahua
             <Button 
               onClick={handleCalculateSavings} 
               disabled={loading}
-              variant="outline"
+              variant="primary"
               className="flex-1"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
@@ -213,7 +213,7 @@ Sistema de Tráfico Inteligente - Chihuahua
             </Button>
             <Button 
               onClick={handleExportPDF}
-              variant="default"
+              variant="secondary"
               className="flex-1"
             >
               <Download className="w-4 h-4 mr-2" />

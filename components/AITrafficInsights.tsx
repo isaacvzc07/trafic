@@ -76,7 +76,7 @@ export function AITrafficInsights() {
         </h3>
         <div className="flex gap-2">
           <Button
-            variant={activeTab === 'insights' ? 'default' : 'outline'}
+            variant={activeTab === 'insights' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('insights')}
           >
@@ -84,7 +84,7 @@ export function AITrafficInsights() {
             Insights
           </Button>
           <Button
-            variant={activeTab === 'alerts' ? 'default' : 'outline'}
+            variant={activeTab === 'alerts' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('alerts')}
           >
@@ -92,7 +92,7 @@ export function AITrafficInsights() {
             Alertas
           </Button>
           <Button
-            variant={activeTab === 'savings' ? 'default' : 'outline'}
+            variant={activeTab === 'savings' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('savings')}
           >
