@@ -1,8 +1,14 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Check if API key is available
+const openaiApiKey = process.env.OPENAI_API_KEY;
+if (!openaiApiKey) {
+  console.warn('OpenAI API key not found. AI features will be disabled.');
+}
+
+const openai = openaiApiKey ? new OpenAI({ 
+  apiKey: openaiApiKey,
+}) : null;
 
 export interface TrafficInsight {
   insights: string[];
@@ -20,6 +26,10 @@ export async function generateTrafficInsights(
   historicalData: any[]
 ): Promise<string> {
   try {
+    if (!openai) {
+      return "❌ Funciones de IA no disponibles. Por favor configure la clave de API de OpenAI.";
+    }
+
     const prompt = `
 Analiza estos datos de tráfico para funcionarios municipales de Chihuahua:
 
@@ -56,17 +66,27 @@ Incluye emojis relevantes para mayor claridad.
 
 export async function generateSmartAlert(alertData: {
   camera_id: string;
-  congestion_level: string;
-  duration: number;
-  timestamp: string;
   current_count: number;
+  threshold: number;
+  timestamp: string;
 }) {
   try {
+    if (!openai) {
+      return {
+        alertTitle: "IA No Disponible",
+        recommendation: "Configure la clave de API de OpenAI",
+        resolutionTime: "N/A",
+        alternativeRoutes: [],
+        urgency: "baja"
+      };
+    }
+
     const prompt = `
-Alerta de tráfico activada:
+Genera una alerta inteligente para tráfico en Chihuahua:
+
+DATOS:
 - Cámara: ${alertData.camera_id}
-- Nivel de congestión: ${alertData.congestion_level}
-- Duración: ${alertData.duration} minutos
+- Umbral: ${alertData.threshold}
 - Hora: ${alertData.timestamp}
 - Vehículos actuales: ${alertData.current_count}
 
@@ -98,6 +118,17 @@ Sé específico y accionable.
 
 export async function calculateAICostSavings(trafficData: any[]) {
   try {
+    if (!openai) {
+      return {
+        dailyFuelSavings: "No disponible",
+        timeSavingsHours: "No disponible",
+        co2ReductionKg: "No disponible",
+        optimizationRecommendations: ["Configure la API de OpenAI"],
+        roiProjection: "No disponible",
+        weeklySavings: "No disponible"
+      };
+    }
+
     const prompt = `
 Calcula el impacto económico para la ciudad de Chihuahua basado en:
 
@@ -136,6 +167,10 @@ export async function answerTrafficQuery(query: string, availableData: {
   cameraInsights: any[];
 }) {
   try {
+    if (!openai) {
+      return "❌ Funciones de IA no disponibles. Por favor configure la clave de API de OpenAI para poder responder preguntas sobre el tráfico.";
+    }
+
     const prompt = `
 Eres un asistente de análisis de tráfico IA para la ciudad de Chihuahua.
 

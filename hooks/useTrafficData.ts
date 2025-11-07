@@ -108,3 +108,47 @@ export function useHistoricalData(startDate?: string, endDate?: string, refreshI
     isError: error,
   };
 }
+
+// Combined hook for all traffic data
+export function useTrafficData() {
+  const { liveCounts } = useLiveCounts();
+  const { hourlyStatistics } = useHourlyStatistics();
+  const { summaryStatistics } = useSummaryStatistics();
+  const { historicalData } = useHistoricalData();
+
+  // Process live data for AI components
+  const liveData = liveCounts?.map(count => ({
+    camera_id: count.camera_id,
+    count: count.total_in + count.total_out,
+    hour: count.created_at,
+    direction: 'total'
+  })) || [];
+
+  // Process historical data for AI components
+  const processedHistoricalData = historicalData?.map(stat => ({
+    camera_id: stat.camera_id,
+    count: stat.count,
+    hour: stat.hour,
+    vehicle_type: stat.vehicle_type,
+    direction: stat.direction
+  })) || [];
+
+  // Generate camera insights for AI components
+  const cameraInsights = liveCounts?.map(count => ({
+    camera_id: count.camera_id,
+    peak_hour: new Date(count.created_at).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+    total_vehicles: count.total_in + count.total_out,
+    flow_rate: ((count.total_in + count.total_out) / 60).toFixed(1) // vehicles per minute
+  })) || [];
+
+  return {
+    liveData,
+    historicalData: processedHistoricalData,
+    cameraInsights,
+    liveCounts,
+    hourlyStatistics,
+    summaryStatistics,
+    isLoading: false,
+    isError: false
+  };
+}
