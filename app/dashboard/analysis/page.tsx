@@ -217,9 +217,14 @@ export default function AnalysisPage() {
       }
       
       if (!hourlyMap.has(mexicoCityHourKey)) {
+        // Use direct time formatting instead of locale-dependent formatting
+        const hours = mexicoCityTime.getHours().toString().padStart(2, '0');
+        const minutes = mexicoCityTime.getMinutes().toString().padStart(2, '0');
+        const formattedTime = `${hours}:${minutes}`;
+        
         hourlyMap.set(mexicoCityHourKey, {
           hour: mexicoCityHourKey,
-          time: formatMexicoCityTime(mexicoCityTime, { hour: '2-digit', minute: '2-digit' }),
+          time: formattedTime,
           cars: 0,
           buses: 0,
           trucks: 0,
@@ -430,23 +435,6 @@ export default function AnalysisPage() {
     fetchAnalysisData();
   }, [timeRange]);
 
-  // Calculate summary statistics
-  const totalVehicles = analysisData.reduce((sum, d) => sum + d.total, 0);
-  const avgHourly = analysisData.length > 0 ? Math.round(totalVehicles / analysisData.length) : 0;
-  const peakHourData = analysisData.reduce((max, d) => d.total > max.total ? d : max, analysisData[0] || { total: 0, time: '00:00' });
-  const criticalHours = analysisData.filter(d => d.traffic_level === 'CRÍTICO').length;
-  
-  // Vehicle distribution
-  const totalCars = analysisData.reduce((sum, d) => sum + d.cars, 0);
-  const totalBuses = analysisData.reduce((sum, d) => sum + d.buses, 0);
-  const totalTrucks = analysisData.reduce((sum, d) => sum + d.trucks, 0);
-  
-  const vehicleDistribution = [
-    { name: 'AUTOS', value: totalCars, percentage: Math.round((totalCars / totalVehicles) * 100) },
-    { name: 'AUTOBUSES', value: totalBuses, percentage: Math.round((totalBuses / totalVehicles) * 100) },
-    { name: 'CAMIONES', value: totalTrucks, percentage: Math.round((totalTrucks / totalVehicles) * 100) }
-  ];
-
   // Filter data based on time range
   const hoursMap = { '6h': 6, '12h': 12, '24h': 24, '48h': 48 };
   
@@ -471,6 +459,27 @@ export default function AnalysisPage() {
   };
 
   const filteredData = getFilteredData();
+
+  // Calculate summary statistics
+  const totalVehicles = analysisData.reduce((sum, d) => sum + d.total, 0);
+  const avgHourly = analysisData.length > 0 ? Math.round(totalVehicles / analysisData.length) : 0;
+  const criticalHours = analysisData.filter(d => d.traffic_level === 'CRÍTICO').length;
+  
+  // Calculate peak hour from FILTERED data (not full analysis data)
+  const peakHourData = filteredData.length > 0 
+    ? filteredData.reduce((max, d) => d.total > max.total ? d : max, filteredData[0])
+    : { total: 0, time: '00:00' };
+  
+  // Vehicle distribution
+  const totalCars = analysisData.reduce((sum, d) => sum + d.cars, 0);
+  const totalBuses = analysisData.reduce((sum, d) => sum + d.buses, 0);
+  const totalTrucks = analysisData.reduce((sum, d) => sum + d.trucks, 0);
+  
+  const vehicleDistribution = [
+    { name: 'AUTOS', value: totalCars, percentage: Math.round((totalCars / totalVehicles) * 100) },
+    { name: 'AUTOBUSES', value: totalBuses, percentage: Math.round((totalBuses / totalVehicles) * 100) },
+    { name: 'CAMIONES', value: totalTrucks, percentage: Math.round((totalTrucks / totalVehicles) * 100) }
+  ];
   const filteredPatterns = trafficPatterns.filter(p => {
     const now = getMexicoCityTime();
     const cutoffTime = new Date(now.getTime() - (hoursMap[timeRange] * 60 * 60 * 1000));
