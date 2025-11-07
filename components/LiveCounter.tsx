@@ -17,8 +17,8 @@ export default function LiveCounter({ data }: LiveCounterProps) {
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
-  const totalVehicles = data.total_in + data.total_out;
-  const netFlow = data.total_in - data.total_out;
+  const totalVehicles = (data.total_in || 0) + (data.total_out || 0);
+  const netFlow = (data.total_in || 0) - (data.total_out || 0);
   const isAccumulating = netFlow > 0;
 
   // Determine congestion level
@@ -146,7 +146,7 @@ export default function LiveCounter({ data }: LiveCounterProps) {
       {/* Timestamp */}
       <div className="text-xs text-gray-400 text-center mt-2">
         {mounted ? (
-          <>Actualizado {formatRelativeMexicoCityTime(data.timestamp)}</>
+          <>Actualizado {data.timestamp ? formatRelativeMexicoCityTime(data.timestamp) : 'recientemente'}</>
         ) : (
           <>Actualizado recientemente</>
         )}

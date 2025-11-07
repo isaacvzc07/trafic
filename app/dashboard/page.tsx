@@ -56,9 +56,9 @@ export default function Dashboard() {
 
   // Calculate total traffic across all cameras
   const liveCountsData = liveCounts as LiveCount[] | undefined;
-  const totalTraffic = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_in + count.total_out, 0) || 0;
-  const totalIn = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_in, 0) || 0;
-  const totalOut = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + count.total_out, 0) || 0;
+  const totalTraffic = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + (count.total_in || 0) + (count.total_out || 0), 0) || 0;
+  const totalIn = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + (count.total_in || 0), 0) || 0;
+  const totalOut = liveCountsData?.reduce((sum: number, count: LiveCount) => sum + (count.total_out || 0), 0) || 0;
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -152,8 +152,8 @@ export default function Dashboard() {
               <DataTable
                 data={liveCountsData.map((count: LiveCount) => ({
                   ...count,
-                  efficiency: count.total_in > 0 ? Math.round((count.total_out / count.total_in) * 100) : 0,
-                  timestamp: formatMexicoCityTime(count.timestamp)
+                  efficiency: (count.total_in || 0) > 0 ? Math.round(((count.total_out || 0) / (count.total_in || 0)) * 100) : 0,
+                  timestamp: count.timestamp ? formatMexicoCityTime(count.timestamp) : 'N/A'
                 }))}
                 columns={[
                   { key: 'camera_id', label: 'Cámara', sortable: true },
@@ -206,7 +206,7 @@ export default function Dashboard() {
               </Button>
             </Link>
           </div>
-          {hourlyStats && <TrafficChartVisx data={hourlyStats} />}
+          {hourlyStats && <TrafficChartVisx />}
         </motion.div>
 
         {/* Snapshots de Cámaras */}
@@ -239,13 +239,13 @@ export default function Dashboard() {
             <TrafficHeatmap 
               data={Array.isArray(hourlyStats) ? hourlyStats.map((stat: HourlyStatistic) => {
                 // Convert to Mexico City timezone to get correct hour
-                const date = new Date(stat.hour);
+                const date = new Date(stat.hour || '');
                 const mexicoCityHour = new Date(date.toLocaleString('en-US', { timeZone: MEXICO_CITY_TIMEZONE })).getHours();
                 return {
                   hour: mexicoCityHour.toString().padStart(2, '0'),
-                  location: stat.camera_id,
-                  intensity: stat.count,
-                  count: stat.count
+                  location: stat.camera_id || 'Unknown',
+                  intensity: stat.count || 0,
+                  count: stat.count || 0
                 };
               }) : []}
             />

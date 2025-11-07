@@ -1,7 +1,7 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
+// import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 
 // Initialize OpenTelemetry
@@ -19,20 +19,20 @@ export function initializeTelemetry() {
   });
 
   const sdk = new NodeSDK({
-    resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: 'traffic-dashboard',
-      [SemanticResourceAttributes.SERVICE_VERSION]: process.env.npm_package_version || '1.0.0',
-      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV || 'production',
-    }),
+    // resource: new Resource({
+    //   [SemanticResourceAttributes.SERVICE_NAME]: 'traffic-dashboard',
+    //   [SemanticResourceAttributes.SERVICE_VERSION]: process.env.npm_package_version || '1.0.0',
+    //   [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV || 'production',
+    // }),
     traceExporter,
     instrumentations: [getNodeAutoInstrumentations()],
-    sampler: {
-      // Sample 10% of traces in production, 100% in staging
-      shouldSample: () => {
-        const sampleRate = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
-        return Math.random() < sampleRate;
-      },
-    },
+    // sampler: {
+    //   // Sample 10% of traces in production, 100% in staging
+    //   shouldSample: () => {
+    //     const sampleRate = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
+    //     return Math.random() < sampleRate;
+    //   },
+    // },
   });
 
   sdk.start();
@@ -52,13 +52,13 @@ export function initializeTelemetry() {
 }
 
 // Custom tracing utilities
-import { trace } from '@opentelemetry/api';
+import { trace, Span, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('traffic-dashboard');
 
 export function createSpan<T>(
   name: string,
-  fn: (span: trace.Span) => T,
+  fn: (span: Span) => T,
   attributes?: Record<string, any>
 ): T {
   return tracer.startActiveSpan(name, (span) => {
@@ -75,14 +75,14 @@ export function createSpan<T>(
       if (result instanceof Promise) {
         return result
           .then((value) => {
-            span.setStatus({ code: trace.SpanStatusCode.OK });
+            span.setStatus({ code: SpanStatusCode.OK });
             span.end();
             return value;
           })
           .catch((error) => {
             span.recordException(error);
             span.setStatus({ 
-              code: trace.SpanStatusCode.ERROR, 
+              code: SpanStatusCode.ERROR, 
               message: error.message 
             });
             span.end();
@@ -90,13 +90,13 @@ export function createSpan<T>(
           }) as T;
       }
       
-      span.setStatus({ code: trace.SpanStatusCode.OK });
+      span.setStatus({ code: SpanStatusCode.OK });
       span.end();
       return result;
     } catch (error) {
       span.recordException(error as Error);
       span.setStatus({ 
-        code: trace.SpanStatusCode.ERROR, 
+        code: SpanStatusCode.ERROR, 
         message: (error as Error).message 
       });
       span.end();
@@ -179,11 +179,11 @@ export function traceWebSocketEvent(
       
       try {
         fn();
-        span.setStatus({ code: trace.SpanStatusCode.OK });
+        span.setStatus({ code: SpanStatusCode.OK });
       } catch (error) {
         span.recordException(error as Error);
         span.setStatus({ 
-          code: trace.SpanStatusCode.ERROR, 
+          code: SpanStatusCode.ERROR, 
           message: (error as Error).message 
         });
         throw error;

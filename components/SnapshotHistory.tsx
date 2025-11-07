@@ -29,10 +29,10 @@ interface SnapshotHistoryProps {
 }
 
 const cameraNames: Record<string, string> = {
-  cam_01: 'Cámara Principal',
-  cam_02: 'Cámara Norte',
-  cam_03: 'Cámara Sur',
-  cam_04: 'Cámara Este'
+  cam_01: 'Av. Homero Oeste - Este',
+  cam_02: 'Av. Homero Este - Oeste',
+  cam_03: 'Av. Industrias Norte - Sur',
+  cam_04: 'Av. Industrias Sur - Norte'
 };
 
 const incidentColors: Record<string, string> = {
@@ -64,7 +64,7 @@ export default function SnapshotHistory({ cameraId, refreshTrigger }: SnapshotHi
       if (cameraId) params.append('camera_id', cameraId);
       params.append('limit', '50');
 
-      const response = await fetch(`/api/v1/history/snapshots?${params.toString()}`);
+      const response = await fetch(`/api/snapshots?${params.toString()}`);
       const data = await response.json();
       
       if (data.success) {
@@ -83,7 +83,7 @@ export default function SnapshotHistory({ cameraId, refreshTrigger }: SnapshotHi
     if (!confirm('¿Está seguro de eliminar este snapshot?')) return;
     
     try {
-      const response = await fetch(`/api/v1/history/snapshots?snapshot_id=${snapshotId}`, {
+      const response = await fetch(`/api/snapshots?snapshot_id=${snapshotId}`, {
         method: 'DELETE'
       });
       
@@ -94,7 +94,7 @@ export default function SnapshotHistory({ cameraId, refreshTrigger }: SnapshotHi
           setSelectedSnapshot(null);
         }
       } else {
-        alert('Error al eliminar snapshot');
+        alert(`Error al eliminar snapshot: ${data.error}`);
       }
     } catch (error) {
       console.error('Error al eliminar:', error);

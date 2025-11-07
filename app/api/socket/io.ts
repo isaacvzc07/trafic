@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { SocketHandler } from '@/lib/socket-server';
+import SocketHandler from '@/lib/socket-server';
 
-export default function SocketHandler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return SocketHandler(req, res);
 }
 

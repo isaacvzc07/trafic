@@ -22,9 +22,9 @@ export interface LiveCount {
     truck_in?: number;
     truck_out?: number;
   };
-  total_in: number;
-  total_out: number;
-  timestamp: string;
+  total_in?: number;
+  total_out?: number;
+  timestamp?: string;
 }
 
 export interface VehicleEvent {
@@ -59,13 +59,13 @@ export interface CountingLine {
 }
 
 export interface HourlyStatistic {
-  period: string;
-  hour: string;
-  camera_id: string;
-  vehicle_type: 'car' | 'bus' | 'truck';
-  direction: 'in' | 'out';
-  count: number;
-  avg_confidence: number;
+  period?: string;
+  hour?: string;
+  camera_id?: string;
+  vehicle_type?: 'car' | 'bus' | 'truck';
+  direction?: 'in' | 'out';
+  count?: number;
+  avg_confidence?: number;
 }
 
 export interface SummaryStatistics {

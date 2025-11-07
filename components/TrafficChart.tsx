@@ -193,7 +193,7 @@ export default function TrafficChart({ data: propData }: TrafficChartProps) {
     }
 
     const cameraKey = stat.camera_id as 'cam_01' | 'cam_02' | 'cam_03' | 'cam_04';
-    acc[timestampKey][cameraKey] += stat.count;
+    acc[timestampKey][cameraKey] += stat.count || 0;
 
     return acc;
   }, {} as Record<string, { timestamp: number; hour: string; cam_01: number; cam_02: number; cam_03: number; cam_04: number; }>);

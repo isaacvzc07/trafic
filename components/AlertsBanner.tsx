@@ -11,8 +11,8 @@ export default function AlertsBanner({ liveCounts }: AlertsBannerProps) {
   const alerts: Array<{ type: 'warning' | 'info'; message: string }> = [];
 
   liveCounts.forEach((count) => {
-    const totalVehicles = count.total_in + count.total_out;
-    const netFlow = count.total_in - count.total_out;
+    const totalVehicles = (count.total_in || 0) + (count.total_out || 0);
+    const netFlow = (count.total_in || 0) - (count.total_out || 0);
 
     // High traffic alert
     if (totalVehicles > 30) {

@@ -33,7 +33,7 @@ export async function validatedFetch<T>(url: string, validator: (data: unknown) 
     
     const result = validator(data);
     
-    if (!result.success) {
+    if (!result.success || !result.data) {
       console.error('Validation error:', result.error);
       throw new Error(`Invalid API response: ${result.error?.issues?.map((i: any) => i.message).join(', ') || 'Unknown validation error'}`);
     }

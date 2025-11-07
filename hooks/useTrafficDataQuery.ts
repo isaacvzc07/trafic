@@ -80,7 +80,7 @@ export function useHistoricalData(startDate?: string, endDate?: string, refreshI
     queryFn: () => fetchHistoricalData(startDate, endDate),
     refetchInterval: refreshInterval,
     refetchOnWindowFocus: true,
-    staleTime: 30000,
+    staleTime: 5000, // Reduced from 30s to 5s for fresher data
     enabled: true, // Always enabled, but will refetch when params change
   });
 

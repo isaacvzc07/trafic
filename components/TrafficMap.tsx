@@ -67,11 +67,11 @@ function CameraMarker({ camera, onClick }: CameraMarkerProps) {
   const coordinates = CAMERA_COORDINATES[camera.camera_id] || [-106.10549703573227, 28.712335611426948];
   
   // Determine traffic level based on total count
-  const totalTraffic = camera.total_in + camera.total_out;
+  const totalTraffic = (camera.total_in || 0) + (camera.total_out || 0);
   const trafficLevel = totalTraffic > 100 ? 'high' : totalTraffic > 50 ? 'medium' : 'low';
   
   // Determine trend (simplified - in real app this would compare with previous data)
-  const trend = camera.total_in > camera.total_out ? 'in' : 'out';
+  const trend = (camera.total_in || 0) > (camera.total_out || 0) ? 'in' : 'out';
   
   const markerColor = {
     high: '#ef4444', // red
@@ -245,33 +245,33 @@ export default function TrafficMap({ cameras, onCameraClick, showHistory = true 
                       <div className="space-y-1 text-xs">
                         <div className="flex justify-between">
                           <span className="text-gray-500">Total In:</span>
-                          <span className="font-medium text-green-600">{selectedCamera.total_in}</span>
+                          <span className="font-medium text-green-600">{selectedCamera.total_in || 0}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Total Out:</span>
-                          <span className="font-medium text-red-600">{selectedCamera.total_out}</span>
+                          <span className="font-medium text-red-600">{selectedCamera.total_out || 0}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Cars:</span>
                           <span className="font-medium">
-                            {selectedCamera.counts.car_in} / {selectedCamera.counts.car_out}
+                            {selectedCamera.counts.car_in || 0} / {selectedCamera.counts.car_out || 0}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Buses:</span>
                           <span className="font-medium">
-                            {selectedCamera.counts.bus_in} / {selectedCamera.counts.bus_out}
+                            {selectedCamera.counts.bus_in || 0} / {selectedCamera.counts.bus_out || 0}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Trucks:</span>
                           <span className="font-medium">
-                            {selectedCamera.counts.truck_in} / {selectedCamera.counts.truck_out}
+                            {selectedCamera.counts.truck_in || 0} / {selectedCamera.counts.truck_out || 0}
                           </span>
                         </div>
                       </div>
                       <div className="mt-2 pt-2 border-t border-gray-200 text-xs text-gray-500">
-                        Last updated: {formatMexicoCityTime(selectedCamera.timestamp)}
+                        Last updated: {selectedCamera.timestamp ? formatMexicoCityTime(selectedCamera.timestamp) : 'Unknown'}
                       </div>
                     </div>
                   </Popup>

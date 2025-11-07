@@ -88,7 +88,7 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
       }
 
       const timeFilteredData = filteredData.filter(stat => 
-        new Date(stat.hour) >= cutoffDate
+        stat.hour && new Date(stat.hour) >= cutoffDate
       );
 
       setHistoryData(timeFilteredData);
@@ -102,6 +102,7 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
 
   // Process data for charts
   const processedData: HistoryData[] = historyData.reduce((acc: HistoryData[], stat) => {
+    if (!stat.hour) return acc;
     const hour = new Date(stat.hour);
     const timeKey = formatMexicoCityTime(hour, { 
       hour: '2-digit', 
@@ -112,17 +113,17 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
     
     if (existingEntry) {
       if (stat.vehicle_type === 'car') {
-        existingEntry.cars += stat.direction === 'in' ? stat.count : -stat.count;
+        existingEntry.cars += stat.direction === 'in' ? (stat.count || 0) : -(stat.count || 0);
       } else if (stat.vehicle_type === 'bus') {
-        existingEntry.buses += stat.direction === 'in' ? stat.count : -stat.count;
+        existingEntry.buses += stat.direction === 'in' ? (stat.count || 0) : -(stat.count || 0);
       } else if (stat.vehicle_type === 'truck') {
-        existingEntry.trucks += stat.direction === 'in' ? stat.count : -stat.count;
+        existingEntry.trucks += stat.direction === 'in' ? (stat.count || 0) : -(stat.count || 0);
       }
       existingEntry.total = Math.abs(existingEntry.cars) + Math.abs(existingEntry.buses) + Math.abs(existingEntry.trucks);
     } else {
-      const cars = stat.vehicle_type === 'car' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-      const buses = stat.vehicle_type === 'bus' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
-      const trucks = stat.vehicle_type === 'truck' ? (stat.direction === 'in' ? stat.count : -stat.count) : 0;
+      const cars = stat.vehicle_type === 'car' ? (stat.direction === 'in' ? (stat.count || 0) : -(stat.count || 0)) : 0;
+      const buses = stat.vehicle_type === 'bus' ? (stat.direction === 'in' ? (stat.count || 0) : -(stat.count || 0)) : 0;
+      const trucks = stat.vehicle_type === 'truck' ? (stat.direction === 'in' ? (stat.count || 0) : -(stat.count || 0)) : 0;
       
       acc.push({
         hour: stat.hour,
@@ -290,7 +291,6 @@ export default function TrafficHistory({ cameraId, className }: TrafficHistoryPr
                 color: '#1f2937'
               }}
               labelStyle={{ color: '#1f2937' }}
-              cursor="pointer"
             />
             <Legend 
               verticalAlign="top"

@@ -27,7 +27,7 @@ interface CameraSnapshotsProps {
 }
 
 export default function CameraSnapshots({ cameras }: CameraSnapshotsProps) {
-  const [selectedCamera, setSelectedCamera] = useState<string>(cameras[0]);
+  const [selectedCamera, setSelectedCamera] = useState<string>('cam_01'); // Default to cam_01
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
@@ -36,10 +36,10 @@ export default function CameraSnapshots({ cameras }: CameraSnapshotsProps) {
   const [description, setDescription] = useState('');
 
   const cameraNames: Record<string, string> = {
-    cam_01: 'Cámara Principal',
-    cam_02: 'Cámara Norte',
-    cam_03: 'Cámara Sur',
-    cam_04: 'Cámara Este'
+    cam_01: 'Av. Homero Oeste - Este',
+    cam_02: 'Av. Homero Este - Oeste',
+    cam_03: 'Av. Industrias Norte - Sur',
+    cam_04: 'Av. Industrias Sur - Norte'
   };
 
   const fetchSnapshot = async (cameraId: string) => {
@@ -77,25 +77,36 @@ export default function CameraSnapshots({ cameras }: CameraSnapshotsProps) {
     
     setSaving(true);
     try {
-      const response = await fetch(`/api/v1/cameras/${selectedCamera}/snapshot`, {
+      // Convert blob URL to base64 for storage
+      const response = await fetch(snapshot.snapshot_url);
+      const blob = await response.blob();
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+      
+      const apiResponse = await fetch('/api/snapshots', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          camera_id: selectedCamera,
           incident_type: incidentType,
-          description: description
+          description: description,
+          snapshot_url: base64
         })
       });
       
-      const data = await response.json();
+      const data = await apiResponse.json();
       if (data.success) {
         // Reset form
         setIncidentType('');
         setDescription('');
         alert('Snapshot guardado exitosamente en la base de datos');
       } else {
-        alert('Error al guardar snapshot');
+        alert(`Error al guardar snapshot: ${data.error}`);
       }
     } catch (error) {
       console.error('Error al guardar:', error);
