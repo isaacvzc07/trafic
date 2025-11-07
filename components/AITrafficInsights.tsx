@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Brain, TrendingUp, DollarSign, AlertTriangle, MessageCircle } from 'lucide-react';
+import { Brain, TrendingUp, DollarSign, AlertTriangle, MessageCircle, Loader, Zap, AlertCircle } from 'lucide-react';
 import { generateTrafficInsightsClient, generateSmartAlertClient, calculateAICostSavingsClient } from '@/lib/ai/client-service';
 import { useTrafficData } from '@/hooks/useTrafficData';
 
@@ -106,15 +106,26 @@ export function AITrafficInsights() {
       {activeTab === 'insights' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              🧠 Análisis generado por IA basado en datos en tiempo real
+            <p className="text-sm text-gray-600 flex items-center gap-2">
+              <Brain className="w-4 h-4 text-blue-500" />
+              Análisis generado por IA basado en datos en tiempo real
             </p>
             <Button 
               onClick={handleGenerateInsights} 
               disabled={loading || !liveData || !historicalData}
               className="min-w-32"
             >
-              {loading ? '🔄 Analizando con IA...' : '⚡ Generar Insights'}
+              {loading ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Analizando con IA...
+                </>
+              ) : (
+                <>
+                  <Zap className="w-4 h-4 mr-2" />
+                  Generar Insights
+                </>
+              )}
             </Button>
           </div>
           
@@ -136,15 +147,26 @@ export function AITrafficInsights() {
       {activeTab === 'alerts' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              🚨 Alertas inteligentes con recomendaciones específicas
+            <p className="text-sm text-gray-600 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-orange-500" />
+              Alertas inteligentes con recomendaciones específicas
             </p>
             <Button 
               onClick={handleGenerateAlert} 
               disabled={loading || !liveData}
               className="min-w-32"
             >
-              {loading ? '🔄 Generando alerta...' : '🚨 Generar Alerta IA'}
+              {loading ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Generando alerta...
+                </>
+              ) : (
+                <>
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  Generar Alerta IA
+                </>
+              )}
             </Button>
           </div>
           
@@ -166,15 +188,26 @@ export function AITrafficInsights() {
       {activeTab === 'savings' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              💰 Análisis de impacto económico con IA
+            <p className="text-sm text-gray-600 flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-green-500" />
+              Análisis de impacto económico con IA
             </p>
             <Button 
               onClick={handleCalculateSavings} 
               disabled={loading || !historicalData}
               className="min-w-32"
             >
-              {loading ? '🔄 Calculando ahorros...' : '💰 Calcular Impacto'}
+              {loading ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Calculando ahorros...
+                </>
+              ) : (
+                <>
+                  <DollarSign className="w-4 h-4 mr-2" />
+                  Calcular Impacto
+                </>
+              )}
             </Button>
           </div>
           

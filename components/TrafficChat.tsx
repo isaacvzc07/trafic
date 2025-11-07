@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { MessageCircle, Send, Bot, User } from 'lucide-react';
+import { MessageCircle, Send, Bot, User, Activity, Brain } from 'lucide-react';
 import { answerTrafficQueryClient } from '@/lib/ai/client-service';
 import { useTrafficData } from '@/hooks/useTrafficData';
 
@@ -64,7 +64,7 @@ export function TrafficChat() {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '❌ Lo siento, no pude procesar tu pregunta. Por favor intenta nuevamente.',
+        content: 'ERROR: Lo siento, no pude procesar tu pregunta. Por favor intenta nuevamente.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -185,8 +185,14 @@ export function TrafficChat() {
 
       {/* Status Bar */}
       <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
-        <span>📊 Basado en {liveData?.length || 0} puntos de datos en vivo</span>
-        <span>🤖 Powered by GPT-4</span>
+        <span className="flex items-center gap-1">
+          <Activity className="w-3 h-3" />
+          Basado en {liveData?.length || 0} puntos de datos en vivo
+        </span>
+        <span className="flex items-center gap-1">
+          <Brain className="w-3 h-3" />
+          Análisis avanzado de tráfico
+        </span>
       </div>
     </Card>
   );

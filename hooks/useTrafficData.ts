@@ -114,7 +114,8 @@ export function useTrafficData() {
   const { liveCounts } = useLiveCounts();
   const { hourlyStats } = useHourlyStatistics();
   const { summary } = useSummaryStatistics();
-  const { historicalData } = useHistoricalData();
+  // Only get data from November 6, 2025 onwards
+  const { historicalData } = useHistoricalData('2025-11-06T00:00:00.000Z');
 
   // Process live data for AI components
   const liveData = liveCounts?.map(count => ({
@@ -124,7 +125,7 @@ export function useTrafficData() {
     direction: 'total'
   })) || [];
 
-  // Process historical data for AI components
+  // Process historical data for AI components (already filtered by date)
   const processedHistoricalData = historicalData?.map(stat => ({
     camera_id: stat.camera_id,
     count: stat.count,
