@@ -116,8 +116,18 @@ export default function AnalysisPage() {
       if (hourlyResponse.status === 'fulfilled') {
         const result = await hourlyResponse.value.json();
         console.log('🔍 Hourly API Response:', result);
+        console.log('🔍 Hourly API Response type:', typeof result);
+        console.log('🔍 Hourly API Response isArray:', Array.isArray(result));
+        
+        if (result && result.data) {
+          console.log('🔍 Hourly API Response.data:', result.data);
+          console.log('🔍 Hourly API Response.data type:', typeof result.data);
+          console.log('🔍 Hourly API Response.data isArray:', Array.isArray(result.data));
+        }
+        
         hourlyData = Array.isArray(result) ? result : (result.data || []);
         console.log(`✅ Datos horarios: ${hourlyData.length} registros`);
+        console.log('🔍 First hourly record:', hourlyData[0]);
       } else {
         console.error('❌ Error en datos horarios:', hourlyResponse.reason);
       }
@@ -221,6 +231,15 @@ export default function AnalysisPage() {
         const hours = mexicoCityTime.getHours().toString().padStart(2, '0');
         const minutes = mexicoCityTime.getMinutes().toString().padStart(2, '0');
         const formattedTime = `${hours}:${minutes}`;
+        
+        console.log(`🕐 TIME FORMATTING DEBUG for ${mexicoCityHourKey}:`, {
+          originalHour: utcHour,
+          mexicoCityTime: mexicoCityTime.toISOString(),
+          hours: mexicoCityTime.getHours(),
+          minutes: mexicoCityTime.getMinutes(),
+          formattedTime,
+          total: 0
+        });
         
         hourlyMap.set(mexicoCityHourKey, {
           hour: mexicoCityHourKey,
@@ -490,25 +509,12 @@ export default function AnalysisPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver al Dashboard
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Análisis de Tráfico Urbano</h1>
-              <p className="text-gray-600">Sistema Inteligente de Monitoreo Vial</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Brain className="w-12 h-12 mx-auto mb-4 text-blue-500 animate-pulse" />
-              <p className="text-xl text-gray-700 font-semibold">Procesando datos de tráfico...</p>
-              <p className="text-gray-500 mt-2">Analizando patrones para la toma de decisiones</p>
-            </div>
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando análisis de tráfico...</p>
+            <Brain className="w-12 h-12 mx-auto mb-4 text-blue-500 animate-pulse" />
+            <p className="text-xl text-gray-700 font-semibold">Procesando datos de tráfico...</p>
+            <p className="text-gray-500 mt-2">Analizando patrones para la toma de decisiones</p>
           </div>
         </div>
       </div>
@@ -549,7 +555,8 @@ export default function AnalysisPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -638,6 +645,9 @@ export default function AnalysisPage() {
                 <p className="text-orange-100 text-sm font-medium">HORA PICO</p>
                 <p className="text-3xl font-bold">{peakHourData.time}</p>
                 <p className="text-orange-100 text-xs mt-1">{peakHourData.total.toLocaleString()} vehículos</p>
+                <p className="text-orange-200 text-xs mt-2">
+                  DEBUG: Filtered: {filteredData.length} | Raw: {analysisData.length}
+                </p>
               </div>
               <Target className="w-10 h-10 text-orange-200" />
             </div>
@@ -803,19 +813,16 @@ export default function AnalysisPage() {
                   </div>
                 ))}
               </div>
-            </Card>
+          </Card>
           </div>
         </div>
 
-        {/* Camera Performance Analysis */}
-        <Card className="p-6 mb-8">
-          <div className="mb-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Análisis por Cámara</h3>
-            <p className="text-gray-600">Rendimiento y patrones de congestión por punto de monitoreo</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {cameraInsights.map((camera) => (
+        {/* Camera Analysis Section */}
+        <div className="mb-8">
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Análisis por Cámara</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {cameraInsights.map((camera) => (
               <div key={camera.camera_id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-bold text-gray-900">{camera.camera_id.toUpperCase()}</h4>
@@ -864,6 +871,7 @@ export default function AnalysisPage() {
             ))}
           </div>
         </Card>
+        </div>
 
         {/* Traffic Flow Patterns */}
         <Card className="p-6">
@@ -977,25 +985,32 @@ export default function AnalysisPage() {
         </Card>
 
         {/* AI Features Section */}
-        <div className="space-y-8 mb-8">
-          <div className="text-center py-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-              <Brain className="w-6 h-6 text-blue-600" />
-              Inteligencia Artificial de Tráfico
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+        <div className="border-t-2 border-blue-200 pt-8 mt-8">
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <Brain className="w-7 h-7 text-blue-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Inteligencia Artificial de Tráfico</h2>
+            </div>
+            <p className="text-gray-600 ml-10">
               Análisis avanzado con IA para toma de decisiones municipales
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <AITrafficInsights />
-            <TrafficChat />
+            <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
+              <AITrafficInsights />
+            </Card>
+            <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
+              <TrafficChat />
+            </Card>
           </div>
 
-          <AICostSavings />
+          <Card className="p-6 bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 mt-8">
+            <AICostSavings />
+          </Card>
         </div>
       </div>
     </div>
+    </>
   );
 }

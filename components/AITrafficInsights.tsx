@@ -79,24 +79,27 @@ export function AITrafficInsights() {
             variant={activeTab === 'insights' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('insights')}
+            className="whitespace-nowrap"
           >
-            <TrendingUp className="w-4 h-4" />
+            <TrendingUp className="w-4 h-4 mr-2.5" />
             Insights
           </Button>
           <Button
             variant={activeTab === 'alerts' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('alerts')}
+            className="whitespace-nowrap"
           >
-            <AlertTriangle className="w-4 h-4" />
+            <AlertTriangle className="w-4 h-4 mr-2.5" />
             Alertas
           </Button>
           <Button
             variant={activeTab === 'savings' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('savings')}
+            className="whitespace-nowrap"
           >
-            <DollarSign className="w-4 h-4" />
+            <DollarSign className="w-4 h-4 mr-2.5" />
             Ahorros
           </Button>
         </div>
@@ -113,16 +116,16 @@ export function AITrafficInsights() {
             <Button 
               onClick={handleGenerateInsights} 
               disabled={loading || !liveData || !historicalData}
-              className="min-w-32"
+              className="min-w-fit whitespace-nowrap"
             >
               {loading ? (
                 <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader className="w-4 h-4 mr-3 animate-spin" />
                   Analizando con IA...
                 </>
               ) : (
                 <>
-                  <Zap className="w-4 h-4 mr-2" />
+                  <Zap className="w-4 h-4 mr-3" />
                   Generar Insights
                 </>
               )}
@@ -154,16 +157,16 @@ export function AITrafficInsights() {
             <Button 
               onClick={handleGenerateAlert} 
               disabled={loading || !liveData}
-              className="min-w-32"
+              className="min-w-fit whitespace-nowrap"
             >
               {loading ? (
                 <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader className="w-4 h-4 mr-3 animate-spin" />
                   Generando alerta...
                 </>
               ) : (
                 <>
-                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  <AlertTriangle className="w-4 h-4 mr-3" />
                   Generar Alerta IA
                 </>
               )}
@@ -195,16 +198,16 @@ export function AITrafficInsights() {
             <Button 
               onClick={handleCalculateSavings} 
               disabled={loading || !historicalData}
-              className="min-w-32"
+              className="min-w-fit whitespace-nowrap"
             >
               {loading ? (
                 <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader className="w-4 h-4 mr-3 animate-spin" />
                   Calculando ahorros...
                 </>
               ) : (
                 <>
-                  <DollarSign className="w-4 h-4 mr-2" />
+                  <DollarSign className="w-4 h-4 mr-3" />
                   Calcular Impacto
                 </>
               )}
@@ -213,12 +216,57 @@ export function AITrafficInsights() {
           
           {recommendations && (
             <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-600">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-4">
                 <DollarSign className="w-5 h-5 text-green-600" />
                 <h4 className="font-semibold text-green-900">Análisis Económico IA</h4>
               </div>
-              <div className="text-sm text-gray-700 space-y-2">
-                <pre className="whitespace-pre-wrap">{recommendations}</pre>
+              <div className="text-sm text-gray-700 space-y-3">
+                {typeof recommendations === 'string' ? (
+                  // If it's a string, try to parse and display as formatted data
+                  (() => {
+                    try {
+                      const data = JSON.parse(recommendations);
+                      return (
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center p-2 bg-white rounded border border-green-200">
+                            <span className="text-gray-600">Ahorro Diario de Combustible:</span>
+                            <span className="font-semibold text-green-700">{data.dailyFuelSavings}</span>
+                          </div>
+                          <div className="flex justify-between items-center p-2 bg-white rounded border border-green-200">
+                            <span className="text-gray-600">Ahorro de Tiempo (horas):</span>
+                            <span className="font-semibold text-green-700">{data.timeSavingsHours}</span>
+                          </div>
+                          <div className="flex justify-between items-center p-2 bg-white rounded border border-green-200">
+                            <span className="text-gray-600">Reducción de CO₂:</span>
+                            <span className="font-semibold text-green-700">{data.co2ReductionKg}</span>
+                          </div>
+                          <div className="flex justify-between items-center p-2 bg-white rounded border border-green-200">
+                            <span className="text-gray-600">Proyección ROI:</span>
+                            <span className="font-semibold text-green-700">{data.roiProjection}</span>
+                          </div>
+                          <div className="flex justify-between items-center p-2 bg-white rounded border border-green-200">
+                            <span className="text-gray-600">Ahorro Semanal:</span>
+                            <span className="font-semibold text-green-700">{data.weeklySavings}</span>
+                          </div>
+                          {data.optimizationRecommendations && Array.isArray(data.optimizationRecommendations) && (
+                            <div className="p-2 bg-white rounded border border-green-200">
+                              <p className="text-gray-600 font-semibold mb-2">Recomendaciones:</p>
+                              <ul className="list-disc list-inside space-y-1 text-gray-700">
+                                {data.optimizationRecommendations.map((rec: string, idx: number) => (
+                                  <li key={idx}>{rec}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    } catch (e) {
+                      return <pre className="whitespace-pre-wrap text-xs">{recommendations}</pre>;
+                    }
+                  })()
+                ) : (
+                  <pre className="whitespace-pre-wrap text-xs">{JSON.stringify(recommendations, null, 2)}</pre>
+                )}
               </div>
             </div>
           )}

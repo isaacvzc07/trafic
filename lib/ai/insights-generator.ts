@@ -107,13 +107,39 @@ Sé específico y accionable.
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3,
-      response_format: { type: "json_object" },
+      max_tokens: 500,
     });
 
-    return JSON.parse(response.choices[0].message.content || '{}');
+    const content = response.choices[0].message.content || '{}';
+    
+    // Try to extract JSON from the response
+    try {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+    } catch (parseError) {
+      console.error('JSON parse error in alert:', parseError);
+    }
+    
+    // Fallback to default alert structure
+    return {
+      alertTitle: "Congestión Detectada",
+      recommendation: `Se detectaron ${alertData.current_count} vehículos en ${alertData.camera_id}. Se recomienda activar protocolos de desvío.`,
+      resolutionTime: "15-30 minutos",
+      alternativeRoutes: ["Ruta Alternativa 1", "Ruta Alternativa 2"],
+      urgency: alertData.current_count > alertData.threshold ? "alta" : "media"
+    };
   } catch (error) {
     console.error('Error generating smart alert:', error);
-    throw new Error('Error al generar alerta inteligente');
+    // Return a safe fallback instead of throwing
+    return {
+      alertTitle: "Error en Alerta IA",
+      recommendation: "Por favor intenta nuevamente",
+      resolutionTime: "N/A",
+      alternativeRoutes: [],
+      urgency: "baja"
+    };
   }
 }
 
