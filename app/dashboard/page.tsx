@@ -64,16 +64,16 @@ export default function Dashboard() {
     <div className="min-h-screen bg-neutral-50">
       {/* Header */}
       <header className="bg-white border border-neutral-200 shadow-soft">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-3 font-semibold text-neutral-900">
+              <Link href="/" className="flex items-center gap-4 font-semibold text-neutral-900">
                 <img 
                   src="/images/logo.png" 
-                  alt="Traffic.mx Logo" 
-                  className="w-10 h-10 object-contain"
+                  alt="Trafic.mx Logo" 
+                  className="w-15 h-15 object-contain"
                 />
-                <span className="text-xl font-bold">Traffic.mx</span>
+                <span className="text-2xl font-bold">Trafic.mx</span>
               </Link>
               <div className="hidden md:block text-sm text-neutral-500">
                 Monitoreo en Tiempo Real
