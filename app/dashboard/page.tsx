@@ -67,11 +67,13 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
-                </div>
-                <span className="font-bold text-neutral-900">TrafficMX</span>
+              <Link href="/" className="flex items-center gap-3 font-semibold text-neutral-900">
+                <img 
+                  src="/images/logo.png" 
+                  alt="Traffic.mx Logo" 
+                  className="w-10 h-10 object-contain"
+                />
+                <span className="text-xl font-bold">Traffic.mx</span>
               </Link>
               <div className="hidden md:block text-sm text-neutral-500">
                 Monitoreo en Tiempo Real

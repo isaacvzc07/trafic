@@ -52,11 +52,13 @@ export default function HomePage() {
       }`}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2 font-semibold text-neutral-900">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <Shield className="w-4 h-4 text-white" />
-              </div>
-              TrafficMX
+            <Link href="/" className="flex items-center gap-3 font-semibold text-neutral-900">
+              <img 
+                src="/images/logo.png" 
+                alt="Traffic.mx Logo" 
+                className="w-10 h-10 object-contain"
+              />
+              <span className="text-xl font-bold">Traffic.mx</span>
             </Link>
             
             <div className="hidden md:flex items-center gap-8">
@@ -461,12 +463,14 @@ export default function HomePage() {
       <footer className="bg-neutral-900 text-neutral-300 py-12 px-6">
         <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <Shield className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-white">TrafficMX</span>
-            </div>
+            <Link href="/" className="flex items-center gap-3 font-semibold text-white mb-4">
+                <img 
+                  src="/images/logo.png" 
+                  alt="Traffic.mx Logo" 
+                  className="w-8 h-8 object-contain"
+                />
+                <span className="font-bold text-white">Traffic.mx</span>
+              </Link>
             <p className="text-sm text-neutral-400">
               Tecnología de inteligencia de tráfico de nivel gubernamental 
               para ciudades más seguras y eficientes.
@@ -505,7 +509,7 @@ export default function HomePage() {
         </div>
         
         <div className="max-w-6xl mx-auto mt-8 pt-8 border-t border-neutral-800 text-center text-sm text-neutral-400">
-          <p>&copy; 2025 TrafficMX. Todos los derechos reservados. | 
+          <p>&copy; 2025 Traffic.mx. Todos los derechos reservados. | 
           <a href="#" className="hover:text-white transition-colors"> Política de Privacidad</a> | 
           <a href="#" className="hover:text-white transition-colors"> Términos de Servicio</a></p>
         </div>

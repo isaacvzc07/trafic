@@ -29,7 +29,7 @@ export async function GET(
       const response = await fetch(snapshotUrl, {
         method: 'GET',
         headers: {
-          'User-Agent': 'TrafficMX-Dashboard/1.0'
+          'User-Agent': 'Traffic.mx-Dashboard/1.0'
         }
       });
 
